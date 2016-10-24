@@ -60,9 +60,46 @@ public class RushHour {
 		}	
 	}
 	
+	public String toString()
+	{
+		String s ="";
+		
+		for(int i=0;i<this.nbLigne;i++)
+		{			
+			for(int j=0;j<this.nbColonne;j++)
+			{
+				s+=this.grille.get(i).get(j)+"\t";
+			}
+			
+			s+="\n";
+		}	
+		
+		return s;
+	}
+	
+	public boolean equals(RushHour r2)
+	{
+		for(int i=0;i<this.nbLigne;i++)
+		{			
+			for(int j=0;j<this.nbColonne;j++)
+			{
+				if(!this.grille.get(i).get(j).equals(r2.grille.get(i).get(j)))
+					return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public ArrayList<ArrayList<String>> getGrille()
+	{
+		return this.grille;
+	}
+	
 	public static void main(String[] args)
 	{
-		RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
+		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
+		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		r1.afficher();
 	}
 
