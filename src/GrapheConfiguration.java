@@ -65,9 +65,7 @@ public class GrapheConfiguration {
 	}
 	
 	public void afficherMatrice()
-	{
-		System.out.println(this.matrice_adj.size()+" "+"\n");
-		
+	{		
 		for(int i=0;i<this.matrice_adj.size();i++)
 		{
 			for(int j=0;j<this.matrice_adj.get(i).size();j++)

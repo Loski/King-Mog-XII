@@ -1,11 +1,14 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class RushHour {
 
 	private ArrayList<ArrayList<String>> grille;
+	private HashMap<String,Integer> marqueurs;
 	private int nbLigne;
 	private int nbColonne;
 	
@@ -13,10 +16,12 @@ public class RushHour {
 	{
 		BufferedReader buffer;
 		String x;
-		grille = new ArrayList<ArrayList<String>>();
+		this.grille = new ArrayList<ArrayList<String>>();
+		this.marqueurs = new HashMap<String,Integer>();
 		
         try 
         {
+        	int i=0;
             buffer = new BufferedReader(new FileReader(filename));
             
             if((x = buffer.readLine()) != null)	
@@ -38,10 +43,16 @@ public class RushHour {
             	StringTokenizer st = new StringTokenizer(x," ");
             	while(st.hasMoreElements())
             	{
-            		ar.add((String)st.nextElement());
+            		String s = (String)st.nextElement();
+            		ar.add(s);
+            		i++;
+            		if(!this.marqueurs.containsKey(s) && !s.equals("0"))
+            		{
+            			this.marqueurs.put(s,i);
+            		}
             	}
             	
-            	grille.add(ar);
+            	this.grille.add(ar);
             }
             
         }catch(Exception e){e.printStackTrace();}
@@ -57,7 +68,17 @@ public class RushHour {
 			}
 			
 			System.out.println();
-		}	
+		}
+		
+		//DEBUG MARQUEUR
+		System.out.println();
+		Iterator<String> ite = marqueurs.keySet().iterator();
+		 
+		while (ite.hasNext())
+		{
+		    String key = ite.next();
+		    System.out.println(key+" :" + this.marqueurs.get(key));
+		}
 	}
 	
 	public String toString()
@@ -94,6 +115,11 @@ public class RushHour {
 	public ArrayList<ArrayList<String>> getGrille()
 	{
 		return this.grille;
+	}
+	
+	public HashMap<String,Integer> getMarqueurs()
+	{
+		return this.marqueurs;
 	}
 	
 	public static void main(String[] args)
