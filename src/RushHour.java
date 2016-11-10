@@ -71,7 +71,7 @@ public class RushHour {
 		supprimerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
 		
 		//Marqueur
-		this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+direction); // old value + direction
+		this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+direction);// old value + direction
 		
 		//on recréé la voiture dans la grille !
 		creerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
@@ -153,7 +153,7 @@ public class RushHour {
             				if(vehicules.get(j).getCode().equals(s))
             				{
             					find=true;
-            					if( (marqueurs.get(s)%this.nbColonne )==0)
+            					if( i - marqueurs.get(s) ==0)
             						vehicules.get(j).setOrientation(Orientation.VERTICAL);
             					else
             						vehicules.get(j).setOrientation(Orientation.HORIZONTAL);
