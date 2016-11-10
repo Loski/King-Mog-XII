@@ -139,7 +139,7 @@ public class RushHour {
             				if(vehicules.get(j).getCode().equals(s))
             				{
             					find=true;
-            					if( i - marqueurs.get(s) ==0)
+            					if( i - marqueurs.get(s) == this.nbColonne)
             						vehicules.get(j).setOrientation(Orientation.VERTICAL);
             					else
             						vehicules.get(j).setOrientation(Orientation.HORIZONTAL);
@@ -241,7 +241,7 @@ public class RushHour {
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		r1.afficher();
-		r1.deplacement_1(r1.vehicules.get(1), Direction.FORWARD, Orientation.HORIZONTAL);
+		r1.deplacement_1(r1.vehicules.get(1), Direction.FORWARD, Orientation.VERTICAL);
 		r1.afficher();
 		System.out.println(r1.vehicules.get(1));
 	}
