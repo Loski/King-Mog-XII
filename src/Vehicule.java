@@ -44,4 +44,8 @@ public abstract class Vehicule {
 			return false;
 				
 	}
+	
+	public String toString(){
+		return "Mon véhicule :" + this.code + "\t";
+	}
 }
