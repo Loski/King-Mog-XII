@@ -5,4 +5,10 @@ public class Camion extends Vehicule{
 		super(code,direction);
 		this.taille=3;
 	}
+	
+	public Camion(String code)
+	{
+		super(code);
+		this.taille=3;
+	}
 }

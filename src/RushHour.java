@@ -9,6 +9,7 @@ public class RushHour {
 
 	private ArrayList<ArrayList<String>> grille;
 	private HashMap<String,Integer> marqueurs;
+	private ArrayList<Vehicule> vehicules;
 	private int nbLigne;
 	private int nbColonne;
 	
@@ -18,6 +19,7 @@ public class RushHour {
 		String x;
 		this.grille = new ArrayList<ArrayList<String>>();
 		this.marqueurs = new HashMap<String,Integer>();
+		this.vehicules = new ArrayList<Vehicule>();
 		
         try 
         {
@@ -49,6 +51,30 @@ public class RushHour {
             		if(!this.marqueurs.containsKey(s) && !s.equals("0"))
             		{
             			this.marqueurs.put(s,i);
+            			if(s.startsWith("c"))
+            				this.vehicules.add(new Voiture(s));
+            			else
+            				this.vehicules.add(new Camion(s));
+            		}
+            		
+            		//Ajout orientation
+            		else if(this.marqueurs.containsKey(s))
+            		{
+            			boolean find = false;
+            			int j=0;
+            			while(!find)
+            			{
+            				if(vehicules.get(j).getCode().equals(s))
+            				{
+            					find=true;
+            					if( (marqueurs.get(s)%this.nbColonne )==0)
+            						vehicules.get(j).setOrientation(Orientation.VERTICAL);
+            					else
+            						vehicules.get(j).setOrientation(Orientation.HORIZONTAL);
+            				}
+            				
+            				j++;
+            			}
             		}
             	}
             	
@@ -78,6 +104,13 @@ public class RushHour {
 		{
 		    String key = ite.next();
 		    System.out.println(key+" :" + this.marqueurs.get(key));
+		}
+		
+		//DEBUG VEHICULES
+		System.out.println();
+		for(Vehicule v : vehicules)
+		{
+			System.out.println(v.getCode() +" "+v.getOrientation());
 		}
 	}
 	

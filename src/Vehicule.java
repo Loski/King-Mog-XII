@@ -2,18 +2,23 @@
 public abstract class Vehicule {
 
 	private String code;
-	private int direction;
+	private int orientation;
 	protected int taille;
 	
-	public Vehicule(String code,int direction)
+	public Vehicule(String code,int orientation)
 	{
 		this.code=code;
-		this.direction=direction;
+		this.orientation=orientation;
 	}
 	
-	public int getDirection()
+	public Vehicule(String code)
 	{
-		return this.direction;
+		this.code=code;
+	}
+	
+	public int getOrientation()
+	{
+		return this.orientation;
 	}
 	
 	public String getCode()
@@ -24,5 +29,19 @@ public abstract class Vehicule {
 	public int getTaille()
 	{
 		return this.taille;
+	}
+	
+	public void setOrientation(int orientation)
+	{
+		this.orientation=orientation;
+	}
+	
+	public boolean equals(Vehicule v2)
+	{
+		if(this.code.equals(v2.code) && this.taille==v2.taille && this.orientation==v2.orientation)
+			return true;
+		else
+			return false;
+				
 	}
 }
