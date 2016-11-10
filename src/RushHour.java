@@ -20,7 +20,7 @@ public class RushHour {
 	public boolean deplacement_1(Vehicule vehicule, int direction, int orientation_deplacement){
 		if(orientation_deplacement != vehicule.getOrientation())
 			return false;
-		boolean deplacement_possible = false;
+		boolean deplacement_possible = true;
 		int sommet_depart = marqueurs.get(vehicule.getCode()).intValue();
 		int taille = vehicule.getTaille();
 		
@@ -28,15 +28,9 @@ public class RushHour {
 			if(direction == Direction.FORWARD)
 				if(sommet_depart%nbColonne + taille + direction > nbColonne)
 					deplacement_possible = false;
-				else{
-					deplacement_possible = true;
-				}
 			else{ //BACKWARD
 				if(sommet_depart%nbColonne + direction < 0){  //Hors tableau
 					deplacement_possible = false;
-				}
-				else{
-					deplacement_possible = true;
 				}
 			}
 		}
@@ -44,15 +38,9 @@ public class RushHour {
 			if(direction == Direction.FORWARD)
 				if(sommet_depart%nbLigne + taille + direction > nbLigne)
 					deplacement_possible = false;
-				else{
-					deplacement_possible = true;
-				}
 			else{ //BACKWARD
 				if(sommet_depart%nbLigne + direction < 0){  //Hors tableau
 					deplacement_possible = false;
-				}
-				else{
-					deplacement_possible = true;
 				}
 			}
 		}
@@ -70,9 +58,7 @@ public class RushHour {
 		//On supprime la voiture de la grille 
 		supprimerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
 		
-		//Marqueur
 		this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+direction);// old value + direction
-		
 		//on recréé la voiture dans la grille !
 		creerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
 	}
@@ -255,8 +241,9 @@ public class RushHour {
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		r1.afficher();
-		r1.deplacement_1(r1.vehicules.get(0), Direction.FORWARD, Orientation.HORIZONTAL);
+		r1.deplacement_1(r1.vehicules.get(1), Direction.FORWARD, Orientation.HORIZONTAL);
 		r1.afficher();
+		System.out.println(r1.vehicules.get(1));
 	}
 
 	static class Direction{
