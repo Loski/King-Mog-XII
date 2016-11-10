@@ -3,7 +3,7 @@ public class Voiture extends Vehicule{
 	
 	public Voiture(String code,int direction) {
 		super(code,direction);
-		this.taille=3;
+		this.taille=2;
 	}
 	
 	public Voiture(String code)
