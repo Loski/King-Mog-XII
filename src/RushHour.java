@@ -20,7 +20,7 @@ public class RushHour {
 	public boolean deplacementLateral(Vehicule vehicule, Direction d){
 		if(vehicule.getOrientation() == Orientation.HORIZONTAL){
 			if(
-					grille.marqueurs.get(vehicule.getCode())
+					marqueurs.get(vehicule.getCode()).intValue()
 					)
 		}
 		return false;
