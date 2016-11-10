@@ -7,6 +7,8 @@ import java.util.StringTokenizer;
 
 public class RushHour {
 
+	public static final int caseSortie = 8; //17;
+	
 	private ArrayList<ArrayList<String>> grille;
 	private HashMap<String,Integer> marqueurs;
 	private ArrayList<Vehicule> vehicules;
@@ -153,6 +155,14 @@ public class RushHour {
 	public HashMap<String,Integer> getMarqueurs()
 	{
 		return this.marqueurs;
+	}
+	
+	public boolean isSolution()
+	{
+		if(this.marqueurs.get("g")==RushHour.caseSortie)
+			return true;
+		else
+			return false;
 	}
 	
 	public static void main(String[] args)
