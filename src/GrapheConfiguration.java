@@ -77,6 +77,8 @@ public class GrapheConfiguration {
 		}
 	}
 	
+
+	
 	public static void main(String[] args)
 	{
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");

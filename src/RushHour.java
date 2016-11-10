@@ -13,6 +13,20 @@ public class RushHour {
 	private int nbLigne;
 	private int nbColonne;
 	
+	
+	
+	public boolean deplacementLateral(Vehicule vehicule, Direction d){
+		if(vehicule.getOrientation() == Orientation.HORIZONTAL){
+			if(
+					grille.marqueurs.get(vehicule.getCode())
+					)
+		}
+		return false;
+	}
+	
+	public Vehicule findVehicule(Vehicule voiture){
+		return null;
+	}
 	public RushHour(String filename)
 	{
 		BufferedReader buffer;
@@ -47,7 +61,6 @@ public class RushHour {
             	{
             		String s = (String)st.nextElement();
             		ar.add(s);
-            		i++;
             		if(!this.marqueurs.containsKey(s) && !s.equals("0"))
             		{
             			this.marqueurs.put(s,i);
@@ -76,6 +89,7 @@ public class RushHour {
             				j++;
             			}
             		}
+            		i++;
             	}
             	
             	this.grille.add(ar);
@@ -162,5 +176,8 @@ public class RushHour {
 		r1.afficher();
 	}
 
-	
+	static class Direction{
+		 public final static int DROITE = 1;
+		 public final static int GAUCHE = -1;
+	}
 }
