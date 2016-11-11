@@ -1,5 +1,7 @@
 package RushHour;
+
 import java.util.ArrayList;
+import java.util.Collections;
 
 public abstract class DijkstraSolver {
 	
@@ -82,13 +84,33 @@ public abstract class DijkstraSolver {
 		return predecesseurs;
 	}
 	
-	
-	public static int[] resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations)
+	private static ArrayList<RushHour> createSequence(int[] predecesseurs,ArrayList<RushHour> configurations,int indexOfSolution)
 	{
-		return resolve(matrice_adj, configurations);
+		boolean configDepart=false;
+		ArrayList<RushHour> sequence = new ArrayList<RushHour>();
+		sequence.add(configurations.get(indexOfSolution));
+		int currentRushHour=0;
+		
+		while(!configDepart)
+		{
+			currentRushHour=predecesseurs[currentRushHour];
+			sequence.add(configurations.get(currentRushHour));
+		}
+		
+		Collections.reverse(sequence);
+		
+		return sequence;
 	}
 	
-	public static int[] resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations)
+	
+	public static ArrayList<RushHour> resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	{
+		int[] predecesseurs = resolve(matrice_adj, configurations);
+		
+		return createSequence(predecesseurs, configurations, indexOfSolution);
+	}
+	
+	public static ArrayList<RushHour> resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
 		ArrayList<ArrayList<Integer>> copy = new ArrayList<ArrayList<Integer>>();
 		
@@ -108,6 +130,9 @@ public abstract class DijkstraSolver {
 		}
 		
 		
-		return resolve(copy, configurations);
+		int[] predecesseurs = resolve(copy, configurations);
+		return createSequence(predecesseurs, configurations, indexOfSolution);
 	}
+	
+	
 }
