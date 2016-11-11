@@ -17,16 +17,12 @@ public class RushHour implements Cloneable {
 	private int nbColonne;
 	
 	public boolean deplacement_multiple(Vehicule vehicule, int direction, int orientation_deplacement, int nombre_deplacement){
-		boolean jebouge = false;
 		for(int i = 0; i < nombre_deplacement; i++){
 			 boolean tmp = deplacement_1(vehicule, direction, orientation_deplacement);
 			 if(!tmp)
-				 break;
-			 else
-				 if(!jebouge)
-					 jebouge = true;
+				return false;
 		}
-		return jebouge;
+		return true;
 	}
 	
 	public boolean deplacement_1(Vehicule vehicule, int direction, int orientation_deplacement){
