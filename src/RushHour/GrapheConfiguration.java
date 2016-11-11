@@ -54,22 +54,26 @@ public class GrapheConfiguration {
 		//System.out.println(r);
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
-				for(int orientation:all_orientation){
-					RushHour tmp = (RushHour) r.clone();
-					if(tmp.deplacement_1(v, direction, orientation)){
-						//if(!this.configurations.contains(tmp)){
-						if(!this.configurations.contains(tmp)){
-						//System.out.println(tmp);		
-							/*System.out.println("MUST ADD : "+tmp);
-							System.out.println("IN :");
-							for(RushHour r0 : this.configurations)
-								System.out.println(r0);*/
-							//System.out.println("\n COMPARE TO ("+this.configurations.size()+") :"+this.configurations.contains(tmp));
-							addSommet(tmp);	
-							setSuccesseur(index, this.configurations.size()-1,1);
-							setSuccesseur(this.configurations.size()-1,index,1);
+					
+					for(int j = 1; j < 6; j++){
+						RushHour tmp = (RushHour) r.clone();
+						boolean s = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
+						if(s){
+							//if(!this.configurations.contains(tmp)){
+							if(!this.configurations.contains(tmp)){
+							//System.out.println(tmp);		
+							/*	System.out.println("MUST ADD : "+tmp);
+								System.out.println("IN :");
+								for(RushHour r0 : this.configurations)
+									System.out.println(r0);
+								System.out.println("\n COMPARE TO ("+this.configurations.size()+") :"+this.configurations.contains(tmp));*/
+								addSommet(tmp);	
+								setSuccesseur(index, this.configurations.size()-1,1);
+								setSuccesseur(this.configurations.size()-1,index,j);
+							}
 						}
-					}
+						else
+							j=10;
 				}
 			}
 		
@@ -89,8 +93,8 @@ public class GrapheConfiguration {
 		
 		//System.out.println("J'ai ajouté : "+r);
 		
-		/*if(r.isSolution())
-			indexOfSolutions.add(this.configurations.size());*/
+		if(r.isSolution())
+			indexOfSolutions.add(this.configurations.size());
 		
 		this.configurations.add(r);
 		

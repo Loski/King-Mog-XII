@@ -95,6 +95,8 @@ public abstract class DijkstraSolver {
 		{
 			currentRushHour=predecesseurs[currentRushHour];
 			sequence.add(configurations.get(currentRushHour));
+			if(configurations.get(currentRushHour).equals(configDepart))
+                configDepart=true;
 		}
 		
 		Collections.reverse(sequence);
@@ -103,14 +105,14 @@ public abstract class DijkstraSolver {
 	}
 	
 	
-	public static ArrayList<RushHour> resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static ArrayList<RushHour> resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
 		int[] predecesseurs = resolve(matrice_adj, configurations);
 		
 		return createSequence(predecesseurs, configurations, indexOfSolution);
 	}
 	
-	public static ArrayList<RushHour> resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static ArrayList<RushHour> resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
 		ArrayList<ArrayList<Integer>> copy = new ArrayList<ArrayList<Integer>>();
 		
