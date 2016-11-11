@@ -64,7 +64,7 @@ public abstract class DijkstraSolver {
 				}
 			}
 			
-			System.out.println("DISTANCE + sommet( "+ nvSommetMarque +" )");
+			/*System.out.println("DISTANCE + sommet( "+ nvSommetMarque +" )");
 			for(int i=0;i<distances.length;i++)
 			{
 				System.out.print(distances[i]+"\t");
@@ -78,7 +78,7 @@ public abstract class DijkstraSolver {
 				System.out.print(predecesseurs[i]+"\t");
 			}
 			
-			System.out.println("\n");
+			System.out.println("\n");*/
 			
 		}		
 		return predecesseurs;
@@ -95,8 +95,10 @@ public abstract class DijkstraSolver {
 		{
 			currentRushHour=predecesseurs[currentRushHour];
 			sequence.add(configurations.get(currentRushHour));
-			if(configurations.get(currentRushHour).equals(configDepart))
-                configDepart=true;
+			
+			if(configurations.get(currentRushHour).equals(configurations.get(0)))
+				configDepart=true;		
+			
 		}
 		
 		Collections.reverse(sequence);

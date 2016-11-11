@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 
 public class RushHour implements Cloneable {
 
-	public static final int caseSortie = 8; //17;
+	public static final int caseSortie = 6; //16;
 	
 	private ArrayList<ArrayList<String>> grille;
 	private HashMap<String,Integer> marqueurs;
@@ -16,7 +16,18 @@ public class RushHour implements Cloneable {
 	private int nbLigne;
 	private int nbColonne;
 	
-	
+	public boolean deplacement_multiple(Vehicule vehicule, int direction, int orientation_deplacement, int nombre_deplacement){
+		boolean jebouge = false;
+		for(int i = 0; i < nombre_deplacement; i++){
+			 boolean tmp = deplacement_1(vehicule, direction, orientation_deplacement);
+			 if(!tmp)
+				 break;
+			 else
+				 if(!jebouge)
+					 jebouge = true;
+		}
+		return jebouge;
+	}
 	
 	public boolean deplacement_1(Vehicule vehicule, int direction, int orientation_deplacement){
 		if(orientation_deplacement != vehicule.getOrientation())
@@ -55,18 +66,7 @@ public class RushHour implements Cloneable {
 	}
 	
 	
-	public boolean deplacement_multiple(Vehicule vehicule, int direction, int orientation_deplacement, int nombre_deplacement){
-		boolean jebouge = false;
-		for(int i = 0; i < nombre_deplacement; i++){
-			 boolean tmp = deplacement_1(vehicule, direction, orientation_deplacement);
-			 if(!tmp)
-				 break;
-			 else
-				 if(!jebouge)
-					 jebouge = true;
-		}
-		return jebouge;
-	}
+	
 	private void deplacementRushHour(Vehicule vehicule, int direction, int orientation){
 		String nom_vehicule = vehicule.getCode();
 		
@@ -272,7 +272,7 @@ public class RushHour implements Cloneable {
 		
 		if(this.marqueurs.size()!=r2.marqueurs.size())
 			return false;
-
+		
 		int i=0;
 		for(Vehicule v:this.vehicules)
 		{			
@@ -282,7 +282,7 @@ public class RushHour implements Cloneable {
 			if(!r2.marqueurs.containsKey(v.getCode()))
 				return false;
 			
-			if(!r2.marqueurs.get(v.getCode()).equals(this.marqueurs.get(v.getCode())))
+			if(r2.marqueurs.get(v.getCode()).intValue()!=this.marqueurs.get(v.getCode()).intValue())
 			{
 				//System.out.println("PAS MÊME INT POUR : " +r2 + "\n" + this);
 				return false;

@@ -34,6 +34,7 @@ public class GrapheConfiguration {
 	{
 		this.configurations=new ArrayList<RushHour>();
 		this.matrice_adj=new ArrayList<ArrayList<Integer>>();
+		this.indexOfSolutions = new ArrayList<Integer>();
 		
 		/*int[] arrete = {0,0};
 		ArrayList<Integer> intersect = new ArrayList<Integer>();
@@ -54,7 +55,6 @@ public class GrapheConfiguration {
 		//System.out.println(r);
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
-					
 					for(int j = 1; j < 6; j++){
 						RushHour tmp = (RushHour) r.clone();
 						boolean s = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
@@ -71,10 +71,10 @@ public class GrapheConfiguration {
 								setSuccesseur(index, this.configurations.size()-1,1);
 								setSuccesseur(this.configurations.size()-1,index,j);
 							}
-						}
-						else
+							else
 							j=10;
-				}
+						}
+					}
 			}
 		
 		//Si on a ajouté une config
