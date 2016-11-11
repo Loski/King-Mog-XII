@@ -44,7 +44,7 @@ public class GrapheConfiguration {
 					RushHour tmp = (RushHour) r.clone();
 					while(tmp.deplacement_1(v, direction, orientation)){
 						if(!this.configurations.contains(tmp)){
-							this.configurations.add(tmp);
+							addSommet(tmp);
 							System.out.println(tmp);
 							creerGraphe(tmp);
 						}
