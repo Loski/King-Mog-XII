@@ -81,8 +81,29 @@ public class GrapheConfiguration {
 	{
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
-		GrapheConfiguration g1 = new GrapheConfiguration(r1);
+		GrapheConfiguration g1 = new GrapheConfiguration(r1);		
+		
+		g1.addSommet(r1);
+		g1.addSommet(r1);
+		g1.addSommet(r1);
+		g1.addSommet(r1);
+		
+		g1.setSuccesseur(0, 1, 10);
+		g1.setSuccesseur(1, 2, 1);
+		g1.setSuccesseur(2, 3, 4);
+		g1.setSuccesseur(3, 2, 6);
+		g1.setSuccesseur(3, 0, 7);
+		g1.setSuccesseur(4, 3, 2);
+		g1.setSuccesseur(4, 2, 9);
+		g1.setSuccesseur(4, 1, 3);
+		g1.setSuccesseur(1, 4, 2);
+		g1.setSuccesseur(0, 4, 5);
+		
 		g1.afficherMatrice();
+		
+		int[] succ = DijkstraSolver.resolveRHC(g1.matrice_adj, g1.configurations);
+		for(int i=0;i<succ.length;i++)
+		System.out.print(succ[i]+"\t");
 	}
 	
 	
