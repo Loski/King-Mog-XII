@@ -1,6 +1,9 @@
 package RushHour;
 
-public abstract class Vehicule {
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public abstract class Vehicule implements Cloneable{
 
 	private String code;
 	private int orientation;
@@ -48,4 +51,5 @@ public abstract class Vehicule {
 	public String toString(){
 		return "Mon véhicule :" + this.code + "\t";
 	}
+
 }

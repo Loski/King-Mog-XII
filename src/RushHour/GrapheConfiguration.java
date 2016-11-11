@@ -35,18 +35,17 @@ public class GrapheConfiguration {
 	}
 	
 	public void creerGraphe(RushHour r){
-		int[] all_direction = {Direction.BACKWARD, Direction.FORWARD};
+		int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
 		int[] all_orientation = {Orientation.HORIZONTAL, Orientation.VERTICAL};
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
 				for(int orientation:all_orientation){
 					RushHour tmp = (RushHour) r.clone();
 					while(tmp.deplacement_1(v, direction, orientation)){
-						
 						if(!this.configurations.contains(tmp)){
 							addSommet(tmp);
-							System.out.println(tmp);
 							creerGraphe(tmp);
+
 						}
 					}
 				}
@@ -55,7 +54,10 @@ public class GrapheConfiguration {
 	public void addSommet(RushHour r)
 	{
 		//TESTER SI LE SOMMET a.k.a la grille de r EXISTE ??
-		
+		if(r == null)
+			System.out.println("CAY NULL");
+		System.out.println(this.configurations.size()+ " : \n" +r);
+
 		this.configurations.add(r);
 		ArrayList<Integer> newSommet = new ArrayList<Integer>();
 		this.matrice_adj.add(newSommet);
