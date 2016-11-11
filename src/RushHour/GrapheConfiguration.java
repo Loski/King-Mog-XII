@@ -56,30 +56,29 @@ public class GrapheConfiguration {
 		//System.out.println(r);
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
-				int taille_max;
-				if(v.getOrientation() == Orientation.HORIZONTAL)
-					taille_max = r.getMarqueurs().get(v.getCode())%r.getNbColonne();
-					for(int j = 1; j < r.getNbLigne() - v.getTaille(); j++){
-						RushHour tmp = (RushHour) r.clone();
-						boolean s = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
-						if(s){
-							//if(!this.configurations.contains(tmp)){
-							if(!this.configurations.contains(tmp)){
-							//System.out.println(tmp);		
-							/*	System.out.println("MUST ADD : "+tmp);
-								System.out.println("IN :");
-								for(RushHour r0 : this.configurations)
-									System.out.println(r0);
-								System.out.println("\n COMPARE TO ("+this.configurations.size()+") :"+this.configurations.contains(tmp));*/
-								addSommet(tmp);	
-							}
-							if(index!=this.configurations.size()-1)
-							{
-								setSuccesseur(index, this.configurations.indexOf(tmp),j);
-								setSuccesseur(this.configurations.indexOf(tmp),index,j);
-							}
+				int taille_max = 6;
+				if(v.getOrientation() == Orientation.HORIZONTAL){
+					taille_max = r.getNbColonne() - (r.getMarqueurs().get(v.getCode())%r.getNbColonne() + v.taille);
+				}
+				else{
+					taille_max = r.getNbLigne() -((int)r.getMarqueurs().get(v.getCode())/r.getNbColonne() + v.taille);
+				}
+				for(int j = 1; j <=taille_max+1; j++){
+					RushHour tmp = (RushHour) r.clone();
+					boolean s = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
+					if(s){
+						if(!this.configurations.contains(tmp)){
+							addSommet(tmp);	
+						}
+						if(index!=this.configurations.size()-1)
+						{
+							setSuccesseur(index, this.configurations.indexOf(tmp),j);
+							setSuccesseur(this.configurations.indexOf(tmp),index,j);
 						}
 					}
+					else
+						j = 50;
+				}
 			}
 		
 		//Si on a ajouté une config
@@ -91,12 +90,6 @@ public class GrapheConfiguration {
 	
 	public void addSommet(RushHour r)
 	{
-		
-		if(r == null)
-			System.out.println("CAY NULL");
-		//System.out.println(this.configurations.size()+ " : \n" +r);
-		
-		//System.out.println("J'ai ajouté : "+r);
 		
 		if(r.isSolution())
 			indexOfSolutions.add(this.configurations.size());

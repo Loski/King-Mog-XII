@@ -134,6 +134,7 @@ public class RushHourSolver {
 		
 		else
 		{
+			System.out.println(g.getConfigurations().size());
 			Object[] result = DijkstraSolver.resolveRHC(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
 			nbCaseDeplace=(int) result[0];
 			this.sequence=(ArrayList<RushHour>) result[1];

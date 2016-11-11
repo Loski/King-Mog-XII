@@ -228,9 +228,10 @@ public class RushHour implements Cloneable {
 				r.grille.add(s);
 			}
 			return r;
-		} catch (CloneNotSupportedException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println(this.grille);
 		}
 		return null;
 	}
