@@ -37,13 +37,10 @@ public abstract class Vehicule {
 		this.orientation=orientation;
 	}
 	
-	public boolean equals(Object other)
+	public boolean equals(Vehicule v2)
 	{
-		if (other!= null && (other.getClass() == Vehicule.class)){
-			Vehicule v2 = (Vehicule) other;
 			if(this.code.equals(v2.code) && this.taille==v2.taille && this.orientation==v2.orientation)
 				return true;
-		}
 		return false;
 				
 	}

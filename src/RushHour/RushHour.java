@@ -27,7 +27,7 @@ public class RushHour implements Cloneable {
 		
 		if(vehicule.getOrientation() == Orientation.HORIZONTAL){ 
 			if(direction == Direction.FORWARD){
-				if(sommet_depart%nbColonne + taille <= nbColonne && this.grille.get((int)sommet_depart/nbColonne).get(sommet_depart%nbColonne + taille).equals("0"))
+				if(sommet_depart%nbColonne + taille < nbColonne && this.grille.get((int)sommet_depart/nbColonne).get(sommet_depart%nbColonne + taille).equals("0"))
 					deplacement_possible = true;
 			}
 			else{ //BACKWARD
@@ -38,11 +38,10 @@ public class RushHour implements Cloneable {
 		}
 		else{  // VERTICAL
 			if(direction == Direction.FORWARD){				
-				if((int)sommet_depart/nbColonne + taille + direction < nbLigne && this.grille.get((int)sommet_depart/nbColonne + taille).get(sommet_depart%nbLigne).equals("0"))
+				if((int)sommet_depart/nbColonne + taille < nbLigne && this.grille.get((int)sommet_depart/nbColonne + taille).get(sommet_depart%nbLigne).equals("0"))
 					deplacement_possible = true;
 			}
 				else{ //BACKWARD
-					System.out.println( this.grille.get((int)sommet_depart/nbColonne + Direction.BACKWARD).get(sommet_depart%nbLigne));
 					if((int)(sommet_depart/nbColonne + Direction.BACKWARD) >= 0 && (this.grille.get((int)sommet_depart/nbColonne + Direction.BACKWARD).get(sommet_depart%nbLigne).equals("0"))){  //Hors tableau
 						deplacement_possible = true;
 					}
@@ -281,9 +280,7 @@ public class RushHour implements Cloneable {
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		r1.afficher();
 
-		r1.afficher();
-
-		r1.deplacement_1(r1.getVehicules().get(1), Direction.FORWARD, Orientation.VERTICAL);
+		r1.deplacement_1(r1.getVehicules().get(0), Direction.FORWARD, Orientation.HORIZONTAL);
 
 		r1.afficher();
 		System.out.println(r1.vehicules.get(0).toString() + r1.vehicules.get(0).getTaille());

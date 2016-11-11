@@ -37,12 +37,12 @@ public class GrapheConfiguration {
 	public void creerGraphe(RushHour r){
 		int[] all_direction = {Direction.BACKWARD, Direction.FORWARD};
 		int[] all_orientation = {Orientation.HORIZONTAL, Orientation.VERTICAL};
-		System.out.println(r);
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
 				for(int orientation:all_orientation){
 					RushHour tmp = (RushHour) r.clone();
 					while(tmp.deplacement_1(v, direction, orientation)){
+						
 						if(!this.configurations.contains(tmp)){
 							addSommet(tmp);
 							System.out.println(tmp);
@@ -114,9 +114,11 @@ public class GrapheConfiguration {
 	public static void main(String[] args)
 	{
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
-		RushHour r1 = new RushHour("puzzles/debug.txt"); 
+		RushHour r1 = new RushHour("puzzles/debug.txt"), r2 = new RushHour("puzzles/debug.txt"); 
+		System.out.println(r1.equals(r2));
 		GrapheConfiguration g1 = new GrapheConfiguration(r1);		
 		g1.creerGraphe(g1.getConfigurations().get(0));
+		System.out.println(g1.getConfigurations().size());
 	}
 	
 	
