@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class RushHourSolver {
 	private RushHour r;
 	private GrapheConfiguration g;
+	private ArrayList<RushHour> sequence;
 	
 	public RushHourSolver()
 	{
@@ -116,20 +117,18 @@ public class RushHourSolver {
 	
 	public void resolveGraphe(int probleme)
 	{
-		this.g = new GrapheConfiguration(r);
-		ArrayList<RushHour> sequence = new ArrayList<RushHour>();
-		sequence.add(r);
+		//Recréer le graphe des configs
+		if(this.g==null || ! this.g.getConfigurations().get(0).equals(r))
+			this.g = new GrapheConfiguration(r);
 		
 		if(probleme == 1)
 		{
-	    	//g.creerGrapheConf
-	        //DijkstraSolver.resolveRHM(g.);
+			this.sequence = DijkstraSolver.resolveRHM(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
 		}
 		
 		else
 		{
-	    	//g.creerGrapheConf
-	        //DijkstraSolver.resolveRHC(g.);
+			this.sequence = DijkstraSolver.resolveRHC(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
 		}
 		
 		beginSequence(sequence);
@@ -137,13 +136,18 @@ public class RushHourSolver {
 	
 	public void beginSequence(ArrayList<RushHour> sequence)
 	{
+		int i =0;
+		
 		for(RushHour rh: sequence)
 		{
-			System.out.println("");
+			System.out.println(String.format("-------ETAPE(%d)---------",i));
 			rh.afficher();
-			System.out.println("");
+			//Dire quelle pièce a bougée ??
+			System.out.println("-----------------------");
 			waitForNext();
 		}
+		
+		i++;
 	}
 	
 	public RushHour getRushHour()

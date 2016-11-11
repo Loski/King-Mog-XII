@@ -3,7 +3,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
@@ -27,6 +26,7 @@ public class RushHour implements Cloneable {
 		int taille = vehicule.getTaille();
 		
 		if(vehicule.getOrientation() == Orientation.HORIZONTAL){ 
+			
 			if(direction == Direction.FORWARD){
 				if(sommet_depart%nbColonne + taille < nbColonne && this.grille.get((int)sommet_depart/nbColonne).get(sommet_depart%nbColonne + taille).equals("0"))
 					deplacement_possible = true;
@@ -38,7 +38,7 @@ public class RushHour implements Cloneable {
 			}
 		}
 		else{  // VERTICAL
-			if(direction == Direction.FORWARD){				
+			if(direction == Direction.FORWARD){
 				if((int)sommet_depart/nbColonne + taille < nbLigne && this.grille.get((int)sommet_depart/nbColonne + taille).get(sommet_depart%nbLigne).equals("0"))
 					deplacement_possible = true;
 			}
@@ -58,7 +58,7 @@ public class RushHour implements Cloneable {
 	
 	private void deplacementRushHour(Vehicule vehicule, int direction, int orientation){
 		String nom_vehicule = vehicule.getCode();
-
+		
 		//On supprime la voiture de la grille 
 		supprimerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
 		if(orientation == Orientation.HORIZONTAL)
@@ -77,6 +77,7 @@ public class RushHour implements Cloneable {
 	}
 	
 	public void modifieVehiculeGrille(Vehicule vehicule, int initialPosition, int orientation, String new_value){
+				
 		int ligne =(int)initialPosition/nbColonne;
 		if(orientation == Orientation.HORIZONTAL){
 			ArrayList<String> a = grille.get(ligne);
@@ -201,18 +202,16 @@ public class RushHour implements Cloneable {
 			RushHour r = (RushHour)super.clone();
 			r.marqueurs = new HashMap<String,Integer>();
 			for(String s : this.marqueurs.keySet()){
-				r.marqueurs.put(s, this.marqueurs.get(s)); 
+				r.marqueurs.put(new String(s), Integer.valueOf(this.marqueurs.get(s))); 
 			}
 			r.grille = new ArrayList<ArrayList<String>>();
 			for(int i = 0; i < this.grille.size(); i++){
 				ArrayList<String> s = new ArrayList<String>();
 				for(int j = 0; j < this.grille.size(); j++){
-					s.add(this.grille.get(i).get(j));
+					s.add(new String(this.grille.get(i).get(j)));
 				}
 				r.grille.add(s);
 			}
-			
-					
 			return r;
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
@@ -234,6 +233,16 @@ public class RushHour implements Cloneable {
 			s+="\n";
 		}	
 		
+		//DEBUG MARQUEUR
+		System.out.println();
+		Iterator<String> ite = marqueurs.keySet().iterator();
+		 
+		while (ite.hasNext())
+		{
+		    String key = ite.next();
+		    s+=key+" :" + this.marqueurs.get(key)+"\t";
+		}
+		
 		return s;
 	}
 	
@@ -241,8 +250,11 @@ public class RushHour implements Cloneable {
 	{	
 		if (other== null || (other.getClass() != RushHour.class))
 			return false;
-        
+       		
 		RushHour r2 = (RushHour) other;
+		
+		if(r2==this)
+			return true;
 		
 		if(r2.vehicules.size()!=this.vehicules.size())
 			return false;
@@ -252,7 +264,7 @@ public class RushHour implements Cloneable {
 		
 		int i=0;
 		for(Vehicule v:this.vehicules)
-		{
+		{			
 			if(! v.equals(r2.vehicules.get(i)))
 				return false;
 			
@@ -260,11 +272,14 @@ public class RushHour implements Cloneable {
 				return false;
 			
 			if(r2.marqueurs.get(v.getCode()).intValue()!=this.marqueurs.get(v.getCode()).intValue())
+			{
+				//System.out.println("PAS MÊME INT POUR : " +r2 + "\n" + this);
 				return false;
+			}
 			
 			i++;
 		}
-		
+
 		return true;
 		
 	}
@@ -293,21 +308,9 @@ public class RushHour implements Cloneable {
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		r1.afficher();
 
-		r1.deplacement_1(r1.getVehicules().get(0), Direction.FORWARD, Orientation.HORIZONTAL);
-		
 		r1.afficher();
 
-		r1.deplacement_1(r1.getVehicules().get(2), Direction.BACKWARD, Orientation.VERTICAL);
-		r1.afficher();r1.deplacement_1(r1.getVehicules().get(2), Direction.BACKWARD, Orientation.VERTICAL);
-		r1.afficher();
-
-		r1.deplacement_1(r1.getVehicules().get(2), Direction.BACKWARD, Orientation.VERTICAL);
-		r1.afficher();r1.deplacement_1(r1.getVehicules().get(2), Direction.BACKWARD, Orientation.VERTICAL);
-		r1.afficher();
-
-		r1.deplacement_1(r1.getVehicules().get(2), Direction.BACKWARD, Orientation.VERTICAL);
-		r1.afficher();
-
+		r1.deplacement_1(r1.getVehicules().get(1), Direction.FORWARD, Orientation.VERTICAL);
 
 		r1.afficher();
 		System.out.println(r1.vehicules.get(0).toString() + r1.vehicules.get(0).getTaille());
