@@ -43,6 +43,7 @@ public class RushHourSolver {
 		boolean badChoice = false;
 		do
 		{
+			badChoice =false;
 			try
 			{
 			    System.out.println("Résoudre un problème de : ");
@@ -75,6 +76,8 @@ public class RushHourSolver {
 		boolean badChoice = false;
 		do
 		{
+			badChoice =false;
+			
 			try
 			{
 				System.out.println("Utiliser la méthode : ");
@@ -97,7 +100,7 @@ public class RushHourSolver {
 			            badChoice=true;
 			            break;
 			    }
-			}catch(Exception e){badChoice=true;};
+			}catch(Exception e){badChoice=true;e.printStackTrace();};
 			
 		}while(badChoice);
 	}
@@ -117,6 +120,8 @@ public class RushHourSolver {
 	
 	public void resolveGraphe(int probleme)
 	{
+		long startTime = System.nanoTime();
+		
 		//Recréer le graphe des configs
 		if(this.g==null || ! this.g.getConfigurations().get(0).equals(r))
 			this.g = new GrapheConfiguration(r);
@@ -131,7 +136,15 @@ public class RushHourSolver {
 			this.sequence = DijkstraSolver.resolveRHC(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
 		}
 		
+		long endTime = System.nanoTime();
+
+		long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+		
+		System.out.println("ALGO WAS DONE IN "+duration/1000000+" ms");
+		
 		beginSequence(sequence);
+		
+
 	}
 	
 	public void beginSequence(ArrayList<RushHour> sequence)
@@ -164,6 +177,8 @@ public class RushHourSolver {
 			solver = new RushHourSolver(args[0]);
 		else 
 			solver = new RushHourSolver();
+		
+		System.out.println(solver.getRushHour().getGrille().size());
 		
 		solver.getRushHour().afficher();
 		

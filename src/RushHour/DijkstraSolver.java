@@ -101,7 +101,7 @@ public abstract class DijkstraSolver {
 			
 		}
 		
-		System.out.println("\n"+sequence.size());
+		//System.out.println("\n"+sequence.size());
 		
 		Collections.reverse(sequence);
 		
@@ -112,7 +112,7 @@ public abstract class DijkstraSolver {
 	public static ArrayList<RushHour> resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
 		int[] predecesseurs = resolve(matrice_adj, configurations);
-		
+	
 		return createSequence(predecesseurs, configurations, indexOfSolution);
 	}
 	

@@ -43,11 +43,13 @@ public class GrapheConfiguration {
 		
 		addSommet(configDepart);		
 		creerGraphe(0);
-		System.out.println(this.configurations.size());
+		//System.out.println(this.configurations.size());
 	}
 	
 	public void creerGraphe(int index){
-				
+		
+		System.out.println("LOOP");
+		
 		RushHour r = this.configurations.get(index);
 		
 		int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};

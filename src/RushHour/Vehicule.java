@@ -18,6 +18,7 @@ public abstract class Vehicule implements Cloneable{
 	public Vehicule(String code)
 	{
 		this.code=code;
+		this.orientation=-1;
 	}
 	
 	public int getOrientation()

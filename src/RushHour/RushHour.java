@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 
 public class RushHour implements Cloneable {
 
-	public static final int caseSortie = 6; //16;
+	public static final int caseSortie = 16;
 	
 	private ArrayList<ArrayList<String>> grille;
 	private HashMap<String,Integer> marqueurs;
@@ -63,7 +63,7 @@ public class RushHour implements Cloneable {
 	
 	
 	
-	private void deplacementRushHour(Vehicule vehicule, int direction, int orientation){
+	private void deplacementRushHour(Vehicule vehicule, int direction, int orientation){		
 		String nom_vehicule = vehicule.getCode();
 		
 		//On supprime la voiture de la grille 
@@ -127,7 +127,7 @@ public class RushHour implements Cloneable {
             	scanner.close();
             }
             
-            while ( (x = buffer.readLine()) != null && x!="") {
+            while ( (x = buffer.readLine()) != null && !x.equals("")) {
                 // printing out each line in the file
                 //System.out.println(x);
             	
@@ -148,19 +148,26 @@ public class RushHour implements Cloneable {
             		}
             		
             		//Ajout orientation
-            		else if(this.marqueurs.containsKey(s))
-            		{
+            		else if(this.marqueurs.containsKey(s) && !s.equals("0"))
+            		{          			
             			boolean find = false;
             			int j=0;
             			while(!find)
             			{
+            				if(vehicules.get(j).getCode().equals(s) && vehicules.get(j).getOrientation()!=-1)
+            				{
+            					find=true;
+            					break;
+            				}
+            				
             				if(vehicules.get(j).getCode().equals(s))
             				{
             					find=true;
-            					if( i - marqueurs.get(s) == this.nbColonne)
-            						vehicules.get(j).setOrientation(Orientation.VERTICAL);
-            					else
+            					
+            					if(i%nbColonne!=0 && ar.get((int)(i-1)%nbLigne).equals(s))
             						vehicules.get(j).setOrientation(Orientation.HORIZONTAL);
+            					else
+            						vehicules.get(j).setOrientation(Orientation.VERTICAL);
             				}
             				
             				j++;
@@ -312,10 +319,10 @@ public class RushHour implements Cloneable {
 	public static void main(String[] args)
 	{
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
-		RushHour r1 = new RushHour("puzzles/debug.txt"); 
+		RushHour r1 = new RushHour("puzzles/expert/jam40.txt"); 
 		r1.afficher();
-
-		r1.afficher();
+		
+		System.out.println("V :"+r1.getVehicules().size());
 
 		r1.deplacement_1(r1.getVehicules().get(1), Direction.FORWARD, Orientation.VERTICAL);
 
