@@ -20,29 +20,32 @@ public class RushHour {
 	public boolean deplacement_1(Vehicule vehicule, int direction, int orientation_deplacement){
 		if(orientation_deplacement != vehicule.getOrientation())
 			return false;
-		boolean deplacement_possible = true;
+		boolean deplacement_possible = false;
 		int sommet_depart = marqueurs.get(vehicule.getCode()).intValue();
 		int taille = vehicule.getTaille();
 		
 		if(vehicule.getOrientation() == Orientation.HORIZONTAL){ 
-			if(direction == Direction.FORWARD)
-				if(sommet_depart%nbColonne + taille + direction > nbColonne)
-					deplacement_possible = false;
+			if(direction == Direction.FORWARD){
+				if(sommet_depart%nbColonne + taille <= nbColonne && this.grille.get((int)sommet_depart/nbColonne).get(sommet_depart%nbColonne + taille).equals("0"))
+					deplacement_possible = true;
+			}
 			else{ //BACKWARD
-				if(sommet_depart%nbColonne + direction < 0){  //Hors tableau
-					deplacement_possible = false;
+				if(sommet_depart%nbColonne + direction >= 0  && this.grille.get((int)sommet_depart/nbColonne).get(sommet_depart%nbColonne + direction).equals("0")){  //Hors tableau
+					deplacement_possible = true;
 				}
 			}
 		}
 		else{  // VERTICAL
-			if(direction == Direction.FORWARD)
-				if(sommet_depart%nbLigne + taille + direction > nbLigne)
-					deplacement_possible = false;
-			else{ //BACKWARD
-				if(sommet_depart%nbLigne + direction < 0){  //Hors tableau
-					deplacement_possible = false;
-				}
+			if(direction == Direction.FORWARD){				
+				if((int)sommet_depart/nbColonne + taille + direction < nbLigne && this.grille.get((int)sommet_depart/nbColonne + taille).get(sommet_depart%nbLigne).equals("0"))
+					deplacement_possible = true;
 			}
+				else{ //BACKWARD
+					System.out.println( this.grille.get((int)sommet_depart/nbColonne + Direction.BACKWARD).get(sommet_depart%nbLigne));
+					if((int)(sommet_depart/nbColonne + Direction.BACKWARD) >= 0 && (this.grille.get((int)sommet_depart/nbColonne + Direction.BACKWARD).get(sommet_depart%nbLigne).equals("0"))){  //Hors tableau
+						deplacement_possible = true;
+					}
+				}
 		}
 		if(deplacement_possible){
 			deplacementRushHour(vehicule, direction, orientation_deplacement);
@@ -57,8 +60,10 @@ public class RushHour {
 		
 		//On supprime la voiture de la grille 
 		supprimerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
-		
-		this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+direction);// old value + direction
+		if(orientation == Orientation.HORIZONTAL)
+			this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+direction);// old value + direction
+		else
+			this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+direction*nbLigne);
 		//on recréé la voiture dans la grille !
 		creerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
 	}
@@ -71,14 +76,18 @@ public class RushHour {
 	}
 	
 	public void modifieVehiculeGrille(Vehicule vehicule, int initialPosition, int orientation, String new_value){
+		int ligne =(int)initialPosition/nbColonne;
 		if(orientation == Orientation.HORIZONTAL){
+			ArrayList<String> a = grille.get(ligne);
 			for(int i = 0; i < vehicule.getTaille(); i++){
-				grille.get(initialPosition%nbColonne).set(i + initialPosition, new_value);
+				a.set(i + initialPosition%nbColonne, new_value);
 			}
 		}
 		else{
 			for(int i = 0; i < vehicule.getTaille(); i++){
-				grille.get(initialPosition%nbColonne).set(i*nbLigne + initialPosition, new_value);
+				ArrayList<String> s = grille.get(ligne);
+				s.set(initialPosition%nbColonne, new_value);
+				ligne+=1; // changement de ligne
 			}
 		}
 	}
@@ -123,7 +132,7 @@ public class RushHour {
             		if(!this.marqueurs.containsKey(s) && !s.equals("0"))
             		{
             			this.marqueurs.put(s,i);
-            			if(s.startsWith("c"))
+            			if(s.startsWith("c") || s.startsWith("g"))
             				this.vehicules.add(new Voiture(s));
             			else
             				this.vehicules.add(new Camion(s));
@@ -139,7 +148,7 @@ public class RushHour {
             				if(vehicules.get(j).getCode().equals(s))
             				{
             					find=true;
-            					if( i - marqueurs.get(s) ==0)
+            					if( i - marqueurs.get(s) == this.nbColonne)
             						vehicules.get(j).setOrientation(Orientation.VERTICAL);
             					else
             						vehicules.get(j).setOrientation(Orientation.HORIZONTAL);
@@ -241,13 +250,27 @@ public class RushHour {
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		r1.afficher();
-		r1.deplacement_1(r1.vehicules.get(1), Direction.FORWARD, Orientation.HORIZONTAL);
+		r1.deplacement_1(r1.getVehicules().get(1), Direction.BACKWARD, Orientation.VERTICAL);
 		r1.afficher();
-		System.out.println(r1.vehicules.get(1));
+
+		r1.deplacement_1(r1.getVehicules().get(1), Direction.FORWARD, Orientation.VERTICAL);
+
+		r1.afficher();
+		System.out.println(r1.vehicules.get(0).toString() + r1.vehicules.get(0).getTaille());
+	}
+
+	public ArrayList<Vehicule> getVehicules() {
+		return vehicules;
+	}
+
+
+
+	public void setVehicules(ArrayList<Vehicule> vehicules) {
+		this.vehicules = vehicules;
 	}
 
 	static class Direction{
-		 public final static int BACKWARD = 1;
-		 public final static int FORWARD = -1;
+		 public final static int BACKWARD = -1;
+		 public final static int FORWARD = 1;
 	}
 }
