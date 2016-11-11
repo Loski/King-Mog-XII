@@ -225,18 +225,36 @@ public class RushHour implements Cloneable {
 		return s;
 	}
 	
-	public boolean equals(RushHour r2)
-	{
-		for(int i=0;i<this.nbLigne;i++)
-		{			
-			for(int j=0;j<this.nbColonne;j++)
-			{
-				if(!this.grille.get(i).get(j).equals(r2.grille.get(i).get(j)))
-					return false;
-			}
+	public boolean equals(Object other)
+	{	
+		if (other== null || (other.getClass() != RushHour.class))
+			return false;
+        
+		RushHour r2 = (RushHour) other;
+		
+		if(r2.vehicules.size()!=this.vehicules.size())
+			return false;
+		
+		if(this.marqueurs.size()!=r2.marqueurs.size())
+			return false;
+		
+		int i=0;
+		for(Vehicule v:this.vehicules)
+		{
+			if(! v.equals(r2.vehicules.get(i)))
+				return false;
+			
+			if(!r2.marqueurs.containsKey(v.getCode()))
+				return false;
+			
+			if(r2.marqueurs.get(v.getCode()).intValue()!=this.marqueurs.get(v.getCode()).intValue())
+				return false;
+			
+			i++;
 		}
 		
 		return true;
+		
 	}
 	
 	public ArrayList<ArrayList<String>> getGrille()
