@@ -16,6 +16,7 @@ public class RushHour implements Cloneable {
 	private int nbLigne;
 	private int nbColonne;
 	
+
 	public boolean deplacement_multiple(Vehicule vehicule, int direction, int orientation_deplacement, int nombre_deplacement){
         for(int i = 0; i < nombre_deplacement; i++){
             boolean tmp = deplacement_1(vehicule, direction, orientation_deplacement);
@@ -334,7 +335,21 @@ public class RushHour implements Cloneable {
 		return vehicules;
 	}
 
+	public int getNbLigne() {
+		return nbLigne;
+	}
 
+	public void setNbLigne(int nbLigne) {
+		this.nbLigne = nbLigne;
+	}
+
+	public int getNbColonne() {
+		return nbColonne;
+	}
+
+	public void setNbColonne(int nbColonne) {
+		this.nbColonne = nbColonne;
+	}
 
 	public void setVehicules(ArrayList<Vehicule> vehicules) {
 		this.vehicules = vehicules;

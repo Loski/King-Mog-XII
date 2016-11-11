@@ -56,7 +56,10 @@ public class GrapheConfiguration {
 		//System.out.println(r);
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
-					for(int j = 1; j < 6; j++){
+					int taille_max;
+					if(v.getOrientation() == Orientation.HORIZONTAL)
+						taille_max = r.getMarqueurs().get(v.getCode())%r.getNbColonne();
+					for(int j = 1; j < r.getNbLigne() - v.getTaille(); j++){
 						RushHour tmp = (RushHour) r.clone();
 						boolean s = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
 						if(s){
