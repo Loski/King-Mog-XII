@@ -121,6 +121,7 @@ public class RushHourSolver {
 	public void resolveGraphe(int probleme)
 	{
 		long startTime = System.nanoTime();
+		int nbCaseDeplace=-1;
 		
 		//Recréer le graphe des configs
 		if(this.g==null || ! this.g.getConfigurations().get(0).equals(r))
@@ -133,12 +134,19 @@ public class RushHourSolver {
 		
 		else
 		{
-			this.sequence = DijkstraSolver.resolveRHC(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
+			Object[] result = DijkstraSolver.resolveRHC(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
+			nbCaseDeplace=(int) result[0];
+			this.sequence=(ArrayList<RushHour>) result[1];
+		
 		}
 		
 		long endTime = System.nanoTime();
 
 		long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+		
+		System.out.println("Nombre de Solutions : "+this.g.getIndexOfSolutions().size());
+		System.out.println("Nombre minimal de déplacement : "+sequence.size());
+		System.out.println("Nombre minimal de case : "+nbCaseDeplace);
 		
 		System.out.println("ALGO WAS DONE IN "+duration/1000000+" ms");
 		

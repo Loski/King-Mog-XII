@@ -48,7 +48,7 @@ public class GrapheConfiguration {
 	
 	public void creerGraphe(int index){
 		
-		System.out.println("LOOP");
+		//System.out.println(this.configurations.size());
 		
 		RushHour r = this.configurations.get(index);
 		
@@ -56,9 +56,9 @@ public class GrapheConfiguration {
 		//System.out.println(r);
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
-					int taille_max;
-					if(v.getOrientation() == Orientation.HORIZONTAL)
-						taille_max = r.getMarqueurs().get(v.getCode())%r.getNbColonne();
+				int taille_max;
+				if(v.getOrientation() == Orientation.HORIZONTAL)
+					taille_max = r.getMarqueurs().get(v.getCode())%r.getNbColonne();
 					for(int j = 1; j < r.getNbLigne() - v.getTaille(); j++){
 						RushHour tmp = (RushHour) r.clone();
 						boolean s = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);

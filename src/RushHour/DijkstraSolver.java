@@ -5,7 +5,7 @@ import java.util.Collections;
 
 public abstract class DijkstraSolver {
 	
-	private static int[] resolve(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations)
+	private static int[][] resolve(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations)
 	{
 		int[] distances = new int[matrice_adj.size()];
 		int[] predecesseurs = new int[matrice_adj.size()];
@@ -81,7 +81,14 @@ public abstract class DijkstraSolver {
 			System.out.println("\n");*/
 			
 		}		
-		return predecesseurs;
+		
+		int i=0;
+		
+		int[][] result = new int[2][];
+		result[0] = distances; 
+		result[1] = predecesseurs;
+		
+		return result;
 	}
 	
 	private static ArrayList<RushHour> createSequence(int[] predecesseurs,ArrayList<RushHour> configurations,int indexOfSolution)
@@ -109,11 +116,30 @@ public abstract class DijkstraSolver {
 	}
 	
 	
-	public static ArrayList<RushHour> resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static Object[] resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
-		int[] predecesseurs = resolve(matrice_adj, configurations);
-	
-		return createSequence(predecesseurs, configurations, indexOfSolution);
+		long startTime = System.nanoTime();
+		
+		int[][] resultDij = resolve(matrice_adj, configurations);
+		
+		int[] predecesseurs = resultDij[1];
+		int[] distance = resultDij[0];
+		
+		int nbCaseDeplace = distance[indexOfSolution];
+			
+		ArrayList<RushHour> sequence = createSequence(predecesseurs, configurations, indexOfSolution);
+		
+		Object[] result = new Object[2];
+		result[0] = nbCaseDeplace;
+		result[1] = sequence;
+		
+		long endTime = System.nanoTime();
+
+		long duration = (endTime - startTime); 
+		
+		System.out.println("DIJKSTRA WAS DONE IN "+duration/1000000+" ms");
+		
+		return result;
 	}
 	
 	public static ArrayList<RushHour> resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
@@ -136,7 +162,7 @@ public abstract class DijkstraSolver {
 		}
 		
 		
-		int[] predecesseurs = resolve(copy, configurations);
+		int[] predecesseurs = resolve(copy, configurations)[1];
 		return createSequence(predecesseurs, configurations, indexOfSolution);
 	}
 	
