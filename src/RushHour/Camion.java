@@ -1,4 +1,4 @@
-
+package RushHour;
 public class Camion extends Vehicule{
 
 	public Camion(String code,int direction) {

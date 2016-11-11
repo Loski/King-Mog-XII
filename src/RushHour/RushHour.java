@@ -1,3 +1,4 @@
+package RushHour;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -5,7 +6,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-public class RushHour {
+public class RushHour implements Cloneable {
 
 	public static final int caseSortie = 8; //17;
 	
@@ -195,7 +196,18 @@ public class RushHour {
 			System.out.println(v.getCode() +" "+v.getOrientation());
 		}
 	}
-	
+	public Object clone(){
+		try {
+			RushHour r = (RushHour)super.clone();
+			r.marqueurs = new HashMap<String,Integer>(r.marqueurs);
+			r.grille = new ArrayList<ArrayList<String>>(grille);
+			return r;
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public String toString()
 	{
 		String s ="";
@@ -250,7 +262,7 @@ public class RushHour {
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		r1.afficher();
-		r1.deplacement_1(r1.getVehicules().get(1), Direction.BACKWARD, Orientation.VERTICAL);
+
 		r1.afficher();
 
 		r1.deplacement_1(r1.getVehicules().get(1), Direction.FORWARD, Orientation.VERTICAL);
@@ -268,7 +280,7 @@ public class RushHour {
 	public void setVehicules(ArrayList<Vehicule> vehicules) {
 		this.vehicules = vehicules;
 	}
-
+	
 	static class Direction{
 		 public final static int BACKWARD = -1;
 		 public final static int FORWARD = 1;

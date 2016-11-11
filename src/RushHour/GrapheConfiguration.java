@@ -1,10 +1,27 @@
+package RushHour;
 import java.util.ArrayList;
 
+import RushHour.RushHour.Direction;
 public class GrapheConfiguration {
 	
 	private ArrayList<ArrayList<Integer>> matrice_adj; //contient les poids si poids[i][j]>=0 alors arrête entre i et j  
 	private ArrayList<RushHour> configurations;
-	
+	public ArrayList<ArrayList<Integer>> getMatrice_adj() {
+		return matrice_adj;
+	}
+
+	public void setMatrice_adj(ArrayList<ArrayList<Integer>> matrice_adj) {
+		this.matrice_adj = matrice_adj;
+	}
+
+	public ArrayList<RushHour> getConfigurations() {
+		return configurations;
+	}
+
+	public void setConfigurations(ArrayList<RushHour> configurations) {
+		this.configurations = configurations;
+	}
+
 	public GrapheConfiguration(RushHour configDepart)
 	{
 		this.configurations=new ArrayList<RushHour>();
@@ -14,10 +31,27 @@ public class GrapheConfiguration {
 		ArrayList<Integer> intersect = new ArrayList<Integer>();
 		intersect.add(-1);
 		this.matrice_adj.add(intersect);*/
-		
 		addSommet(configDepart);
 	}
 	
+	public void creerGraphe(RushHour r){
+		int[] all_direction = {Direction.BACKWARD, Direction.FORWARD};
+		int[] all_orientation = {Orientation.HORIZONTAL, Orientation.VERTICAL};
+		System.out.println(r);
+		for(Vehicule v: r.getVehicules())
+			for(int direction:all_direction){
+				for(int orientation:all_orientation){
+					RushHour tmp = (RushHour) r.clone();
+					while(tmp.deplacement_1(v, direction, orientation)){
+						if(!this.configurations.contains(tmp)){
+							this.configurations.add(tmp);
+							System.out.println(tmp);
+							creerGraphe(tmp);
+						}
+					}
+				}
+			}
+	}
 	public void addSommet(RushHour r)
 	{
 		//TESTER SI LE SOMMET a.k.a la grille de r EXISTE ??
@@ -82,28 +116,7 @@ public class GrapheConfiguration {
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
 		RushHour r1 = new RushHour("puzzles/debug.txt"); 
 		GrapheConfiguration g1 = new GrapheConfiguration(r1);		
-		
-		g1.addSommet(r1);
-		g1.addSommet(r1);
-		g1.addSommet(r1);
-		g1.addSommet(r1);
-		
-		g1.setSuccesseur(0, 1, 10);
-		g1.setSuccesseur(1, 2, 1);
-		g1.setSuccesseur(2, 3, 4);
-		g1.setSuccesseur(3, 2, 6);
-		g1.setSuccesseur(3, 0, 7);
-		g1.setSuccesseur(4, 3, 2);
-		g1.setSuccesseur(4, 2, 9);
-		g1.setSuccesseur(4, 1, 3);
-		g1.setSuccesseur(1, 4, 2);
-		g1.setSuccesseur(0, 4, 5);
-		
-		g1.afficherMatrice();
-		
-		int[] succ = DijkstraSolver.resolveRHC(g1.matrice_adj, g1.configurations);
-		for(int i=0;i<succ.length;i++)
-		System.out.print(succ[i]+"\t");
+		g1.creerGraphe(g1.getConfigurations().get(0));
 	}
 	
 	

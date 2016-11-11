@@ -1,3 +1,4 @@
+package RushHour;
 
 public abstract class Vehicule {
 
