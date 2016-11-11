@@ -61,18 +61,15 @@ public class GrapheConfiguration {
 						if(s){
 							//if(!this.configurations.contains(tmp)){
 							if(!this.configurations.contains(tmp)){
-							//System.out.println(tmp);		
-							/*	System.out.println("MUST ADD : "+tmp);
-								System.out.println("IN :");
-								for(RushHour r0 : this.configurations)
-									System.out.println(r0);
-								System.out.println("\n COMPARE TO ("+this.configurations.size()+") :"+this.configurations.contains(tmp));*/
-								addSommet(tmp);	
-								setSuccesseur(index, this.configurations.size()-1,1);
+								addSommet(tmp);
+								setSuccesseur(index, this.configurations.size()-1,j);
 								setSuccesseur(this.configurations.size()-1,index,j);
 							}
-							else
-							j=10;
+							else{
+								setSuccesseur(index, this.configurations.size()-1,j);
+								setSuccesseur(this.configurations.size()-1,index,j);
+							}
+
 						}
 					}
 			}
@@ -151,6 +148,18 @@ public class GrapheConfiguration {
 			for(int j=0;j<this.matrice_adj.get(i).size();j++)
 			{
 				System.out.print(String.format("%d\t", this.matrice_adj.get(i).get(j)));
+			}
+			
+			System.out.println();
+		}
+	}
+	public static void afficherMatrice(ArrayList<ArrayList<Integer>> matrice_adj)
+	{		
+		for(int i=0;i<matrice_adj.size();i++)
+		{
+			for(int j=0;j<matrice_adj.get(i).size();j++)
+			{
+				System.out.print(String.format("%d\t", matrice_adj.get(i).get(j)));
 			}
 			
 			System.out.println();
