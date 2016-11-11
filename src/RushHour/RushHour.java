@@ -17,12 +17,12 @@ public class RushHour implements Cloneable {
 	private int nbColonne;
 	
 	public boolean deplacement_multiple(Vehicule vehicule, int direction, int orientation_deplacement, int nombre_deplacement){
-		for(int i = 0; i < nombre_deplacement; i++){
-			 boolean tmp = deplacement_1(vehicule, direction, orientation_deplacement);
-			 if(!tmp)
-				return false;
-		}
-		return true;
+        for(int i = 0; i < nombre_deplacement; i++){
+            boolean tmp = deplacement_1(vehicule, direction, orientation_deplacement);
+            if(!tmp)
+               return false;
+       }
+       return true;
 	}
 	
 	public boolean deplacement_1(Vehicule vehicule, int direction, int orientation_deplacement){
@@ -127,7 +127,7 @@ public class RushHour implements Cloneable {
             	scanner.close();
             }
             
-            while ( (x = buffer.readLine()) != null ) {
+            while ( (x = buffer.readLine()) != null && x!="") {
                 // printing out each line in the file
                 //System.out.println(x);
             	
@@ -214,7 +214,7 @@ public class RushHour implements Cloneable {
 			r.grille = new ArrayList<ArrayList<String>>();
 			for(int i = 0; i < this.grille.size(); i++){
 				ArrayList<String> s = new ArrayList<String>();
-				for(int j = 0; j < this.grille.size(); j++){
+				for(int j = 0; j < this.grille.get(i).size(); j++){
 					s.add(new String(this.grille.get(i).get(j)));
 				}
 				r.grille.add(s);

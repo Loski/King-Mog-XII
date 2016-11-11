@@ -136,15 +136,16 @@ public class RushHourSolver {
 	
 	public void beginSequence(ArrayList<RushHour> sequence)
 	{
-		int i =0;
+		int i =1;
 		
 		for(RushHour rh: sequence)
 		{
 			System.out.println(String.format("-------ETAPE(%d)---------",i));
-			rh.afficher();
+			System.out.println((rh));
 			//Dire quelle pièce a bougée ??
 			System.out.println("-----------------------");
 			waitForNext();
+			i++;
 		}
 		
 		i++;

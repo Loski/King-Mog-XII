@@ -51,7 +51,6 @@ public class GrapheConfiguration {
 		RushHour r = this.configurations.get(index);
 		
 		int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
-		int[] all_orientation = {Orientation.HORIZONTAL, Orientation.VERTICAL};
 		//System.out.println(r);
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
@@ -61,15 +60,19 @@ public class GrapheConfiguration {
 						if(s){
 							//if(!this.configurations.contains(tmp)){
 							if(!this.configurations.contains(tmp)){
-								addSommet(tmp);
-								setSuccesseur(index, this.configurations.size()-1,j);
-								setSuccesseur(this.configurations.size()-1,index,j);
+							//System.out.println(tmp);		
+							/*	System.out.println("MUST ADD : "+tmp);
+								System.out.println("IN :");
+								for(RushHour r0 : this.configurations)
+									System.out.println(r0);
+								System.out.println("\n COMPARE TO ("+this.configurations.size()+") :"+this.configurations.contains(tmp));*/
+								addSommet(tmp);	
 							}
-							else{
-								setSuccesseur(index, this.configurations.size()-1,j);
-								setSuccesseur(this.configurations.size()-1,index,j);
+							if(index!=this.configurations.size()-1)
+							{
+								setSuccesseur(index, this.configurations.indexOf(tmp),j);
+								setSuccesseur(this.configurations.indexOf(tmp),index,j);
 							}
-
 						}
 					}
 			}
@@ -105,11 +108,7 @@ public class GrapheConfiguration {
 		
 		
 		for(int i=0;i<this.matrice_adj.size();i++)
-		{
-			//int[] arrete = {0,0};
-			ArrayList<Integer> intersect = new ArrayList<Integer>();
-			intersect.add(-1);
-				
+		{				
 			 // ajout nv colonne correspondant au nouveau sommet pour tous les sommets existants
 			this.matrice_adj.get(i).add(-1);			
 			
@@ -153,25 +152,35 @@ public class GrapheConfiguration {
 			System.out.println();
 		}
 	}
-	public static void afficherMatrice(ArrayList<ArrayList<Integer>> matrice_adj)
-	{		
-		for(int i=0;i<matrice_adj.size();i++)
+	
+	public int getNBofIntInMatrice(int a)
+	{
+		int compteur=0;
+		
+		for(int i=0;i<this.matrice_adj.size();i++)
 		{
-			for(int j=0;j<matrice_adj.get(i).size();j++)
+			for(int j=0;j<this.matrice_adj.get(i).size();j++)
 			{
-				System.out.print(String.format("%d\t", matrice_adj.get(i).get(j)));
+				if(matrice_adj.get(i).get(j).equals(a))
+					compteur++;
 			}
-			
-			System.out.println();
 		}
+		
+		return compteur;
 	}
 	
 	public static void main(String[] args)
 	{
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
-		RushHour r1 = new RushHour("puzzles/debug.txt"); 
+		RushHour r1 = new RushHour("puzzles/expert/jam40.txt"); 
+		
+		System.out.println(r1.getGrille().size());
 		
 		GrapheConfiguration g1 = new GrapheConfiguration(r1);
+		System.out.println(g1.getIndexOfSolutions().get(0));
+		DijkstraSolver.resolveRHC(g1.getMatrice_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
+		g1.afficherMatrice();
+		System.out.println(g1.getNBofIntInMatrice(1));
 	}
 	
 	

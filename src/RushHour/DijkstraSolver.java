@@ -89,7 +89,7 @@ public abstract class DijkstraSolver {
 		boolean configDepart=false;
 		ArrayList<RushHour> sequence = new ArrayList<RushHour>();
 		sequence.add(configurations.get(indexOfSolution));
-		int currentRushHour=0;
+		int currentRushHour=indexOfSolution;
 		
 		while(!configDepart)
 		{
@@ -101,6 +101,8 @@ public abstract class DijkstraSolver {
 			
 		}
 		
+		System.out.println("\n"+sequence.size());
+		
 		Collections.reverse(sequence);
 		
 		return sequence;
@@ -110,9 +112,8 @@ public abstract class DijkstraSolver {
 	public static ArrayList<RushHour> resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
 		int[] predecesseurs = resolve(matrice_adj, configurations);
-		GrapheConfiguration.afficherMatrice(matrice_adj);
-		return createSequence(predecesseurs, configurations, indexOfSolution);
 		
+		return createSequence(predecesseurs, configurations, indexOfSolution);
 	}
 	
 	public static ArrayList<RushHour> resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
