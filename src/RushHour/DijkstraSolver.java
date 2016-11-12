@@ -143,28 +143,40 @@ public abstract class DijkstraSolver {
 		return result;
 	}
 	
-	public static ArrayList<RushHour> resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static Object[] resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
 		ArrayList<ArrayList<Integer>> copy = new ArrayList<ArrayList<Integer>>();
 		
-		for(int i=0;i<matrice_adj.size();i++)
+		for(ArrayList<Integer> line : matrice_adj)
 		{
-			ArrayList<Integer> line = new ArrayList<Integer>();
+			ArrayList<Integer> lineCopy = new ArrayList<Integer>();
 			
-			for(int j=0;j<matrice_adj.get(i).size();j++)
+			for(Integer poids : line)
 			{
-				if(matrice_adj.get(i).get(j)>=0)
-					line.add(1);	
+				if(poids.intValue()>=0)
+					lineCopy.add(1);	
 				else
-					line.add(-1);
+					lineCopy.add(-1);
 			}
 			
-			copy.add(line);
+			copy.add(lineCopy);
 		}
 		
 		
-		int[] predecesseurs = resolve(copy, configurations)[1];
-		return createSequence(predecesseurs, configurations, indexOfSolution);
+		int[][] resultDij = resolve(matrice_adj, configurations);
+		
+		int[] predecesseurs = resultDij[1];
+		int[] distance = resultDij[0];
+		
+		int nbCaseDeplace = distance[indexOfSolution];
+			
+		ArrayList<RushHour> sequence = createSequence(predecesseurs, configurations, indexOfSolution);
+		
+		Object[] result = new Object[2];
+		result[0] = nbCaseDeplace;
+		result[1] = sequence;
+		
+		return result;
 	}
 	
 	

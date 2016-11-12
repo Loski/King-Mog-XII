@@ -129,7 +129,9 @@ public class RushHourSolver {
 		
 		if(probleme == 1)
 		{
-			this.sequence = DijkstraSolver.resolveRHM(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
+			Object[] result = DijkstraSolver.resolveRHM(g.getMatrice_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
+			nbCaseDeplace=(int) result[0];
+			this.sequence=(ArrayList<RushHour>) result[1];
 		}
 		
 		else
@@ -145,8 +147,8 @@ public class RushHourSolver {
 
 		long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 		
-		System.out.println("Nombre de Solutions : "+this.g.getIndexOfSolutions().size());
-		System.out.println("Nombre minimal de déplacement : "+sequence.size());
+		System.out.println("Nombre de Configuration-But : "+this.g.getIndexOfSolutions().size());
+		System.out.println("Nombre minimal de mouvement : "+(sequence.size()-1));
 		System.out.println("Nombre minimal de case : "+nbCaseDeplace);
 		
 		System.out.println("ALGO WAS DONE IN "+duration/1000000+" ms");
