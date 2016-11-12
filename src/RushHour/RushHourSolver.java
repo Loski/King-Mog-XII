@@ -186,9 +186,7 @@ public class RushHourSolver {
 			solver = new RushHourSolver(args[0]);
 		else 
 			solver = new RushHourSolver();
-		
-		System.out.println(solver.getRushHour().getGrille().size());
-		
+				
 		solver.getRushHour().afficher();
 		
 		solver.chosirProbleme();

@@ -10,11 +10,10 @@ public class RushHour implements Cloneable {
 
 	public static final int caseSortie = 16;
 	
-	private ArrayList<ArrayList<String>> grille;
+	private String[][] grille;
 	private HashMap<String,Integer> marqueurs;
 	private ArrayList<Vehicule> vehicules;
-	private int nbLigne;
-	private int nbColonne;
+	public static final int taille_matrice =6;
 	
 
 	public boolean deplacement_multiple(Vehicule vehicule, int direction, int orientation_deplacement, int nombre_deplacement){
@@ -36,22 +35,22 @@ public class RushHour implements Cloneable {
 		if(vehicule.getOrientation() == Orientation.HORIZONTAL){ 
 			
 			if(direction == Direction.FORWARD){
-				if(sommet_depart%nbColonne + taille < nbColonne && this.grille.get((int)sommet_depart/nbColonne).get(sommet_depart%nbColonne + taille).equals("0"))
+				if(sommet_depart%taille_matrice + taille < taille_matrice && this.grille[(int)sommet_depart/taille_matrice][sommet_depart%taille_matrice + taille].equals("0"))
 					deplacement_possible = true;
 			}
 			else{ //BACKWARD
-				if(sommet_depart%nbColonne + direction >= 0  && this.grille.get((int)sommet_depart/nbColonne).get(sommet_depart%nbColonne + direction).equals("0")){  //Hors tableau
+				if(sommet_depart%taille_matrice + direction >= 0  && this.grille[(int)sommet_depart/taille_matrice][sommet_depart%taille_matrice + direction].equals("0")){  //Hors tableau
 					deplacement_possible = true;
 				}
 			}
 		}
 		else{  // VERTICAL
 			if(direction == Direction.FORWARD){
-				if((int)sommet_depart/nbColonne + taille < nbLigne && this.grille.get((int)sommet_depart/nbColonne + taille).get(sommet_depart%nbLigne).equals("0"))
+				if((int)sommet_depart/taille_matrice + taille < taille_matrice && this.grille[(int)sommet_depart/taille_matrice + taille][sommet_depart%taille_matrice].equals("0"))
 					deplacement_possible = true;
 			}
 				else{ //BACKWARD
-					if((int)(sommet_depart/nbColonne + Direction.BACKWARD) >= 0 && (this.grille.get((int)sommet_depart/nbColonne + Direction.BACKWARD).get(sommet_depart%nbLigne).equals("0"))){  //Hors tableau
+					if((int)(sommet_depart/taille_matrice + Direction.BACKWARD) >= 0 && (this.grille[(int)sommet_depart/taille_matrice + Direction.BACKWARD][sommet_depart%taille_matrice].equals("0"))){  //Hors tableau
 						deplacement_possible = true;
 					}
 				}
@@ -72,7 +71,7 @@ public class RushHour implements Cloneable {
 		if(orientation == Orientation.HORIZONTAL)
 			this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+direction);// old value + direction
 		else
-			this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+(direction*nbLigne));
+			this.marqueurs.replace(nom_vehicule, this.marqueurs.get(nom_vehicule).intValue()+(direction*taille_matrice));
 		//on recréé la voiture dans la grille !
 		creerVehiculeGrille(vehicule, this.marqueurs.get(nom_vehicule).intValue(), orientation);
 	}
@@ -83,20 +82,27 @@ public class RushHour implements Cloneable {
 	public void creerVehiculeGrille(Vehicule vehicule, int initialPosition, int orientation){
 		modifieVehiculeGrille(vehicule, initialPosition, orientation, vehicule.getCode());
 	}
+	public HashMap<String,Integer> nouvelleHashMapClone(){
+		HashMap<String,Integer> tmp = new HashMap<String,Integer>();
+		for(String s : this.marqueurs.keySet()){
+			tmp.put(new String(s), Integer.valueOf(this.marqueurs.get(s))); 
+		}
+		return tmp;
+	}
 	
 	public void modifieVehiculeGrille(Vehicule vehicule, int initialPosition, int orientation, String new_value){
 				
-		int ligne =(int)initialPosition/nbColonne;
+		int ligne =(int)initialPosition/taille_matrice;
 		if(orientation == Orientation.HORIZONTAL){
-			ArrayList<String> a = grille.get(ligne);
+			String[] s = grille[ligne];
 			for(int i = 0; i < vehicule.getTaille(); i++){
-				a.set(i + initialPosition%nbColonne, new_value);
+				s[i + initialPosition%taille_matrice] = new_value;
 			}
 		}
 		else{
 			for(int i = 0; i < vehicule.getTaille(); i++){
-				ArrayList<String> s = grille.get(ligne);
-				s.set(initialPosition%nbColonne, new_value);
+				String[] s = grille[ligne];
+				s[initialPosition%taille_matrice] = new_value;
 				ligne+=1; // changement de ligne
 			}
 		}
@@ -105,14 +111,27 @@ public class RushHour implements Cloneable {
 	public Vehicule findVehicule(Vehicule voiture){
 		return null;
 	}
+	public RushHour(RushHour r){
+		this.grille = new String[6][6];
+		this.marqueurs = new HashMap<String,Integer>();
+		this.vehicules = r.vehicules;
+		for(String s : r.marqueurs.keySet()){
+			this.marqueurs.put(new String(s), Integer.valueOf(r.marqueurs.get(s))); 
+		}
+		for(int i = 0; i < RushHour.taille_matrice; i++){
+			for(int j = 0; j < RushHour.taille_matrice; j++){
+				this.grille[i][j] = new String(r.grille[i][j]);
+			}
+		}
+	}
 	public RushHour(String filename)
 	{
 		BufferedReader buffer;
 		String x;
-		this.grille = new ArrayList<ArrayList<String>>();
+		this.grille = new String[6][6];
 		this.marqueurs = new HashMap<String,Integer>();
 		this.vehicules = new ArrayList<Vehicule>();
-		
+		ArrayList<ArrayList<String>> tmp = new ArrayList<ArrayList<String>>();
         try 
         {
         	int i=0;
@@ -121,10 +140,10 @@ public class RushHour implements Cloneable {
             if((x = buffer.readLine()) != null)	
             {
             	//System.out.println(x);
-            	
+            	int walid;
             	Scanner scanner = new Scanner(x);
-            	this.nbLigne = scanner.nextInt();
-            	this.nbColonne = scanner.nextInt();
+            	walid = scanner.nextInt();
+            	walid = scanner.nextInt();
             	scanner.close();
             }
             
@@ -165,7 +184,7 @@ public class RushHour implements Cloneable {
             				{
             					find=true;
             					
-            					if(i%nbColonne!=0 && ar.get((int)(i-1)%nbLigne).equals(s))
+            					if(i%taille_matrice!=0 && ar.get((int)(i-1)%taille_matrice).equals(s))
             						vehicules.get(j).setOrientation(Orientation.HORIZONTAL);
             					else
             						vehicules.get(j).setOrientation(Orientation.VERTICAL);
@@ -176,20 +195,23 @@ public class RushHour implements Cloneable {
             		}
             		i++;
             	}
-            	
-            	this.grille.add(ar);
+            	tmp.add(ar);
             }
+            for(int v =0; v < 6; v++)
+            	for(int j = 0; j < 6;j++)
+            		this.grille[v][j] = tmp.get(v).get(j);
+            		
             
         }catch(Exception e){e.printStackTrace();}
 	}
 	
 	public void afficher()
 	{
-		for(int i=0;i<this.nbLigne;i++)
+		for(int i=0;i<this.taille_matrice;i++)
 		{			
-			for(int j=0;j<this.nbColonne;j++)
+			for(int j=0;j<this.taille_matrice;j++)
 			{
-				System.out.print(this.grille.get(i).get(j)+"\t");
+				System.out.print(this.grille[i][j]+"\t");
 			}
 			
 			System.out.println();
@@ -219,13 +241,11 @@ public class RushHour implements Cloneable {
 			for(String s : this.marqueurs.keySet()){
 				r.marqueurs.put(new String(s), Integer.valueOf(this.marqueurs.get(s))); 
 			}
-			r.grille = new ArrayList<ArrayList<String>>();
-			for(int i = 0; i < this.grille.size(); i++){
-				ArrayList<String> s = new ArrayList<String>();
-				for(int j = 0; j < this.grille.get(i).size(); j++){
-					s.add(new String(this.grille.get(i).get(j)));
+			r.grille = new String[6][6];
+			for(int i = 0; i < this.taille_matrice; i++){
+				for(int j = 0; j < this.taille_matrice; j++){
+					r.grille[i][j] = new String(grille[i][j]);
 				}
-				r.grille.add(s);
 			}
 			return r;
 		} catch (Exception e) {
@@ -239,11 +259,11 @@ public class RushHour implements Cloneable {
 	{
 		String s ="";
 		
-		for(int i=0;i<this.nbLigne;i++)
+		for(int i=0;i<this.taille_matrice;i++)
 		{			
-			for(int j=0;j<this.nbColonne;j++)
+			for(int j=0;j<this.taille_matrice;j++)
 			{
-				s+=this.grille.get(i).get(j)+"\t";
+				s+=this.grille[i][j]+"\t";
 			}
 			
 			s+="\n";
@@ -300,11 +320,7 @@ public class RushHour implements Cloneable {
 		
 	}
 	
-	public ArrayList<ArrayList<String>> getGrille()
-	{
-		return this.grille;
-	}
-	
+
 	public HashMap<String,Integer> getMarqueurs()
 	{
 		return this.marqueurs;
@@ -337,19 +353,11 @@ public class RushHour implements Cloneable {
 	}
 
 	public int getNbLigne() {
-		return nbLigne;
-	}
-
-	public void setNbLigne(int nbLigne) {
-		this.nbLigne = nbLigne;
+		return taille_matrice;
 	}
 
 	public int getNbColonne() {
-		return nbColonne;
-	}
-
-	public void setNbColonne(int nbColonne) {
-		this.nbColonne = nbColonne;
+		return taille_matrice;
 	}
 
 	public void setVehicules(ArrayList<Vehicule> vehicules) {

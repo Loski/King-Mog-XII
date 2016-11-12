@@ -8,6 +8,7 @@ public class GrapheConfiguration {
 	private ArrayList<ArrayList<Integer>> matrice_adj; //contient les poids si poids[i][j]>=0 alors arrête entre i et j  
 	private ArrayList<Integer> indexOfSolutions; 
 	private ArrayList<RushHour> configurations;
+	private static final int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
 	
 	public ArrayList<ArrayList<Integer>> getMatrice_adj() {
 		return matrice_adj;
@@ -46,27 +47,30 @@ public class GrapheConfiguration {
 		//System.out.println(this.configurations.size());
 	}
 	
-	public void creerGraphe(int index){
-		
-		//System.out.println(this.configurations.size());
-		
+	public void creerGraphe(int index){	
+		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
-		
-		int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
-		//System.out.println(r);
+		RushHour tmp = (RushHour) r.clone();
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
+				boolean changement = true;
 				int taille_max = 6;
 				if(v.getOrientation() == Orientation.HORIZONTAL){
-					taille_max = r.getNbColonne() - (r.getMarqueurs().get(v.getCode())%r.getNbColonne() + v.taille);
+					if(direction == Direction.FORWARD)
+						taille_max = r.getNbColonne() - (r.getMarqueurs().get(v.getCode())%r.getNbColonne() + v.taille);
+					else
+						taille_max = r.getMarqueurs().get(v.getCode())%r.getNbColonne();
 				}
 				else{
-					taille_max = r.getNbLigne() -((int)r.getMarqueurs().get(v.getCode())/r.getNbColonne() + v.taille);
+					if(direction == Direction.FORWARD)
+						taille_max = r.getNbLigne() -((int)r.getMarqueurs().get(v.getCode())/r.getNbColonne() + v.taille);
+					else taille_max = (int)r.getMarqueurs().get(v.getCode())/r.getNbColonne();
 				}
-				for(int j = 1; j <=taille_max+1; j++){
-					RushHour tmp = (RushHour) r.clone();
-					boolean s = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
-					if(s){
+				for(int j = 1; j <=taille_max; j++){
+					if(changement)
+						tmp = (RushHour) r.clone();
+					changement = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
+					if(changement){
 						if(!this.configurations.contains(tmp)){
 							addSommet(tmp);	
 						}
@@ -91,6 +95,7 @@ public class GrapheConfiguration {
 	public void addSommet(RushHour r)
 	{
 		
+
 		if(r.isSolution())
 			indexOfSolutions.add(this.configurations.size());
 		
@@ -170,10 +175,7 @@ public class GrapheConfiguration {
 	public static void main(String[] args)
 	{
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
-		RushHour r1 = new RushHour("puzzles/expert/jam40.txt"); 
-		
-		System.out.println(r1.getGrille().size());
-		
+		RushHour r1 = new RushHour("puzzles/expert/jam40.txt"); 		
 		GrapheConfiguration g1 = new GrapheConfiguration(r1);
 		System.out.println(g1.getIndexOfSolutions().get(0));
 		DijkstraSolver.resolveRHC(g1.getMatrice_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
