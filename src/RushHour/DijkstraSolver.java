@@ -2,13 +2,16 @@ package RushHour;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 public abstract class DijkstraSolver {
 	
-	private static int[][] resolve(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations)
+	private static int[][] resolve(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations)
 	{
-		int[] distances = new int[matrice_adj.size()];
-		int[] predecesseurs = new int[matrice_adj.size()];
+		int[] distances = new int[configurations.size()];
+		int[] predecesseurs = new int[configurations.size()];
 		ArrayList<Integer> sommetsNonMarques = new ArrayList<Integer>();
 		
 		for(int i=0;i<distances.length;i++)
@@ -47,39 +50,20 @@ public abstract class DijkstraSolver {
 				sommetsNonMarques.remove(Integer.valueOf(nvSommetMarque));
 				int i=0;
 				
-				
-				for(Integer poids : matrice_adj.get(nvSommetMarque))
+				for (Entry<Integer, Integer> successeur : liste_adj.get(Integer.valueOf(nvSommetMarque)).entrySet()) 
 				{
-					//si le poids à [i][j]>=0 alors j est voisin de i			
-					if(poids.intValue()>=0)
-					{						
-						if(distances[i]> distances[nvSommetMarque] + poids.intValue())
-							predecesseurs[i]=nvSommetMarque;
+						int distanceToSucc = successeur.getValue().intValue();
+						int indexOfSucc = successeur.getKey().intValue();
 						
-						distances[i]=Math.min(distances[i],distances[nvSommetMarque] + poids.intValue());					
-
-					}
-					
-					i++;
+						int distanceBefore = distances[indexOfSucc];
+						
+						distances[indexOfSucc]=Math.min(distances[indexOfSucc],distances[nvSommetMarque] + distanceToSucc);
+						
+						if(distances[indexOfSucc]!=distanceBefore)
+							predecesseurs[indexOfSucc]=nvSommetMarque;
 				}
-			}
-			
-			/*System.out.println("DISTANCE + sommet( "+ nvSommetMarque +" )");
-			for(int i=0;i<distances.length;i++)
-			{
-				System.out.print(distances[i]+"\t");
-			}
-			
-			System.out.println();
-			
-			System.out.println("SUCCESEUR + sommet( "+ nvSommetMarque +" )");
-			for(int i=0;i<distances.length;i++)
-			{
-				System.out.print(predecesseurs[i]+"\t");
-			}
-			
-			System.out.println("\n");*/
-			
+				
+			}		
 		}		
 		
 		int i=0;
@@ -116,11 +100,11 @@ public abstract class DijkstraSolver {
 	}
 	
 	
-	public static Object[] resolveRHC(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static Object[] resolveRHC(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
 		long startTime = System.nanoTime();
 		
-		int[][] resultDij = resolve(matrice_adj, configurations);
+		int[][] resultDij = resolve(liste_adj, configurations);
 		
 		int[] predecesseurs = resultDij[1];
 		int[] distance = resultDij[0];
@@ -143,27 +127,18 @@ public abstract class DijkstraSolver {
 		return result;
 	}
 	
-	public static Object[] resolveRHM(ArrayList<ArrayList<Integer>> matrice_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static Object[] resolveRHM(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations,int indexOfSolution)
 	{
-		ArrayList<ArrayList<Integer>> copy = new ArrayList<ArrayList<Integer>>();
+		HashMap<Integer,HashMap<Integer,Integer>> copy = new HashMap<Integer,HashMap<Integer,Integer>>();
 		
-		for(ArrayList<Integer> line : matrice_adj)
-		{
-			ArrayList<Integer> lineCopy = new ArrayList<Integer>();
-			
-			for(Integer poids : line)
-			{
-				if(poids.intValue()>=0)
-					lineCopy.add(1);	
-				else
-					lineCopy.add(-1);
+		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
+			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
+				sommet.setValue(1);
 			}
-			
-			copy.add(lineCopy);
 		}
 		
 		
-		int[][] resultDij = resolve(matrice_adj, configurations);
+		int[][] resultDij = resolve(liste_adj, configurations);
 		
 		int[] predecesseurs = resultDij[1];
 		int[] distance = resultDij[0];
