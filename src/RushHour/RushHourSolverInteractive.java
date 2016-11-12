@@ -89,9 +89,9 @@ public class RushHourSolverInteractive extends JFrame{
 	    System.out.println(r.getNbColonne());
 	    grille.setLayout(new GridLayout(r.getNbLigne(), r.getNbColonne()));
 		
-		for(ArrayList<String> line : r.getGrille())
+		for(int i=0;i<RushHour.taille_matrice;i++)
 		{
-			for(String s : line)
+			for(int j=0;j<RushHour.taille_matrice;j++)
 			{
 				grille.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),"0"));
 			}

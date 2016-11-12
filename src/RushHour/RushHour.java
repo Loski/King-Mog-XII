@@ -359,6 +359,11 @@ public class RushHour implements Cloneable {
 	public int getNbColonne() {
 		return taille_matrice;
 	}
+	
+	public String[][] getGrille()
+	{
+		return this.grille;
+	}
 
 	public void setVehicules(ArrayList<Vehicule> vehicules) {
 		this.vehicules = vehicules;

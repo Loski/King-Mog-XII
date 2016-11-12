@@ -50,7 +50,7 @@ public class GrapheConfiguration {
 	public void creerGraphe(int index){	
 		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
-		RushHour tmp = (RushHour) r.clone();
+		RushHour tmp = null;
 		for(Vehicule v: r.getVehicules())
 			for(int direction:all_direction){
 				boolean changement = true;
