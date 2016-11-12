@@ -124,7 +124,7 @@ public class RushHourSolverInteractive extends JFrame{
 		for(int i=0;i<this.r.getNbLigne();i++)
 		{
 			if(i==(int)(RushHour.caseSortie)/this.r.getNbColonne())
-				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),""));
+				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),"EXIT"));
 			else
 				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),null));
 		}
