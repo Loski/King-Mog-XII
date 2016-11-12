@@ -14,16 +14,21 @@ public class RushHour implements Cloneable {
 	public static final int taille_matrice =6;
 	public static int indice_solution_g;
 
-	public boolean deplacement_multiple(int index, int direction, int nombre_deplacement){
-        for(int i = 0; i < nombre_deplacement; i++){
-            boolean tmp = deplacement_1(index, direction);
-            if(!tmp)
-               return false;
+	public ArrayList<RushHour> deplacement_multiple(int index, int direction, int nombre_deplacement){
+        ArrayList<RushHour> sommetAccessible = new ArrayList<RushHour>();
+        RushHour tmp = this;
+		for(int i = 0; i < nombre_deplacement; i++){
+			tmp = tmp.deplacement_1(index, direction);
+			if(tmp!= null)
+				sommetAccessible.add(tmp);
+			else
+				break;
+            
        }
-       return true;
+       return (sommetAccessible.isEmpty())?null:sommetAccessible;
 	}
 	
-	public boolean deplacement_1(int index, int direction){
+	public RushHour deplacement_1(int index, int direction){
 		boolean deplacement_possible = false;
 		int sommet_depart = this.vehicules.get(index).getPosition();
 		int taille = this.vehicules.get(index).getTaille();
@@ -52,9 +57,11 @@ public class RushHour implements Cloneable {
 				}
 		}
 		if(deplacement_possible){
-			deplacementRushHour(index, direction);
+			RushHour clone = (RushHour) this.clone();
+			clone.deplacementRushHour(index, direction);
+			return clone;
 		}
-		return deplacement_possible;
+		return null;
 	}
 		
 	

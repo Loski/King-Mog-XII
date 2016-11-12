@@ -57,7 +57,7 @@ public class GrapheConfiguration {
 	public void creerGraphe(int index){	
 		System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
-		RushHour tmp = null;
+		ArrayList<RushHour> tmp = new ArrayList<RushHour>();
 		for(int i = 0; i < this.configurations.get(index).getVehicules().size();i++)
 			for(int direction:all_direction){
 				boolean changement = true;
@@ -74,22 +74,25 @@ public class GrapheConfiguration {
 						taille_max = r.getNbLigne() -((int)position_initial/r.getNbColonne() + this.configurations.get(index).getVehicules().get(i).getTaille());
 					else taille_max = (int)position_initial/r.getNbColonne();
 				}
-				for(int j = 1; j <=taille_max; j++){
-					if(changement)
-						tmp = (RushHour) r.clone();
-					changement = tmp.deplacement_multiple(i, direction, j);
-					if(changement){
-						if(!this.configurations.contains(tmp)){
-							addSommet(tmp);	
+					if(tmp == null)
+						tmp = new ArrayList<RushHour>();
+					if(tmp.isEmpty())
+						tmp.add((RushHour) r.clone());
+					tmp = tmp.get(0).deplacement_multiple(i, direction, taille_max);
+					int j = 0;
+					if(tmp != null){
+					while(!tmp.isEmpty()){
+						RushHour tmp_config = tmp.remove(0);
+						if(!this.configurations.contains(tmp_config)){
+							addSommet(tmp_config);	
 						}
 						if(index!=this.configurations.size()-1)
 						{
-							setSuccesseur(index, this.configurations.indexOf(tmp),j);
-							setSuccesseur(this.configurations.indexOf(tmp),index,j);
+							setSuccesseur(index, this.configurations.indexOf(tmp_config),j);
+							setSuccesseur(this.configurations.indexOf(tmp_config),index,j);
 						}
+						j++;
 					}
-					else
-						j = 50;
 				}
 			}
 		
