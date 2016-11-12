@@ -34,7 +34,7 @@ public class CaseRepresentation extends JPanel {
 	    
 	    g.setColor(Color.WHITE);
 	    g.setFont(new Font("Verdana", Font.PLAIN, 30));
-	    g.drawString(this.code, this.getWidth()/2-15,this.getHeight()/2);
+	    g.drawString(this.code, this.getWidth()/2-15,this.getHeight()/2+15);
 	  }
     
   }

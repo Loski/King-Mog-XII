@@ -30,7 +30,7 @@ public class RushHourSolverInteractive extends JFrame{
 	public RushHourSolverInteractive()
 	{
 		super();
-		this.r=new RushHour("puzzles/debug.txt");
+		this.r=new RushHour("puzzles/débutant/jam1.txt");
 	    this.setTitle("RushHour Solver");
 	    this.setSize(800,800);
 	    this.setLocationRelativeTo(null);
