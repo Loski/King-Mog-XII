@@ -44,32 +44,34 @@ public class GrapheConfiguration {
 		
 		addSommet(configDepart);		
 		creerGraphe(0);
+		System.out.println("OVER");
 		//System.out.println(this.configurations.size());
 	}
 	
 	public void creerGraphe(int index){	
 		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
-		RushHour tmp = (RushHour) r.clone();
-		for(Vehicule v: r.getVehicules())
+		RushHour tmp = null;
+		for(int i = 0; i < this.configurations.get(index).getVehicules().size();i++)
 			for(int direction:all_direction){
 				boolean changement = true;
 				int taille_max = 6;
-				if(v.getOrientation() == Orientation.HORIZONTAL){
+				int position_initial = this.configurations.get(index).getVehicules().get(i).getPosition();
+				if(this.configurations.get(index).getVehicules().get(i).getOrientation() == Orientation.HORIZONTAL){
 					if(direction == Direction.FORWARD)
-						taille_max = r.getNbColonne() - (r.getMarqueurs().get(v.getCode())%r.getNbColonne() + v.taille);
+						taille_max = r.getNbColonne() - (position_initial%r.getNbColonne() + this.configurations.get(index).getVehicules().get(i).getTaille());
 					else
-						taille_max = r.getMarqueurs().get(v.getCode())%r.getNbColonne();
+						taille_max = position_initial%r.getNbColonne();
 				}
 				else{
 					if(direction == Direction.FORWARD)
-						taille_max = r.getNbLigne() -((int)r.getMarqueurs().get(v.getCode())/r.getNbColonne() + v.taille);
-					else taille_max = (int)r.getMarqueurs().get(v.getCode())/r.getNbColonne();
+						taille_max = r.getNbLigne() -((int)position_initial/r.getNbColonne() + this.configurations.get(index).getVehicules().get(i).getTaille());
+					else taille_max = (int)position_initial/r.getNbColonne();
 				}
 				for(int j = 1; j <=taille_max; j++){
 					if(changement)
 						tmp = (RushHour) r.clone();
-					changement = tmp.deplacement_multiple(v, direction, v.getOrientation(), j);
+					changement = tmp.deplacement_multiple(i, direction, j);
 					if(changement){
 						if(!this.configurations.contains(tmp)){
 							addSommet(tmp);	
@@ -94,7 +96,7 @@ public class GrapheConfiguration {
 	
 	public void addSommet(RushHour r)
 	{
-		
+		System.out.println(this.configurations.size());
 
 		if(r.isSolution())
 			indexOfSolutions.add(this.configurations.size());
@@ -118,7 +120,7 @@ public class GrapheConfiguration {
 			//ajout chaque cellule pour la ligne du nouveau sommet sauf la dernière qui est faite avant
 			if(i!=this.matrice_adj.size()-1)
 				newSommet.add(-1);
-		}		
+		}
 	}
 	
 	public void setSuccesseur(int sommetPere, int sommetFils, int cout)
