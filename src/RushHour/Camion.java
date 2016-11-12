@@ -5,6 +5,7 @@ public class Camion extends Vehicule implements Cloneable{
 		super(code,direction, position);
 		this.taille=3;
 	}
+	public Camion(Vehicule c){
 		super(c);
 	}
 	
