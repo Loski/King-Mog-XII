@@ -1,6 +1,8 @@
 package RushHour;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
+
 import RushHour.RushHour.Direction;
 
 public class GrapheConfiguration {
@@ -9,6 +11,8 @@ public class GrapheConfiguration {
 	private ArrayList<Integer> indexOfSolutions; 
 	private ArrayList<RushHour> configurations;
 	private static final int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
+	
+	private ArrayList<Integer> LigneNvSommet;
 	
 	public ArrayList<ArrayList<Integer>> getMatrice_adj() {
 		return matrice_adj;
@@ -36,13 +40,14 @@ public class GrapheConfiguration {
 		this.configurations=new ArrayList<RushHour>();
 		this.matrice_adj=new ArrayList<ArrayList<Integer>>();
 		this.indexOfSolutions = new ArrayList<Integer>();
+		this.LigneNvSommet = new ArrayList<Integer>();
 		
 		/*int[] arrete = {0,0};
 		ArrayList<Integer> intersect = new ArrayList<Integer>();
 		intersect.add(-1);
 		this.matrice_adj.add(intersect);*/
 		
-		addSommet(configDepart);		
+		addSommet(configDepart);
 		creerGraphe(0);
 		System.out.println("OVER");
 		//System.out.println(this.configurations.size());
@@ -96,7 +101,7 @@ public class GrapheConfiguration {
 	
 	public void addSommet(RushHour r)
 	{
-		System.out.println(this.configurations.size());
+		//System.out.println(this.configurations.size());
 
 		if(r.isSolution())
 			indexOfSolutions.add(this.configurations.size());
@@ -108,19 +113,29 @@ public class GrapheConfiguration {
 		for(RushHour r0 : this.configurations)
 			System.out.println(r0);*/
 		
-		ArrayList<Integer> newSommet = new ArrayList<Integer>();
+		this.LigneNvSommet.add(-1);
+		ArrayList<Integer> newSommet = (ArrayList<Integer>) this.LigneNvSommet.clone();
+		
 		this.matrice_adj.add(newSommet);
 		
+		//this.afficherMatrice();
 		
-		for(int i=0;i<this.matrice_adj.size();i++)
+		this.matrice_adj.forEach(new Consumer<ArrayList<Integer>>() {
+
+			@Override
+			public void accept(ArrayList<Integer> t) {
+				t.add(-1);
+			}
+		});
+		
+		/*for(int i=0;i<this.matrice_adj.size();i++)
 		{				
 			 // ajout nv colonne correspondant au nouveau sommet pour tous les sommets existants
-			this.matrice_adj.get(i).add(-1);			
-			
+			this.matrice_adj.get(i).add(-1);				
 			//ajout chaque cellule pour la ligne du nouveau sommet sauf la dernière qui est faite avant
-			if(i!=this.matrice_adj.size()-1)
-				newSommet.add(-1);
-		}
+			/*if(i!=this.matrice_adj.size()-1)
+				newSommet.add(-1);*/
+		//}
 	}
 	
 	public void setSuccesseur(int sommetPere, int sommetFils, int cout)
@@ -177,12 +192,13 @@ public class GrapheConfiguration {
 	public static void main(String[] args)
 	{
 		//RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");
-		RushHour r1 = new RushHour("puzzles/expert/jam40.txt"); 		
+		RushHour r1 = new RushHour("puzzles/débutant/jam1.txt"); 		
 		GrapheConfiguration g1 = new GrapheConfiguration(r1);
-		System.out.println(g1.getIndexOfSolutions().get(0));
-		DijkstraSolver.resolveRHC(g1.getMatrice_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
-		g1.afficherMatrice();
-		System.out.println(g1.getNBofIntInMatrice(1));
+		//System.out.println(g1.getIndexOfSolutions().get(0));
+		//DijkstraSolver.resolveRHC(g1.getMatrice_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
+		//g1.afficherMatrice();
+		//System.out.println(g1.getNBofIntInMatrice(2));
+		System.out.println(g1.getConfigurations().size());
 	}
 	
 	

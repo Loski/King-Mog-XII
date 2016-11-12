@@ -99,7 +99,7 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		for(Vehicule v : this.r.getVehicules())
 		{
-			int caseVehicule = this.r.getMarqueurs().get(v.getCode());
+			int caseVehicule = v.getPosition();
 			for(int i=0;i<v.getTaille();i++)
 			{
 				int n =0;

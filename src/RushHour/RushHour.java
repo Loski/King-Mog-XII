@@ -188,8 +188,8 @@ public class RushHour implements Cloneable {
             	}
             	tmp.add(ar);
             }
-            for(int v =0; v < 6; v++)
-            	for(int j = 0; j < 6;j++)
+            for(int v =0; v < RushHour.taille_matrice; v++)
+            	for(int j = 0; j < RushHour.taille_matrice;j++)
             		this.grille[v][j] = tmp.get(v).get(j);
             		
             
