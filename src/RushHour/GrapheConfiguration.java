@@ -9,10 +9,19 @@ import RushHour.RushHour.Direction;
 
 public class GrapheConfiguration {
 	
+	private ArrayList<ArrayList<Integer>> matrice_adj; //contient les poids si poids[i][j]>=0 alors arrête entre i et j  
 	private HashMap<Integer,HashMap<Integer,Integer>> liste_adj;
 	private ArrayList<Integer> indexOfSolutions; 
 	private ArrayList<RushHour> configurations;
 	private static final int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
+	
+	public ArrayList<ArrayList<Integer>> getMatrice_adj() {
+		return matrice_adj;
+	}
+
+	public void setMatrice_adj(ArrayList<ArrayList<Integer>> matrice_adj) {
+		this.matrice_adj = matrice_adj;
+	}
 
 	public ArrayList<RushHour> getConfigurations() {
 		return configurations;
@@ -30,6 +39,7 @@ public class GrapheConfiguration {
 	public GrapheConfiguration(RushHour configDepart)
 	{
 		this.configurations=new ArrayList<RushHour>();
+		this.matrice_adj=new ArrayList<ArrayList<Integer>>();
 		this.indexOfSolutions = new ArrayList<Integer>();
 		
 		this.liste_adj= new HashMap<>();
@@ -55,11 +65,12 @@ public class GrapheConfiguration {
 		ArrayList<RushHour> tmp = new ArrayList<RushHour>();
 		int i = 0;
 		for(Vehicule v :this.configurations.get(index).getVehicules())
-		{			
+		{
 			for(int direction:all_direction){
+				boolean changement = true;
 				int taille_max = 6;
-				int position_initial = v.getPosition();
-				if(v.getOrientation() == Orientation.HORIZONTAL){
+				int position_initial = this.configurations.get(index).getVehicules().get(i).getPosition();
+				if(this.configurations.get(index).getVehicules().get(i).getOrientation() == Orientation.HORIZONTAL){
 					if(direction == Direction.FORWARD)
 						taille_max = r.getNbColonne() - (position_initial%r.getNbColonne() + v.getTaille());
 					else
@@ -70,30 +81,29 @@ public class GrapheConfiguration {
 						taille_max = r.getNbLigne() -((int)position_initial/r.getNbColonne() + v.getTaille());
 					else taille_max = (int)position_initial/r.getNbColonne();
 				}
-					boolean quit = false;
-					RushHour result = r;
-					for(int j=1;j<=taille_max;j++)
-					{						
-						result = result.deplacement_1(v,i, direction);
-						if(result==null || this.configurations.contains(result))
-						{
-							//quit=true;
-							break;
+					if(tmp == null)
+						tmp = new ArrayList<RushHour>();
+					if(tmp.isEmpty())
+						tmp.add(r);
+					tmp = r.deplacement_multiple(v, i, direction, taille_max);
+
+					int j = 0;
+					while(!tmp.isEmpty()){
+						j++;
+						RushHour tmp_config = tmp.remove(0);
+						if(!this.configurations.contains(tmp_config)){
+							addSommet(tmp_config);	
 						}
 						else
 						{
-							addSommet(result);
-							if(index!=this.configurations.size()-1)
-							{
-								int succ = this.configurations.indexOf(result);
-								setSuccesseur(index, succ,j);
-								setSuccesseur(succ,index,j);
-							}
+							break;
+						}
+						if(index!=this.configurations.size()-1)
+						{
+							setSuccesseur(index, this.configurations.indexOf(tmp_config),j);
+							setSuccesseur(this.configurations.indexOf(tmp_config),index,j);
 						}
 					}
-					
-				/*if(quit)
-					break;*/
 			}
 			i++;
 		}
@@ -118,17 +128,28 @@ public class GrapheConfiguration {
 			succ.put(Integer.valueOf(sommetFils), cout);
 	}
 	
+	public boolean isSuccesseur(int sommetPere,int sommetFils)
+	{
+		if(this.matrice_adj.get(sommetPere).get(sommetFils)>=0)
+			return true;
+			
+		return false;
+	}
+	
 	public void afficherMatrice()
 	{		
-		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
-			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
-				System.out.println(successeurs.getKey()+" -> "+sommet.getKey()+" = "+sommet.getValue());
+		for(int i=0;i<this.matrice_adj.size();i++)
+		{
+			for(int j=0;j<this.matrice_adj.get(i).size();j++)
+			{
+				System.out.print(String.format("%d\t", this.matrice_adj.get(i).get(j)));
 			}
-			System.out.println("");
+			
+			System.out.println();
 		}
 	}
 	
-	/*public int getNBofIntInMatrice(int a)
+	public int getNBofIntInMatrice(int a)
 	{
 		int compteur=0;
 		
@@ -142,7 +163,7 @@ public class GrapheConfiguration {
 		}
 		
 		return compteur;
-	}*/
+	}
 	
 	public HashMap<Integer,HashMap<Integer,Integer>> getListe_adj()
 	{
@@ -154,8 +175,8 @@ public class GrapheConfiguration {
 		RushHour r1 = new RushHour("puzzles/debug.txt");		
 		GrapheConfiguration g1 = new GrapheConfiguration(r1);
 		//System.out.println(g1.getIndexOfSolutions().get(0));
-		//DijkstraSolver.resolveRHC(g1.getListe_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
-		g1.afficherMatrice();
+		DijkstraSolver.resolveRHC(g1.getListe_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
+		//g1.afficherMatrice();
 		//System.out.println(g1.getNBofIntInMatrice(2));
 	}
 	

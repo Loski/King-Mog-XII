@@ -14,11 +14,11 @@ public class RushHour implements Cloneable {
 	public static final int taille_matrice =6;
 	public static int indice_solution_g;
 
-	public ArrayList<RushHour> deplacement_multiple(Vehicule v,int index, int direction, int nombre_deplacement){
+	public ArrayList<RushHour> deplacement_multiple(Vehicule v, int index, int direction, int nombre_deplacement){
         ArrayList<RushHour> sommetAccessible = new ArrayList<RushHour>();
         RushHour tmp = this;
 		for(int i = 0; i < nombre_deplacement; i++){
-			tmp = tmp.deplacement_1(v,index, direction);
+			tmp = tmp.deplacement_1(v, index, direction);
 			if(tmp!= null)
 				sommetAccessible.add(tmp);
 			else
@@ -28,12 +28,12 @@ public class RushHour implements Cloneable {
        return (sommetAccessible.isEmpty())?new ArrayList<RushHour>():sommetAccessible;
 	}
 	
-	public RushHour deplacement_1(Vehicule v,int index, int direction){
+	public RushHour deplacement_1(Vehicule v, int index, int direction){
 		boolean deplacement_possible = false;
-		int sommet_depart = this.vehicules.get(index).getPosition();
-		int taille = this.vehicules.get(index).getTaille();
+		int sommet_depart = v.getPosition();
+		int taille = v.getTaille();
 		
-		if(this.vehicules.get(index).getOrientation() == Orientation.HORIZONTAL){ 
+		if(v.getOrientation() == Orientation.HORIZONTAL){ 
 			
 			if(direction == Direction.FORWARD){
 				if(sommet_depart%taille_matrice + taille < taille_matrice && this.grille[(int)sommet_depart/taille_matrice][sommet_depart%taille_matrice + taille].equals("0"))
@@ -58,34 +58,35 @@ public class RushHour implements Cloneable {
 		}
 		if(deplacement_possible){
 			RushHour clone = (RushHour) this.clone();
-			clone.deplacementRushHour(v,index, direction);
+			clone.deplacementRushHour(v, index, direction);
 			return clone;
 		}
 		return null;
 	}
 		
 	
-	private void deplacementRushHour(Vehicule v,int index, int direction){		
+	private void deplacementRushHour(Vehicule v, int index, int direction){		
 		
-		supprimerVehiculeGrille(v,index);
+		supprimerVehiculeGrille(v, index);
+		v = (Vehicule) v.clone();
 		int old_value = v.getPosition();
 		if(v.getOrientation() == Orientation.HORIZONTAL)
 			v.setPosition(old_value + direction); //OLD + DEPLACEMENTS
 		else
 			v.setPosition(old_value +(direction*taille_matrice));
-		this.vehicules.set(index, (Vehicule) v.clone());
+		this.vehicules.set(index, v);
 		//on recréé la voiture dans la grille !
-		creerVehiculeGrille(v,index);
+		creerVehiculeGrille(v, index);
 	}
 	
-	public void supprimerVehiculeGrille(Vehicule v,int index){
-		modifieVehiculeGrille(v,index, "0");
+	public void supprimerVehiculeGrille(Vehicule v, int index){
+		modifieVehiculeGrille(v, index, "0");
 	}
-	public void creerVehiculeGrille(Vehicule v,int index){
-		modifieVehiculeGrille(v,index, this.vehicules.get(index).getCode());
+	public void creerVehiculeGrille(Vehicule v, int index){
+		modifieVehiculeGrille(v, index, v.getCode());
 	}
 	
-	public void modifieVehiculeGrille(Vehicule v,int index, String new_value){
+	public void modifieVehiculeGrille(Vehicule v, int index, String new_value){
 		int initialPosition = v.getPosition();
 		int ligne =(int)initialPosition/taille_matrice;
 		if(v.getOrientation() == Orientation.HORIZONTAL){
@@ -260,11 +261,16 @@ public class RushHour implements Cloneable {
 	}
 	
 	public boolean equals(Object other)
-	{	      		
+	{	
+		if (other== null || (other.getClass() != RushHour.class))
+			return false;
+       		
 		RushHour r2 = (RushHour) other;
 		
 		if(r2==this)
 			return true;
+		if(r2.vehicules.size()!=this.vehicules.size())
+			return false;
 		
 		
 		for(int i =0; i < RushHour.taille_matrice;i++)
