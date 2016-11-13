@@ -83,11 +83,11 @@ public class GrapheConfiguration {
 						else
 						{
 							addSommet(result);
-							if(index!=this.configurations.size()-1)
+							int lastIndex=this.configurations.size()-1;
+							if(index!=lastIndex)
 							{
-								int succ = this.configurations.indexOf(result);
-								setSuccesseur(index, succ,j);
-								setSuccesseur(succ,index,j);
+								setSuccesseur(index, lastIndex,j);
+								setSuccesseur(lastIndex,index,j);
 							}
 						}
 					}
