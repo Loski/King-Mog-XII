@@ -25,7 +25,7 @@ public class RushHour implements Cloneable {
 				break;
             
        }
-       return (sommetAccessible.isEmpty())?null:sommetAccessible;
+       return (sommetAccessible.isEmpty())?new ArrayList<RushHour>():sommetAccessible;
 	}
 	
 	public RushHour deplacement_1(int index, int direction){
