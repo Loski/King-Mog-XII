@@ -73,7 +73,7 @@ public class RushHour implements Cloneable {
 			v.setPosition(old_value + direction); //OLD + DEPLACEMENTS
 		else
 			v.setPosition(old_value +(direction*taille_matrice));
-		this.vehicules.set(index, v.clone());
+		this.vehicules.set(index, v);
 		//on recréé la voiture dans la grille !
 		creerVehiculeGrille(v,index);
 	}
