@@ -2,6 +2,7 @@ package RushHour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import RushHour.RushHour.Direction;
@@ -49,13 +50,17 @@ public class GrapheConfiguration {
 		this.matrice_adj.add(intersect);*/
 		
 		addSommet(configDepart);
-		creerGraphe(0);
+		int nodeToTest = 0;
+		do{
+			creerGraphe(nodeToTest);
+			nodeToTest++;
+		}while(nodeToTest<this.configurations.size());
 		System.out.println("OVER");
 		//System.out.println(this.configurations.size());
 	}
 	
 	public void creerGraphe(int index){	
-		System.out.println(configurations.size());
+		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
 		ArrayList<RushHour> tmp = new ArrayList<RushHour>();
 		for(int i = 0; i < this.configurations.get(index).getVehicules().size();i++)
@@ -82,6 +87,7 @@ public class GrapheConfiguration {
 					int j = 0;
 					if(tmp != null){
 					while(!tmp.isEmpty()){
+						j++;
 						RushHour tmp_config = tmp.remove(0);
 						if(!this.configurations.contains(tmp_config)){
 							addSommet(tmp_config);	
@@ -91,14 +97,9 @@ public class GrapheConfiguration {
 							setSuccesseur(index, this.configurations.indexOf(tmp_config),j);
 							setSuccesseur(this.configurations.indexOf(tmp_config),index,j);
 						}
-						j++;
 					}
 				}
 			}
-		
-		//Si on a ajouté une config
-		if(index+1<this.configurations.size())
-			creerGraphe(index+1);
 		
 		return;
 	}
@@ -172,7 +173,6 @@ public class GrapheConfiguration {
 		DijkstraSolver.resolveRHC(g1.getListe_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
 		//g1.afficherMatrice();
 		//System.out.println(g1.getNBofIntInMatrice(2));
-		System.out.println(g1.getConfigurations().size());
 	}
 	
 	
