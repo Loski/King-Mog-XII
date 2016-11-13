@@ -63,7 +63,8 @@ public class GrapheConfiguration {
 		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
 		ArrayList<RushHour> tmp = new ArrayList<RushHour>();
-		for(int i = 0; i < this.configurations.get(index).getVehicules().size();i++)
+		int i = 0;
+		for(Vehicule v :this.configurations.get(index).getVehicules()){
 			for(int direction:all_direction){
 				boolean changement = true;
 				int taille_max = 6;
@@ -82,7 +83,7 @@ public class GrapheConfiguration {
 					if(tmp == null)
 						tmp = new ArrayList<RushHour>();
 					if(tmp.isEmpty())
-						tmp.add((RushHour) r.clone());
+						tmp.add(r);
 					tmp = tmp.get(0).deplacement_multiple(i, direction, taille_max);
 					int j = 0;
 					if(tmp != null){
@@ -100,6 +101,8 @@ public class GrapheConfiguration {
 					}
 				}
 			}
+		i++;
+	}
 		
 		return;
 	}
