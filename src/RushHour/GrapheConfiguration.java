@@ -54,11 +54,12 @@ public class GrapheConfiguration {
 		RushHour r = this.configurations.get(index);
 		ArrayList<RushHour> tmp = new ArrayList<RushHour>();
 		int i = 0;
-		for(Vehicule v :this.configurations.get(index).getVehicules())
-		{			
+		int taille_max = 6;
+		for(Vehicule v :r.getVehicules())
+		{		
+			int position_initial = v.getPosition();
+			
 			for(int direction:all_direction){
-				int taille_max = 6;
-				int position_initial = v.getPosition();
 				if(v.getOrientation() == Orientation.HORIZONTAL){
 					if(direction == Direction.FORWARD)
 						taille_max = r.getNbColonne() - (position_initial%r.getNbColonne() + v.getTaille());
@@ -70,7 +71,7 @@ public class GrapheConfiguration {
 						taille_max = r.getNbLigne() -((int)position_initial/r.getNbColonne() + v.getTaille());
 					else taille_max = (int)position_initial/r.getNbColonne();
 				}
-					boolean quit = false;
+					//boolean quit = false;
 					RushHour result = r;
 					for(int j=1;j<=taille_max;j++)
 					{						

@@ -261,17 +261,11 @@ public class RushHour implements Cloneable {
 	}
 	
 	public boolean equals(Object other)
-	{	
-		if (other== null || (other.getClass() != RushHour.class))
-			return false;
-       		
+	{	      		
 		RushHour r2 = (RushHour) other;
 		
 		if(r2==this)
-			return true;
-		if(r2.vehicules.size()!=this.vehicules.size())
-			return false;
-		
+			return true;		
 		
 		for(int i =0; i < RushHour.taille_matrice;i++)
 		{			
