@@ -148,8 +148,16 @@ public class RushHourSolver {
 		long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
 		
 		System.out.println("Nombre de Configuration-But : "+this.g.getIndexOfSolutions().size());
-		System.out.println("Nombre minimal de mouvement : "+(sequence.size()-1));
-		System.out.println("Nombre minimal de case : "+nbCaseDeplace);
+		if(probleme == 1)
+		{
+			System.out.println("Nombre minimal de mouvement : "+(sequence.size()-1));
+			System.out.println("Avec "+nbCaseDeplace+" cases déplacées");
+		}
+		else
+		{
+			System.out.println("Nombre minimal de case : "+nbCaseDeplace);
+			System.out.println("Avec "+(sequence.size()-1) + " mouvements");
+		}
 		
 		System.out.println("ALGO WAS DONE IN "+duration/1000000+" ms");
 		
@@ -160,7 +168,7 @@ public class RushHourSolver {
 	
 	public void beginSequence(ArrayList<RushHour> sequence)
 	{
-		int i =1;
+		int i =0;
 		
 		for(RushHour rh: sequence)
 		{

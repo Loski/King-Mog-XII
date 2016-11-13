@@ -64,34 +64,34 @@ public class GrapheConfiguration {
 		RushHour r = this.configurations.get(index);
 		ArrayList<RushHour> tmp = new ArrayList<RushHour>();
 		int i = 0;
-		for(Vehicule v :this.configurations.get(index).getVehicules()){
+		for(Vehicule v :this.configurations.get(index).getVehicules())
+		{
 			for(int direction:all_direction){
 				boolean changement = true;
 				int taille_max = 6;
 				int position_initial = this.configurations.get(index).getVehicules().get(i).getPosition();
 				if(this.configurations.get(index).getVehicules().get(i).getOrientation() == Orientation.HORIZONTAL){
 					if(direction == Direction.FORWARD)
-						taille_max = r.getNbColonne() - (position_initial%r.getNbColonne() + this.configurations.get(index).getVehicules().get(i).getTaille());
+						taille_max = r.getNbColonne() - (position_initial%r.getNbColonne() + v.getTaille());
 					else
 						taille_max = position_initial%r.getNbColonne();
 				}
 				else{
 					if(direction == Direction.FORWARD)
-						taille_max = r.getNbLigne() -((int)position_initial/r.getNbColonne() + this.configurations.get(index).getVehicules().get(i).getTaille());
+						taille_max = r.getNbLigne() -((int)position_initial/r.getNbColonne() + v.getTaille());
 					else taille_max = (int)position_initial/r.getNbColonne();
 				}
-					if(tmp == null)
-						tmp = new ArrayList<RushHour>();
-					if(tmp.isEmpty())
-						tmp.add(r);
-					tmp = tmp.get(0).deplacement_multiple(i, direction, taille_max);
+					tmp = r.deplacement_multiple(i, direction, taille_max);
 					int j = 0;
-					if(tmp != null){
 					while(!tmp.isEmpty()){
 						j++;
 						RushHour tmp_config = tmp.remove(0);
 						if(!this.configurations.contains(tmp_config)){
 							addSommet(tmp_config);	
+						}
+						else
+						{
+							break;
 						}
 						if(index!=this.configurations.size()-1)
 						{
@@ -99,12 +99,9 @@ public class GrapheConfiguration {
 							setSuccesseur(this.configurations.indexOf(tmp_config),index,j);
 						}
 					}
-				}
 			}
-		i++;
-	}
-		
-		return;
+			i++;
+		}
 	}
 	
 	public void addSommet(RushHour r)
@@ -170,7 +167,7 @@ public class GrapheConfiguration {
 	
 	public static void main(String[] args)
 	{
-		RushHour r1 = new RushHour("puzzles/débutant/jam1.txt");		
+		RushHour r1 = new RushHour("puzzles/debug.txt");		
 		GrapheConfiguration g1 = new GrapheConfiguration(r1);
 		//System.out.println(g1.getIndexOfSolutions().get(0));
 		DijkstraSolver.resolveRHC(g1.getListe_adj(), g1.getConfigurations(), g1.getIndexOfSolutions().get(0));
