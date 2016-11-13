@@ -84,7 +84,7 @@ public class GrapheConfiguration {
 						tmp = new ArrayList<RushHour>();
 					if(tmp.isEmpty())
 						tmp.add(r);
-					tmp = tmp.get(0).deplacement_multiple(i, direction, taille_max);
+					tmp = tmp.get(0).deplacement_multiple(v, i, direction, taille_max);
 					int j = 0;
 					if(tmp != null){
 					while(!tmp.isEmpty()){
