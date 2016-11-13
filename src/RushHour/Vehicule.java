@@ -58,7 +58,7 @@ public abstract class Vehicule implements Cloneable{
 	
 	public boolean equals(Vehicule v2)
 	{
-		if(this.code.equals(v2.code) && this.position == v2.position && this.taille==v2.taille && this.orientation==v2.orientation)
+		if(this.code.equals(v2.code) && this.position == v2.position)
 			return true;
 		
 		return false;
