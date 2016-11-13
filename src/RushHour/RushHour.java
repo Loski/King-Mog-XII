@@ -30,10 +30,10 @@ public class RushHour implements Cloneable {
 	
 	public RushHour deplacement_1(Vehicule v,int index, int direction){
 		boolean deplacement_possible = false;
-		int sommet_depart = this.vehicules.get(index).getPosition();
-		int taille = this.vehicules.get(index).getTaille();
+		int sommet_depart = v.getPosition();
+		int taille = v.getTaille();
 		
-		if(this.vehicules.get(index).getOrientation() == Orientation.HORIZONTAL){ 
+		if(v.getOrientation() == Orientation.HORIZONTAL){ 
 			
 			if(direction == Direction.FORWARD){
 				if(sommet_depart%taille_matrice + taille < taille_matrice && this.grille[(int)sommet_depart/taille_matrice][sommet_depart%taille_matrice + taille].equals("0"))
@@ -73,7 +73,7 @@ public class RushHour implements Cloneable {
 			v.setPosition(old_value + direction); //OLD + DEPLACEMENTS
 		else
 			v.setPosition(old_value +(direction*taille_matrice));
-		this.vehicules.set(index, (Vehicule) v.clone());
+		this.vehicules.set(index, v.clone());
 		//on recréé la voiture dans la grille !
 		creerVehiculeGrille(v,index);
 	}
