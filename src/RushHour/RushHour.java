@@ -111,11 +111,6 @@ public class RushHour implements Cloneable {
 		for(Vehicule v : r.vehicules){
 			this.vehicules.add((Vehicule) v.clone());
 		}
-		
-		/*r.vehicules = new ArrayList<Vehicule>();
-		for(Vehicule v : this.vehicules){
-			r.vehicules.add((Vehicule) v.clone());
-		}*/
 	}
 	public RushHour(){}
 	public RushHour(String filename)
@@ -153,34 +148,6 @@ public class RushHour implements Cloneable {
             	tmp.add(ar);
             }
             			
-            		//Ajout orientation
-            /*		else if(marqueurs.containsKey(s) && !s.equals("0"))
-            		{          			
-            			boolean find = false;
-            			int j=0;
-            			while(!find)
-            			{
-            				if(vehicules.get(j).getCode().equals(s) && vehicules.get(j).getOrientation()!= Orientation.NO_DIRECTION)
-            				{
-            					find=true;
-            					break;
-            				}
-            				
-            				if(vehicules.get(j).getCode().equals(s))
-            				{
-            					find=true;
-            					
-            					if(i%taille_matrice!=0 && ar.get((int)(i-1)%taille_matrice).equals(s))
-            						vehicules.get(j).setOrientation(Orientation.HORIZONTAL);
-            					else
-            						vehicules.get(j).setOrientation(Orientation.VERTICAL);
-            				}
-            				
-            				j++;
-            			}
-            		}
-            		i++;
-            	}*/
             int indice;
             	
             for(int v =0; v < RushHour.taille_matrice; v++)
@@ -243,7 +210,6 @@ public class RushHour implements Cloneable {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println(this.grille);
 		}
 		return null;
 	}
@@ -307,7 +273,31 @@ public class RushHour implements Cloneable {
 	public void setVehicules(ArrayList<Vehicule> vehicules) {
 		this.vehicules = vehicules;
 	}
-	
+	public String[][] TabIntToStrTab(){
+		int compteur_voiture = 0;
+		int compteur_camion = 0;
+		String nom;
+		String[][] str= {{"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}};
+		for(Vehicule v: this.vehicules){
+			if(v instanceof Camion){
+				compteur_camion++;
+				nom ="t" + compteur_camion;
+			}
+			else{
+				compteur_voiture++;
+				nom = "t" + compteur_voiture;
+			}
+			for(int i = 0; i < v.getTaille(); i++){
+				if(v.getOrientation() == Orientation.HORIZONTAL){
+					str[(int)v.getPosition()/RushHour.taille_matrice][v.getPosition()%RushHour.taille_matrice + i] = nom;
+				}
+				else{
+					str[(int)v.getPosition()/RushHour.taille_matrice+i][v.getPosition()%RushHour.taille_matrice] = nom;
+				}
+			}
+		}
+		return str;
+	}
 	static class Direction{
 		 public final static int BACKWARD = -1;
 		 public final static int FORWARD = 1;

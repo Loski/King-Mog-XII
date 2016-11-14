@@ -32,6 +32,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import RushHour.RushHour.Orientation;
+
 public class RushHourSolverInteractive extends JFrame{
 	private RushHour r;
 	private GrapheConfiguration g;
