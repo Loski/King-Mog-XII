@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import RushHour.RushHour.Direction;
+import RushHour.RushHour.Orientation;
 
 public class GrapheConfiguration {
 	
@@ -52,7 +53,6 @@ public class GrapheConfiguration {
 	public void creerGraphe(int index){	
 		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
-		ArrayList<RushHour> tmp = new ArrayList<RushHour>();
 		int i = 0;
 		int taille_max = 6;
 		for(Vehicule v :r.getVehicules())
@@ -75,7 +75,7 @@ public class GrapheConfiguration {
 					RushHour result = r;
 					for(int j=1;j<=taille_max;j++)
 					{						
-						result = result.deplacement_1(v,i, direction);
+						result = result.deplacement_1(v,v.getHash()-1, direction);
 						if(result==null || this.configurations.contains(result))
 						{
 							//quit=true;
