@@ -8,24 +8,33 @@ import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class RushHourSolverInteractive extends JFrame{
 	private RushHour r;
 	private GrapheConfiguration g;
 	private ArrayList<RushHour> sequence;
+	
+	JPanel grille;
 	
 	public RushHourSolverInteractive()
 	{
@@ -38,7 +47,8 @@ public class RushHourSolverInteractive extends JFrame{
 	    this.setBackground(Color.WHITE);  
 	 
 	    JPanel pan = new JPanel();
-	    pan.setLayout(new GridLayout(3,1));
+	    pan.setLayout(new GridLayout(2,1));
+	    //pan.setLayout(new GridLayout(3,1));
 	          
 	    
 		/*JComboBox puzzleList = new JComboBox(getListofPuzzle());
@@ -64,36 +74,96 @@ public class RushHourSolverInteractive extends JFrame{
 	      
 	    });
 	    
-	    pan.add(fileChooser);*/
-	    
+	    pan.add(fileChooser);
+	    /*
 	    pan.add(drawGrille(r));
 	    pan.add(createPanelInformations());  
+	    */
+	    
+	    pan.add(this.loadFile());
+	    
+	    this.grille = new JPanel();
+	    
+	    this.drawGrille();
+	    
+	    pan.add(grille);
 	    
 	    this.setContentPane(pan);  
-	    setJMenuBar(createMenu());
+	   // setJMenuBar(createMenu());
 	    this.setVisible(true);
 	}
 	
-	private String[] getListofPuzzle()
+	public JPanel loadFile()
 	{
-		ArrayList<String> list = new ArrayList<String>();	
-		return (String[]) list.toArray();
+		
+		ArrayList<Puzzle> puzzleList = Puzzle.getListofPuzzle();
+
+        Object[][] listData =  new Object[puzzleList.size()][2];
+        
+        int i=0;
+        
+        for(Puzzle p:puzzleList)
+        {
+        	listData[i][0]=p.getDifficulty();
+        	listData[i][1]=p.getTxtFileName();
+        	i++;
+        }
+        
+        String[] columnNames = {"Difficulté","Nom du Fichier"};
+
+        JTable table = new JTable(listData, columnNames)
+        {
+        	   @Override
+        	    public boolean isCellEditable(int row, int column) {
+        	        return false;
+        	    } 
+        };
+		
+        JScrollPane scroll = new JScrollPane(table);
+        
+		JPanel pan = new JPanel();
+		
+		pan.setLayout(new BorderLayout());
+		
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+	        public void valueChanged(ListSelectionEvent event) {
+	        	
+	            String difficulty = table.getValueAt(table.getSelectedRow(), 0).toString();
+	            String name = table.getValueAt(table.getSelectedRow(), 1).toString();
+	            
+	            r = new RushHour("./puzzles/"+difficulty+"/"+name);
+	            drawGrille();
+	        }
+	    });
+		
+		/*JList<String> puzzleList;
+		DefaultListModel<String> model;
+	    model = new DefaultListModel<String>();
+	    puzzleList = new JList<String>(model);
+	    JScrollPane scroll = new JScrollPane(list);
+		
+	    for(Puzzle p : Puzzle.getListofPuzzle())
+	    	model.addElement(p.toString());*/
+	    
+	    pan.add(scroll);
+	    
+		return pan;
 	}
 	
-	public JPanel drawGrille(RushHour r)
+	public void drawGrille()
 	{
 		JPanel pan = new JPanel();
 	    pan.setLayout(new GridLayout(1, 3));
 	    
 	    JPanel grille = new JPanel();
-	    System.out.println(r.getNbColonne());
-	    grille.setLayout(new GridLayout(r.getNbLigne(), r.getNbColonne()));
+	    //System.out.println(this.r.getNbColonne());
+	    grille.setLayout(new GridLayout(this.r.getNbLigne(), this.r.getNbColonne()));
 		
 		for(int i=0;i<RushHour.taille_matrice;i++)
 		{
 			for(int j=0;j<RushHour.taille_matrice;j++)
 			{
-				grille.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),"0"));
+				grille.add(new CaseRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),"0"));
 			}
 		}
 		
@@ -131,20 +201,31 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		pan.add(grilleSortie);
 		
-		return pan;
+		this.getContentPane().remove(this.grille);
+		this.grille = pan;
+		this.getContentPane().add(pan);;
+		
+		this.setContentPane(this.getContentPane());
+		this.revalidate();
+		
 	}
 	
 	public JMenuBar createMenu()
 	{
 		  JMenuBar menuBar = new JMenuBar();
+		  JMenu menuFichier = new JMenu("Fichier");
 		  JMenu menuRHC = new JMenu("Résoudre un problème RHC");
 		  JMenu menuRHM = new JMenu("Résoudre un problème RHM");
 
+		  JMenuItem loadFile = new JMenuItem("Charger un autre fichier");
+		  
 		  JMenuItem RHCGuro = new JMenuItem("GUROBI");
 		  JMenuItem RHCDij = new JMenuItem("Avec Dijkstra");
 		  
 		  JMenuItem RHMGuro = new JMenuItem("GUROBI");
 		  JMenuItem RHMDij = new JMenuItem("Avec Dijkstra");
+		  
+		  menuFichier.add(loadFile);
 		  
 		  menuRHC.add(RHCGuro);
 		  menuRHC.add(RHCDij);
@@ -152,6 +233,7 @@ public class RushHourSolverInteractive extends JFrame{
 		  menuRHM.add(RHMGuro);
 		  menuRHM.add(RHMDij);
 		  
+		  menuBar.add(menuFichier);
 		  menuBar.add(menuRHC);
 		  menuBar.add(menuRHM);
 		  
