@@ -7,10 +7,13 @@ import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -35,6 +38,7 @@ public class RushHourSolverInteractive extends JFrame{
 	private ArrayList<RushHour> sequence;
 	
 	JPanel grille;
+	JPanel loadRushHour;
 	
 	public RushHourSolverInteractive()
 	{
@@ -47,7 +51,7 @@ public class RushHourSolverInteractive extends JFrame{
 	    this.setBackground(Color.WHITE);  
 	 
 	    JPanel pan = new JPanel();
-	    pan.setLayout(new GridLayout(2,1));
+	    pan.setLayout(new GridLayout(3,1));
 	    //pan.setLayout(new GridLayout(3,1));
 	          
 	    
@@ -87,10 +91,40 @@ public class RushHourSolverInteractive extends JFrame{
 	    this.drawGrille();
 	    
 	    pan.add(grille);
+	    pan.add(this.createButtonLoad());
 	    
 	    this.setContentPane(pan);  
 	   // setJMenuBar(createMenu());
 	    this.setVisible(true);
+	}
+	
+	public JPanel createButtonLoad()
+	{
+		loadRushHour = new JPanel();
+		
+		JButton bouton = new JButton("Charger ce RushHour");
+		
+		bouton.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				    afficherMenuRushHourSolver();
+				  } 
+				} );
+		
+		loadRushHour.add(bouton);
+		
+		return loadRushHour;
+	}
+	
+	public void afficherMenuRushHourSolver()
+	{
+		this.getContentPane().removeAll();
+		this.setJMenuBar(createMenu());
+		this.getContentPane().setLayout(new GridLayout(2,1));
+		this.getContentPane().add(grille);
+		this.getContentPane().add(createPanelInformations());
+		
+		this.setContentPane(this.getContentPane());
+		this.revalidate();
 	}
 	
 	public JPanel loadFile()
@@ -118,8 +152,10 @@ public class RushHourSolverInteractive extends JFrame{
         	        return false;
         	    } 
         };
-		
+        
         JScrollPane scroll = new JScrollPane(table);
+        
+        //scroll.setBorder(BorderFactory.createTitledBorder ("Liste des Puzzles"));
         
 		JPanel pan = new JPanel();
 		
@@ -133,6 +169,9 @@ public class RushHourSolverInteractive extends JFrame{
 	            
 	            r = new RushHour("./puzzles/"+difficulty+"/"+name);
 	            drawGrille();
+	            getContentPane().remove(loadRushHour);
+	            getContentPane().add(createButtonLoad());
+	            revalidate();
 	        }
 	    });
 		
