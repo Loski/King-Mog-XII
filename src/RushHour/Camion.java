@@ -15,6 +15,6 @@ public class Camion extends Vehicule implements Cloneable{
 		this.taille=3;
 	}
 	public Object clone(){
-		return new Camion(this.getCode(), this.getOrientation(), this.getPosition());
+		return new Camion(this);
 	}
 }

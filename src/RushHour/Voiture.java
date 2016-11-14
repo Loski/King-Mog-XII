@@ -18,6 +18,6 @@ public class Voiture extends Vehicule implements Cloneable{
 		this.taille=2;
 	}
 	public Object clone(){
-		return new Voiture(this.getCode(), this.getOrientation(), this.getPosition());
+		return new Voiture(this);
 	}
 }

@@ -57,7 +57,7 @@ public class RushHour implements Cloneable {
 				}
 		}
 		if(deplacement_possible){
-			RushHour clone = (RushHour) this.clone();
+			RushHour clone = new RushHour(this);
 			clone.deplacementRushHour(v, index, direction);
 			return clone;
 		}
@@ -65,10 +65,11 @@ public class RushHour implements Cloneable {
 	}
 		
 	
-	private void deplacementRushHour(Vehicule v, int index, int direction){		
+	private void deplacementRushHour(Vehicule vBase, int index, int direction){		
 		
-		supprimerVehiculeGrille(v, index);
-		v = (Vehicule) v.clone();
+		supprimerVehiculeGrille(vBase, index);
+		//Vehicule v = this.vehicules.get(index);
+		Vehicule v = (Vehicule) vBase.clone();
 		int old_value = v.getPosition();
 		if(v.getOrientation() == Orientation.HORIZONTAL)
 			v.setPosition(old_value + direction); //OLD + DEPLACEMENTS
@@ -89,16 +90,17 @@ public class RushHour implements Cloneable {
 	public void modifieVehiculeGrille(Vehicule v, int index, String new_value){
 		int initialPosition = v.getPosition();
 		int ligne =(int)initialPosition/taille_matrice;
+		int colonne = initialPosition%taille_matrice;
 		if(v.getOrientation() == Orientation.HORIZONTAL){
 			String[] s = grille[ligne];
 			for(int i = 0; i < v.getTaille(); i++){
-				s[i + initialPosition%taille_matrice] = new_value;
+				s[i + colonne] = new String(new_value);
 			}
 		}
 		else{
 			for(int i = 0; i < v.getTaille(); i++){
 				String[] s = grille[ligne];
-				s[initialPosition%taille_matrice] = new_value;
+				s[colonne] = new String(new_value);
 				ligne+=1; // changement de ligne
 			}
 		}
@@ -106,15 +108,23 @@ public class RushHour implements Cloneable {
 	
 	public RushHour(RushHour r){
 		this.grille = new String[6][6];
-		for(int i = 0; i < RushHour.taille_matrice; i++){
+		/*for(int i = 0; i < RushHour.taille_matrice; i++){
 			for(int j = 0; j < RushHour.taille_matrice; j++){
 				this.grille[i][j] = new String(r.grille[i][j]);
 			}
+		}*/
+		
+		this.grille = r.grille.clone();
+		for (int i = 0; i < r.grille.length; i++) {
+		    this.grille[i] = r.grille[i].clone();
 		}
-		r.vehicules = new ArrayList<Vehicule>();
+		
+		this.vehicules=(ArrayList<Vehicule>) r.vehicules.clone();
+		
+		/*r.vehicules = new ArrayList<Vehicule>();
 		for(Vehicule v : this.vehicules){
 			r.vehicules.add((Vehicule) v.clone());
-		}
+		}*/
 	}
 	public RushHour(){}
 	public RushHour(String filename)
