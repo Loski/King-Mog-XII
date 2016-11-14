@@ -1,31 +1,25 @@
 package RushHour;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import RushHour.RushHour.Orientation;
 
 public abstract class Vehicule implements Cloneable{
 
-	private String code;
+	private int hash;
 	private int orientation;
-	protected int taille;
 	private int position;
-	
-	public Vehicule(String code,int orientation, int position)
-	{
-		this.code=code;
-		this.orientation=orientation;
-		this.setPosition(position);
-	}
+	private static int compteur_voiture = 1;
 	public Vehicule(Vehicule v){
-		this.code=v.code;
+		this.hash=v.hash;
 		this.orientation=v.orientation;
 		this.setPosition(v.position);
-		this.taille = v.taille;
 	}
-	public Vehicule(String code)
+	public Vehicule(int position)
 	{
-		this.code=code;
-		this.orientation=-1;
+		this.hash = compteur_voiture;
+		this.orientation= Orientation.NO_DIRECTION;
+		compteur_voiture++;
+		this.position = position;
 	}
 	
 	@Override
@@ -41,15 +35,9 @@ public abstract class Vehicule implements Cloneable{
 		return this.orientation;
 	}
 	
-	public String getCode()
-	{
-		return this.code;
-	}
+
 	
-	public int getTaille()
-	{
-		return this.taille;
-	}
+	public abstract int getTaille();
 	
 	public void setOrientation(int orientation)
 	{
@@ -58,7 +46,7 @@ public abstract class Vehicule implements Cloneable{
 	
 	public boolean equals(Vehicule v2)
 	{
-		if(this.code.equals(v2.code) && this.position == v2.position)
+		if(this.hash == v2.hash && this.position == v2.position)
 			return true;
 		
 		return false;
@@ -66,7 +54,7 @@ public abstract class Vehicule implements Cloneable{
 	}
 	
 	public String toString(){
-		return "Mon véhicule :" + this.code + "\t";
+		return "Mon véhicule :" + this.hash + "\t";
 	}
 
 	public int getPosition() {
@@ -76,5 +64,14 @@ public abstract class Vehicule implements Cloneable{
 	public void setPosition(int position) {
 		this.position = position;
 	}
-
+	public int getHash() {
+		return hash;
+	}
+	public void setHash(int hash) {
+		this.hash = hash;
+	}
+	public static int getCompteur_voiture() {
+		return compteur_voiture;
+	}
+	
 }
