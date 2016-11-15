@@ -53,11 +53,11 @@ public class RushHour implements Cloneable {
 		}
 		else{  // VERTICAL
 			if(direction == Direction.FORWARD){
-				if((int)sommet_depart/DIMENSION_MATRICE + taille < DIMENSION_MATRICE && this.grille[sommet_depart  + (taille) * DIMENSION_MATRICE] == RushHour.EMPTY)
+				if((int)sommet_depart/DIMENSION_MATRICE + taille < DIMENSION_MATRICE && this.grille[sommet_depart  + (taille) * Direction.DOWN] == RushHour.EMPTY)
 					deplacement_possible = true;
 			}
 				else{ //BACKWARD
-					if((int)(sommet_depart/DIMENSION_MATRICE + Direction.BACKWARD) >= 0 && (this.grille[sommet_depart + Direction.BACKWARD * DIMENSION_MATRICE] == RushHour.EMPTY )){  //Hors tableau
+					if(sommet_depart + Direction.UP >= 0 && (this.grille[sommet_depart + Direction.UP] == RushHour.EMPTY )){  //Hors tableau
 						deplacement_possible = true;
 					}
 				}
@@ -95,7 +95,7 @@ public class RushHour implements Cloneable {
 	
 	public void modifieVehiculeGrille(Vehicule v, int index, byte new_value){
 		int initialPosition = v.getPosition();
-		this.grille = Arrays.copyOf(this.grille, DIMENSION_MATRICE * DIMENSION_MATRICE);
+		this.grille = Arrays.copyOf(this.grille, RushHour.TAILLE_MATRICE);
 		if(v.getOrientation() == Orientation.HORIZONTAL){
 			for(byte i = 0; i < v.getTaille(); i++){
 				this.grille[initialPosition + i] = new_value;
@@ -121,7 +121,7 @@ public class RushHour implements Cloneable {
 		BufferedReader buffer;
 		String x;
 		ArrayList<ArrayList<String>>  tmp = new ArrayList<ArrayList<String>>();
-		this.grille = new byte[RushHour.DIMENSION_MATRICE * RushHour.DIMENSION_MATRICE];
+		this.grille = new byte[RushHour.TAILLE_MATRICE];
 		this.vehicules = new ArrayList<Vehicule>();
         try 
         {
@@ -304,8 +304,8 @@ public class RushHour implements Cloneable {
 	static class Direction{
 		 public final static byte BACKWARD = -1;
 		 public final static byte FORWARD = 1;
-		 public final static byte DOWN = -RushHour.DIMENSION_MATRICE;
-		 public final static byte UP = RushHour.DIMENSION_MATRICE;
+		 public final static byte DOWN = RushHour.DIMENSION_MATRICE;
+		 public final static byte UP = -RushHour.DIMENSION_MATRICE;
 	}
 	
 	static class Orientation {
