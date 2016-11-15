@@ -5,15 +5,12 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import RushHour.RushHour.Direction;
-import RushHour.RushHour.Orientation;
-
 public class GrapheConfiguration {
 	
 	private HashMap<Integer,HashMap<Integer,Integer>> liste_adj;
 	private ArrayList<Integer> indexOfSolutions; 
 	private ArrayList<RushHour> configurations;
-	private static final byte[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
+	private static final byte[] all_direction = {RushHour.FORWARD, RushHour.BACKWARD};
 
 	public ArrayList<RushHour> getConfigurations() {
 		return configurations;
@@ -60,14 +57,14 @@ public class GrapheConfiguration {
 			byte position_initial = v.getPosition();
 			
 			for(byte direction:all_direction){
-				if(v.getOrientation() == Orientation.HORIZONTAL){
-					if(direction == Direction.FORWARD)
+				if(v.getOrientation() == RushHour.HORIZONTAL){
+					if(direction == RushHour.FORWARD)
 						taille_max = (byte) (r.getNbColonne() - (position_initial%r.getNbColonne() + v.getTaille()));
 					else
 						taille_max = (byte) (position_initial%r.getNbColonne());
 				}
 				else{
-					if(direction == Direction.FORWARD)
+					if(direction == RushHour.FORWARD)
 						taille_max = (byte) (r.getNbLigne() -((int)position_initial/r.getNbColonne() + v.getTaille()));
 					else taille_max = (byte) ((int)position_initial/r.getNbColonne());
 				}

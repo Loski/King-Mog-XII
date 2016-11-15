@@ -1,8 +1,5 @@
 package RushHour;
 
-
-import RushHour.RushHour.Orientation;
-
 public abstract class Vehicule implements Cloneable{
 
 	private byte hash;
@@ -17,7 +14,7 @@ public abstract class Vehicule implements Cloneable{
 	public Vehicule(byte position)
 	{
 		this.hash = compteur_voiture;
-		this.orientation= Orientation.NO_DIRECTION;
+		this.orientation= RushHour.NO_DIRECTION;
 		compteur_voiture++;
 		this.position = position;
 	}
