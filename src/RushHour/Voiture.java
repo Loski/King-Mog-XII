@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Voiture extends Vehicule implements Cloneable{
-	public static final int TAILLE = 2;
+	public static final byte TAILLE = 2;
 	public Voiture(Vehicule v){
 		super(v);
 	}
 	
-	public Voiture(int position)
+	public Voiture(byte position)
 	{
 		super(position);
 	}
@@ -17,7 +17,7 @@ public class Voiture extends Vehicule implements Cloneable{
 		return new Voiture(this);
 	}
 	@Override
-	public int getTaille() {
+	public byte getTaille() {
 		return Voiture.TAILLE;
 	}
 }

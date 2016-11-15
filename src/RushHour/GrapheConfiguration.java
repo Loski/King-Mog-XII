@@ -13,7 +13,7 @@ public class GrapheConfiguration {
 	private HashMap<Integer,HashMap<Integer,Integer>> liste_adj;
 	private ArrayList<Integer> indexOfSolutions; 
 	private ArrayList<RushHour> configurations;
-	private static final int[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
+	private static final byte[] all_direction = {Direction.FORWARD, Direction.BACKWARD};
 
 	public ArrayList<RushHour> getConfigurations() {
 		return configurations;
@@ -53,29 +53,29 @@ public class GrapheConfiguration {
 	public void creerGraphe(int index){	
 		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
-		int i = 0;
-		int taille_max = 6;
+		byte i = 0;
+		byte taille_max = 6;
 		for(Vehicule v :r.getVehicules())
 		{		
-			int position_initial = v.getPosition();
+			byte position_initial = v.getPosition();
 			
-			for(int direction:all_direction){
+			for(byte direction:all_direction){
 				if(v.getOrientation() == Orientation.HORIZONTAL){
 					if(direction == Direction.FORWARD)
-						taille_max = r.getNbColonne() - (position_initial%r.getNbColonne() + v.getTaille());
+						taille_max = (byte) (r.getNbColonne() - (position_initial%r.getNbColonne() + v.getTaille()));
 					else
-						taille_max = position_initial%r.getNbColonne();
+						taille_max = (byte) (position_initial%r.getNbColonne());
 				}
 				else{
 					if(direction == Direction.FORWARD)
-						taille_max = r.getNbLigne() -((int)position_initial/r.getNbColonne() + v.getTaille());
-					else taille_max = (int)position_initial/r.getNbColonne();
+						taille_max = (byte) (r.getNbLigne() -((int)position_initial/r.getNbColonne() + v.getTaille()));
+					else taille_max = (byte) ((int)position_initial/r.getNbColonne());
 				}
 					//boolean quit = false;
 					RushHour result = r;
 					for(int j=1;j<=taille_max;j++)
 					{						
-						result = result.deplacement_1(v,v.getHash()-1, direction);
+						result = result.deplacement_1(v, (v.getHash()-1), direction);
 						if(result==null || this.configurations.contains(result))
 						{
 							//quit=true;

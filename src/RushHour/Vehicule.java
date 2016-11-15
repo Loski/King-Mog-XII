@@ -5,16 +5,16 @@ import RushHour.RushHour.Orientation;
 
 public abstract class Vehicule implements Cloneable{
 
-	private int hash;
-	private int orientation;
-	private int position;
-	private static int compteur_voiture = 1;
+	private byte hash;
+	private byte orientation;
+	private byte position;
+	private static byte compteur_voiture = 1;
 	public Vehicule(Vehicule v){
 		this.hash=v.hash;
 		this.orientation=v.orientation;
 		this.setPosition(v.position);
 	}
-	public Vehicule(int position)
+	public Vehicule(byte position)
 	{
 		this.hash = compteur_voiture;
 		this.orientation= Orientation.NO_DIRECTION;
@@ -30,16 +30,16 @@ public abstract class Vehicule implements Cloneable{
 			return new Voiture(this);
 		return null;
 	}
-	public int getOrientation()
+	public byte getOrientation()
 	{
 		return this.orientation;
 	}
 	
 
 	
-	public abstract int getTaille();
+	public abstract byte getTaille();
 	
-	public void setOrientation(int orientation)
+	public void setOrientation(byte orientation)
 	{
 		this.orientation=orientation;
 	}
@@ -57,20 +57,20 @@ public abstract class Vehicule implements Cloneable{
 		return "Mon véhicule :" + this.hash + "\t";
 	}
 
-	public int getPosition() {
+	public byte getPosition() {
 		return position;
 	}
 
-	public void setPosition(int position) {
+	public void setPosition(byte position) {
 		this.position = position;
 	}
-	public int getHash() {
+	public byte getHash() {
 		return hash;
 	}
-	public void setHash(int hash) {
+	public void setHash(byte hash) {
 		this.hash = hash;
 	}
-	public static int getCompteur_voiture() {
+	public static byte getCompteur_voiture() {
 		return compteur_voiture;
 	}
 	

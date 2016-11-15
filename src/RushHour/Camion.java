@@ -1,11 +1,11 @@
 package RushHour;
 public class Camion extends Vehicule implements Cloneable{
-	private final static int TAILLE = 3;
+	private final static byte TAILLE = 3;
 	public Camion(Vehicule c){
 		super(c);
 	}
 	
-	public Camion(int position)
+	public Camion(byte position)
 	{
 		super(position);
 	}
@@ -14,7 +14,7 @@ public class Camion extends Vehicule implements Cloneable{
 	}
 
 	@Override
-	public int getTaille() {
+	public byte getTaille() {
 		return Camion.TAILLE;
 	}
 }
