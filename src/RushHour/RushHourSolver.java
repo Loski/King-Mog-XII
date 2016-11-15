@@ -129,7 +129,7 @@ public class RushHourSolver {
 		
 		if(probleme == 1)
 		{
-			Object[] result = DijkstraSolver.resolveRHM(g.getListe_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
+			Object[] result = DijkstraSolver.resolveRHM(g.getListe_adj(), g.getConfigurations());
 			nbCaseDeplace=(int) result[0];
 			this.sequence=(ArrayList<RushHour>) result[1];
 		}
@@ -137,7 +137,7 @@ public class RushHourSolver {
 		else
 		{
 			System.out.println(g.getConfigurations().size());
-			Object[] result = DijkstraSolver.resolveRHC(g.getListe_adj(), g.getConfigurations(), g.getIndexOfSolutions().get(0));
+			Object[] result = DijkstraSolver.resolveRHC(g.getListe_adj(), g.getConfigurations());
 			nbCaseDeplace=(int) result[0];
 			this.sequence=(ArrayList<RushHour>) result[1];
 		

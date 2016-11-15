@@ -66,11 +66,12 @@ public abstract class DijkstraSolver {
 			}		
 		}		
 		
-		int i=0;
-		
-		int[][] result = new int[2][];
+		int[][] result = new int[3][];
 		result[0] = distances; 
 		result[1] = predecesseurs;
+		int [] sommet = new int[1];
+		sommet[0] = nvSommetMarque;
+		result[2] = sommet;
 		
 		return result;
 	}
@@ -100,7 +101,7 @@ public abstract class DijkstraSolver {
 	}
 	
 	
-	public static Object[] resolveRHC(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static Object[] resolveRHC(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations)
 	{
 		long startTime = System.nanoTime();
 		
@@ -108,6 +109,7 @@ public abstract class DijkstraSolver {
 		
 		int[] predecesseurs = resultDij[1];
 		int[] distance = resultDij[0];
+		int indexOfSolution = resultDij[2][0];
 		
 		int nbCaseDeplace = distance[indexOfSolution];
 			
@@ -127,7 +129,7 @@ public abstract class DijkstraSolver {
 		return result;
 	}
 	
-	public static Object[] resolveRHM(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations,int indexOfSolution)
+	public static Object[] resolveRHM(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations)
 	{
 		HashMap<Integer,HashMap<Integer,Integer>> copy = new HashMap<Integer,HashMap<Integer,Integer>>();
 		
@@ -142,6 +144,7 @@ public abstract class DijkstraSolver {
 		
 		int[] predecesseurs = resultDij[1];
 		int[] distance = resultDij[0];
+		int indexOfSolution = resultDij[2][0];
 		
 		int nbCaseDeplace = distance[indexOfSolution];
 			
