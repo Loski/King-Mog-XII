@@ -36,6 +36,7 @@ public class RushHourSolverInteractive extends JFrame{
 	private RushHour r;
 	private GrapheConfiguration g;
 	private ArrayList<RushHour> sequence;
+	int currentConfig = 0;
 	
 	JPanel grille;
 	JPanel loadRushHour;
@@ -127,6 +128,43 @@ public class RushHourSolverInteractive extends JFrame{
 	    this.revalidate();
 	}
 	
+	public void nextConfiguration()
+	{		
+		if(this.currentConfig+1<this.sequence.size())
+		{
+			this.currentConfig++;
+			System.out.println(currentConfig);
+			this.r=this.sequence.get(currentConfig);	
+		}
+		
+		if(this.currentConfig==this.sequence.size())
+		{
+			//DIABLED NEXT
+		}		
+		
+		//SI PREVIOUS disabled : enabled
+			
+		this.drawGrille();
+	}
+	
+	public void previousConfiguration()
+	{
+		if(this.currentConfig-1>=0)
+		{
+			this.currentConfig--;
+			this.r=this.sequence.get(currentConfig);	
+		}
+		
+		if(this.currentConfig==0)
+		{
+			//DIABLED PREVIOUS
+		}
+		
+		//SI NEXT disabled : next Enabled
+		
+		this.drawGrille();
+	}
+	
 	public void afficherMenuRushHourSolver()
 	{
 		this.getContentPane().removeAll();
@@ -178,7 +216,6 @@ public class RushHourSolverInteractive extends JFrame{
 	        	
 	            String difficulty = table.getValueAt(table.getSelectedRow(), 0).toString();
 	            String name = table.getValueAt(table.getSelectedRow(), 1).toString();
-	            
 	            r = new RushHour("./puzzles/"+difficulty+"/"+name);
 	            drawGrille();
 	            getContentPane().remove(loadRushHour);
@@ -203,62 +240,81 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	public void drawGrille()
 	{
-		JPanel pan = new JPanel();
-	    pan.setLayout(new GridLayout(1, 3));
+		//JPanel pan = new JPanel();
+		//this.grille = new JPanel();
+		this.grille.removeAll();
+		this.grille.setLayout(new GridLayout(1, 3));
 	    
 	    JPanel grille = new JPanel();
 	    //System.out.println(this.r.getNbColonne());
 	    grille.setLayout(new GridLayout(this.r.getNbLigne(), this.r.getNbColonne()));
 		
-		for(int i=0;i<RushHour.DIMENSION_MATRICE;i++)
+	    String[] grilleStr= this.r.TabIntToStrTab();
+	    
+		for(int i=0;i<RushHour.TAILLE_MATRICE;i++)
 		{
-			for(int j=0;j<RushHour.DIMENSION_MATRICE;j++)
-			{
-				grille.add(new CaseRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),"0"));
-			}
+			grille.add(new CaseRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),grilleStr[i]));
 		}
 		
-		for(Vehicule v : this.r.getVehicules())
-		{
-			int caseVehicule = v.getPosition();
-			for(int i=0;i<v.getTaille();i++)
-			{
-				int n =0;
-				
-				if(v.getOrientation()==RushHour.HORIZONTAL)
-					n=i;
-				else
-					n=i*this.r.getNbLigne();
-				
-				((CaseRepresentation)grille.getComponent(caseVehicule+n)).setCode("0");
-				grille.getComponent(caseVehicule+n).repaint();
-			}
-
-		}
-		
-		pan.add(new JPanel());
-		pan.add(grille);
+		this.grille.add(new JPanel());
+		this.grille.add(grille);
 		
 		
 		JPanel grilleSortie = new JPanel();
 		grilleSortie.setLayout(new GridLayout(r.getNbLigne(),1));
 		for(int i=0;i<this.r.getNbLigne();i++)
 		{
-			if(i==(int)(RushHour.caseSortie)/this.r.getNbColonne())
+			if(i==(int)(RushHour.CASE_SORTIE)/this.r.getNbColonne())
 				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),"EXIT"));
 			else
 				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),null));
 		}
 		
-		pan.add(grilleSortie);
+		this.grille.add(grilleSortie);
 		
-		this.getContentPane().remove(this.grille);
-		this.grille = pan;
-		this.getContentPane().add(pan);;
+		//this.getContentPane().remove(this.grille);
+		//this.grille = pan;
+		//this.getContentPane().add(pan);;
 		
-		this.setContentPane(this.getContentPane());
+		//this.setContentPane(this.getContentPane());
+
+		this.grille.revalidate();
+		this.grille.repaint();
 		this.revalidate();
 		
+	}
+	
+	public void performRHCDij()
+	{
+		r.afficher();
+		this.g = new GrapheConfiguration(r);
+		Object[] result = DijkstraSolver.resolveRHC(g.getListe_adj(), g.getConfigurations());
+		this.sequence=(ArrayList<RushHour>) result[1];
+		
+		JPanel pan =  new JPanel();
+		JButton previous = new JButton("PREVIOUS");
+		JButton next = new JButton("NEXT");
+		previous.setEnabled(false);
+		
+		
+		next.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  nextConfiguration();
+				  } 
+				} );
+		
+		previous.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  previousConfiguration();
+				  } 
+				} );
+	  
+		
+		pan.add(previous);
+		pan.add(next);
+		
+		this.getContentPane().add(pan);
+		this.revalidate();
 	}
 	
 	public JMenuBar createMenu()
@@ -281,6 +337,20 @@ public class RushHourSolverInteractive extends JFrame{
 		  
 		  JMenuItem RHMGuro = new JMenuItem("GUROBI");
 		  JMenuItem RHMDij = new JMenuItem("Avec Dijkstra");
+		  
+		  
+		  RHCDij.addActionListener(new ActionListener() { 
+				  public void actionPerformed(ActionEvent e) { 
+					    performRHCDij();
+					  } 
+					} );
+		  
+		  RHCDij.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				    
+				  } 
+				} );
+		  
 		  
 		  menuFichier.add(loadFile);
 		  

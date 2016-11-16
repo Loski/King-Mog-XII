@@ -50,6 +50,7 @@ public class GrapheConfiguration {
 	public void creerGraphe(int index){	
 		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
+		byte i = 0;
 		byte taille_max = 6;
 		for(Vehicule v :r.getVehicules())
 		{		
@@ -69,9 +70,11 @@ public class GrapheConfiguration {
 				}
 					//boolean quit = false;
 					RushHour result = r;
-					for( byte j=1; j<=taille_max; j++)
-					{						
-						result = result.deplacement_1(v, (v.getHash()-1), direction);
+					for(byte j=1;j<=taille_max;j++)
+					{	
+						Vehicule vDeplacee=(Vehicule) result.getVehicules().get(i);
+						result = result.deplacement_1(vDeplacee, (vDeplacee.getHash()-1), direction);
+						
 						if(result==null || this.configurations.contains(result))
 						{
 							//quit=true;
@@ -87,9 +90,13 @@ public class GrapheConfiguration {
 							}*/
 						}
 					}
-				}
+					
+				/*if(quit)
+					break;*/
 			}
+			i++;
 		}
+	}
 	
 	public void addFirstSommet(RushHour r)
 	{
@@ -107,10 +114,10 @@ public class GrapheConfiguration {
 		
 		int lastIndex=this.configurations.size();
 		
-		this.configurations.add(r);
+			this.configurations.add(r);
 		
-		if(r.isSolution())
-			indexOfSolutions.add(lastIndex);
+			if(r.isSolution())
+				indexOfSolutions.add(lastIndex);
 		
 		this.liste_adj.put(Integer.valueOf(lastIndex), new HashMap<>());
 		

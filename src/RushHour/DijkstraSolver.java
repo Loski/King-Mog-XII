@@ -102,7 +102,7 @@ public abstract class DijkstraSolver {
 	
 	
 	public static Object[] resolveRHC(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations)
-	{
+	{	
 		long startTime = System.nanoTime();
 		
 		int[][] resultDij = resolve(liste_adj, configurations);
@@ -135,12 +135,27 @@ public abstract class DijkstraSolver {
 		
 		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
 			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
-				sommet.setValue(1);
+				System.out.println(successeurs.getKey()+" -> "+sommet.getKey()+" = "+sommet.getValue());
+			}
+			System.out.println("");
+		}
+		
+		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
+			
+			copy.put(successeurs.getKey(),new HashMap<Integer,Integer>());
+			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
+				copy.get(successeurs.getKey()).put(sommet.getValue(),1);
 			}
 		}
 		
+		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : copy.entrySet()) {
+			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
+				System.out.println(successeurs.getKey()+" -> "+sommet.getKey()+" = "+sommet.getValue());
+			}
+			System.out.println("");
+		}
 		
-		int[][] resultDij = resolve(liste_adj, configurations);
+		int[][] resultDij = resolve(copy, configurations);
 		
 		int[] predecesseurs = resultDij[1];
 		int[] distance = resultDij[0];
