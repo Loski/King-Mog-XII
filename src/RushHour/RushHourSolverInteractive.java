@@ -232,7 +232,7 @@ public class RushHourSolverInteractive extends JFrame{
 		grilleSortie.setLayout(new GridLayout(r.getNbLigne(),1));
 		for(int i=0;i<this.r.getNbLigne();i++)
 		{
-			if(i==(int)(RushHour.caseSortie)/this.r.getNbColonne())
+			if(i==(int)(RushHour.CASE_SORTIE)/this.r.getNbColonne())
 				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),"EXIT"));
 			else
 				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),null));

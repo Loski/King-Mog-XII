@@ -9,15 +9,10 @@ import java.util.StringTokenizer;
 
 public class RushHour implements Cloneable {
 
-	public static final byte caseSortie = 16;
+	public static final byte CASE_SORTIE = 16;
 	public static final byte EMPTY = 0;
 	public static final byte DIMENSION_MATRICE = 6;
 	public static final byte TAILLE_MATRICE = 36;
-	public static byte indice_solution_g;
-	
-	private byte[] grille;
-	
-	private ArrayList<Vehicule> vehicules;
 	public final static byte NO_DIRECTION = -1;
 	public final static byte VERTICAL = 1;
 	public final static byte HORIZONTAL = 0;
@@ -25,6 +20,13 @@ public class RushHour implements Cloneable {
 	public final static byte DOWN = DIMENSION_MATRICE;
 	public final static byte FORWARD = 1;
 	public final static byte BACKWARD = -1;
+	
+	
+	public static byte indice_solution_g;
+	
+	private byte[] grille;
+	private ArrayList<Vehicule> vehicules;
+
 
 
 
@@ -259,7 +261,7 @@ public class RushHour implements Cloneable {
 	
 	public boolean isSolution()
 	{
-		if(this.vehicules.get(indice_solution_g).getPosition() == RushHour.caseSortie)
+		if(this.vehicules.get(indice_solution_g).getPosition() == RushHour.CASE_SORTIE)
 			return true;
 		else
 			return false;
@@ -286,11 +288,12 @@ public class RushHour implements Cloneable {
 	public void setVehicules(ArrayList<Vehicule> vehicules) {
 		this.vehicules = vehicules;
 	}
-	public String[][] TabIntToStrTab(){
+	
+	public String[] TabIntToStrTab(){
 		int compteur_voiture = 0;
 		int compteur_camion = 0;
 		String nom;
-		String[][] str= {{"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}, {"0", "0", "0", "0","0", "0"}};
+		String[] str= {"0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0","0", "0", "0", "0","0", "0"};
 		for(Vehicule v: this.vehicules){
 			if(v instanceof Camion){
 				compteur_camion++;
@@ -302,10 +305,10 @@ public class RushHour implements Cloneable {
 			}
 			for(int i = 0; i < v.getTaille(); i++){
 				if(v.getOrientation() == RushHour.HORIZONTAL){
-					str[(byte)v.getPosition()/RushHour.DIMENSION_MATRICE][v.getPosition()%RushHour.DIMENSION_MATRICE + i] = nom;
+					str[v.getPosition()+i] = nom;
 				}
 				else{
-					str[(byte)v.getPosition()/RushHour.DIMENSION_MATRICE+i][v.getPosition()%RushHour.DIMENSION_MATRICE] = nom;
+					str[v.getPosition() + i * RushHour.DIMENSION_MATRICE] = nom;
 				}
 			}
 		}
