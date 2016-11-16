@@ -174,7 +174,6 @@ public class RushHourSolver {
 		{
 			System.out.println(String.format("-------ETAPE(%d)---------",i));
 			System.out.println((rh));
-			//Dire quelle pièce a bougée ??
 			System.out.println("-----------------------");
 			waitForNext();
 			i++;

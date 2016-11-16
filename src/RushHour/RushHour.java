@@ -80,13 +80,12 @@ public class RushHour implements Cloneable {
 		
 	
 	private void deplacementRushHour(Vehicule vBase, int index, byte direction){		
-		
 		supprimerVehiculeGrille(vBase, index);
 		//Vehicule v = this.vehicules.get(index);
 		Vehicule v = (Vehicule) vBase.clone();
 		byte old_value = v.getPosition();
 		if(v.getOrientation() == RushHour.HORIZONTAL)
-			v.setPosition((byte) (old_value + direction)); //OLD + DEPLACEMENTS
+			v.setPosition( (byte) (old_value + direction)); //OLD + DEPLACEMENTS
 		else
 			v.setPosition((byte) (old_value +(direction*DIMENSION_MATRICE)));
 		this.vehicules.set(index, v);
@@ -104,14 +103,17 @@ public class RushHour implements Cloneable {
 	public void modifieVehiculeGrille(Vehicule v, int index, byte new_value){
 		int initialPosition = v.getPosition();
 		//this.grille = Arrays.copyOf(this.grille, RushHour.TAILLE_MATRICE);
+
+		byte taille = v.getTaille();
+
 		if(v.getOrientation() == RushHour.HORIZONTAL){
-			for(byte i = 0; i < v.getTaille(); i++){
+			for(byte i = 0; i < taille; i++){
 				this.grille[initialPosition + i] = new_value;
 			}
 		}
 		else{
-			for(byte i = 0; i < v.getTaille(); i++){
-				this.grille[initialPosition + i * getNbLigne()] = new_value;
+			for(byte i = 0; i < taille; i++){
+				this.grille[initialPosition + i * RushHour.DOWN] = new_value;
 			}
 		}
 	}
@@ -202,7 +204,7 @@ public class RushHour implements Cloneable {
 		{			
 			for(int j=0;j<RushHour.DIMENSION_MATRICE;j++)
 			{
-				System.out.print(this.grille[i*getNbColonne() + j]+"\t");
+				System.out.print(this.grille[i * RushHour.DIMENSION_MATRICE + j]+"\t");
 			}
 			
 			System.out.println();
@@ -257,7 +259,7 @@ public class RushHour implements Cloneable {
 	
 	public boolean isSolution()
 	{
-		if(this.vehicules.get(indice_solution_g).getPosition() ==RushHour.caseSortie)
+		if(this.vehicules.get(indice_solution_g).getPosition() == RushHour.caseSortie)
 			return true;
 		else
 			return false;

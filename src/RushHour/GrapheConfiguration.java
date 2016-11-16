@@ -59,14 +59,14 @@ public class GrapheConfiguration {
 			for(byte direction:all_direction){
 				if(v.getOrientation() == RushHour.HORIZONTAL){
 					if(direction == RushHour.FORWARD)
-						taille_max = (byte) (r.getNbColonne() - (position_initial%r.getNbColonne() + v.getTaille()));
+						taille_max = (byte) (RushHour.DIMENSION_MATRICE - (position_initial%RushHour.DIMENSION_MATRICE + v.getTaille()));
 					else
-						taille_max = (byte) (position_initial%r.getNbColonne());
+						taille_max = (byte) (position_initial%RushHour.DIMENSION_MATRICE);
 				}
 				else{
 					if(direction == RushHour.FORWARD)
-						taille_max = (byte) (r.getNbLigne() -((int)position_initial/r.getNbColonne() + v.getTaille()));
-					else taille_max = (byte) ((int)position_initial/r.getNbColonne());
+						taille_max = (byte) (RushHour.DIMENSION_MATRICE -((int)position_initial/RushHour.DIMENSION_MATRICE + v.getTaille()));
+					else taille_max = (byte) ((int)position_initial/RushHour.DIMENSION_MATRICE);
 				}
 					//boolean quit = false;
 					RushHour result = r;
