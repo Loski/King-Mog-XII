@@ -103,7 +103,7 @@ public class RushHour implements Cloneable {
 	
 	public void modifieVehiculeGrille(Vehicule v, int index, byte new_value){
 		int initialPosition = v.getPosition();
-		this.grille = Arrays.copyOf(this.grille, RushHour.TAILLE_MATRICE);
+		//this.grille = Arrays.copyOf(this.grille, RushHour.TAILLE_MATRICE);
 		if(v.getOrientation() == RushHour.HORIZONTAL){
 			for(byte i = 0; i < v.getTaille(); i++){
 				this.grille[initialPosition + i] = new_value;
@@ -118,10 +118,10 @@ public class RushHour implements Cloneable {
 	
 	public RushHour(RushHour r){	
 		this.grille = Arrays.copyOf(r.getGrille(),  RushHour.TAILLE_MATRICE);
-		this.vehicules = new ArrayList<Vehicule>();
-		for(Vehicule v : r.vehicules){
+		this.vehicules = (ArrayList<Vehicule>) r.vehicules.clone();
+		/*for(Vehicule v : r.vehicules){
 			this.vehicules.add((Vehicule) v.clone());
-		}
+		}*/
 	}
 	public RushHour(){}
 	public RushHour(String filename)
@@ -212,10 +212,10 @@ public class RushHour implements Cloneable {
 		try {
 			RushHour r = new RushHour();
 			r.grille = Arrays.copyOf(this.grille, RushHour.TAILLE_MATRICE);
-			r.vehicules = new ArrayList<Vehicule>();
-			for(Vehicule v : this.vehicules){
+			r.vehicules = (ArrayList<Vehicule>) this.vehicules.clone();
+			/*for(Vehicule v : this.vehicules){
 				r.vehicules.add((Vehicule) v.clone());
-			}
+			}*/
 			
 			return r;
 		} catch (Exception e) {

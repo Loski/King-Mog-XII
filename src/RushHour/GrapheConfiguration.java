@@ -37,7 +37,7 @@ public class GrapheConfiguration {
 		intersect.add(-1);
 		this.matrice_adj.add(intersect);*/
 		
-		addSommet(configDepart);
+		addFirstSommet(configDepart);
 		int nodeToTest = 0;
 		do{
 			creerGraphe(nodeToTest);
@@ -80,13 +80,12 @@ public class GrapheConfiguration {
 						}
 						else
 						{
-							addSommet(result);
-							int lastIndex=this.configurations.size()-1;
-							if(index!=lastIndex)
+							addNextSommet(result,index,j);
+							/*if(index!=lastIndex)
 							{
 								setSuccesseur(index, lastIndex,j);
 								setSuccesseur(lastIndex,index,j);
-							}
+							}*/
 						}
 					}
 					
@@ -97,24 +96,42 @@ public class GrapheConfiguration {
 		}
 	}
 	
-	public void addSommet(RushHour r)
+	public void addFirstSommet(RushHour r)
+	{
+		this.configurations.add(r);
+		
+		if(r.isSolution())
+			indexOfSolutions.add(0);
+		
+		this.liste_adj.put(Integer.valueOf(0), new HashMap<>());
+	}
+	
+	public void addNextSommet(RushHour r,int previousNode,int costToReach)
 	{
 		//System.out.println(this.configurations.size());
-
-		if(r.isSolution())
-			indexOfSolutions.add(this.configurations.size());
+		
+		int lastIndex=this.configurations.size();
 		
 		this.configurations.add(r);
 		
-		this.liste_adj.put(Integer.valueOf(this.configurations.size()-1), new HashMap<>());
+		if(r.isSolution())
+			indexOfSolutions.add(lastIndex);
+		
+		this.liste_adj.put(Integer.valueOf(lastIndex), new HashMap<>());
+		
+		HashMap<Integer,Integer> succ = this.liste_adj.get(Integer.valueOf(previousNode));
+		succ.put(Integer.valueOf(lastIndex), costToReach);
+		
+		HashMap<Integer,Integer> succReverse = this.liste_adj.get(Integer.valueOf(lastIndex));
+			succReverse.put(Integer.valueOf(previousNode), costToReach);
 	}
 	
-	public void setSuccesseur(int sommetPere, int sommetFils, int cout)
+	/*public void setSuccesseur(int sommetPere, int sommetFils, int cout)
 	{		
 		HashMap<Integer,Integer> succ = this.liste_adj.get(Integer.valueOf(sommetPere));
 		if(succ!=null)
 			succ.put(Integer.valueOf(sommetFils), cout);
-	}
+	}*/
 	
 	public void afficherMatrice()
 	{		
