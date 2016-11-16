@@ -50,7 +50,6 @@ public class GrapheConfiguration {
 	public void creerGraphe(int index){	
 		//System.out.println(configurations.size());
 		RushHour r = this.configurations.get(index);
-		byte i = 0;
 		byte taille_max = 6;
 		for(Vehicule v :r.getVehicules())
 		{		
@@ -70,7 +69,7 @@ public class GrapheConfiguration {
 				}
 					//boolean quit = false;
 					RushHour result = r;
-					for(int j=1;j<=taille_max;j++)
+					for( byte j=1; j<=taille_max; j++)
 					{						
 						result = result.deplacement_1(v, (v.getHash()-1), direction);
 						if(result==null || this.configurations.contains(result))
@@ -88,13 +87,9 @@ public class GrapheConfiguration {
 							}*/
 						}
 					}
-					
-				/*if(quit)
-					break;*/
+				}
 			}
-			i++;
 		}
-	}
 	
 	public void addFirstSommet(RushHour r)
 	{
