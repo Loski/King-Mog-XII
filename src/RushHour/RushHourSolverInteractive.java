@@ -41,6 +41,11 @@ public class RushHourSolverInteractive extends JFrame{
 	JPanel grille;
 	JPanel loadRushHour;
 	
+	JButton nextButton;
+	JButton previousButton;
+	
+	JLabel currentConfigDisplay;
+	
 	public RushHourSolverInteractive()
 	{
 		super();
@@ -133,17 +138,19 @@ public class RushHourSolverInteractive extends JFrame{
 		if(this.currentConfig+1<this.sequence.size())
 		{
 			this.currentConfig++;
-			System.out.println(currentConfig);
 			this.r=this.sequence.get(currentConfig);	
 		}
 		
-		if(this.currentConfig==this.sequence.size())
+		if(this.currentConfig+1>=this.sequence.size())
 		{
 			//DIABLED NEXT
+			this.nextButton.setEnabled(false);
 		}		
 		
 		//SI PREVIOUS disabled : enabled
-			
+		this.previousButton.setEnabled(true);
+		
+		this.currentConfigDisplay.setText("ETAPE ("+this.currentConfig+")");		
 		this.drawGrille();
 	}
 	
@@ -158,10 +165,14 @@ public class RushHourSolverInteractive extends JFrame{
 		if(this.currentConfig==0)
 		{
 			//DIABLED PREVIOUS
+			this.previousButton.setEnabled(false);
 		}
+		
+		this.nextButton.setEnabled(true);
 		
 		//SI NEXT disabled : next Enabled
 		
+		this.currentConfigDisplay.setText("ETAPE ("+this.currentConfig+")");
 		this.drawGrille();
 	}
 	
@@ -284,37 +295,45 @@ public class RushHourSolverInteractive extends JFrame{
 		
 	}
 	
-	public void performRHCDij()
+	public void afficherResultat(Object[] result)
 	{
-		r.afficher();
-		this.g = new GrapheConfiguration(r);
-		Object[] result = DijkstraSolver.resolveRHC(g.getListe_adj(), g.getConfigurations());
 		this.sequence=(ArrayList<RushHour>) result[1];
 		
 		JPanel pan =  new JPanel();
-		JButton previous = new JButton("PREVIOUS");
-		JButton next = new JButton("NEXT");
-		previous.setEnabled(false);
+		this.previousButton = new JButton("PREVIOUS");
+		this.nextButton = new JButton("NEXT");
+		this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+")");
+		previousButton.setEnabled(false);
 		
-		
-		next.addActionListener(new ActionListener() { 
+		nextButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  nextConfiguration();
 				  } 
 				} );
 		
-		previous.addActionListener(new ActionListener() { 
+		previousButton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
 				  previousConfiguration();
 				  } 
 				} );
 	  
 		
-		pan.add(previous);
-		pan.add(next);
+		pan.add(previousButton);
+		pan.add(this.currentConfigDisplay);
+		pan.add(nextButton);
 		
 		this.getContentPane().add(pan);
 		this.revalidate();
+	}
+	
+	
+	public Object[] performRHCDij()
+	{
+		r.afficher();
+		this.g = new GrapheConfiguration(r);
+		Object[] result = DijkstraSolver.resolveRHC(g.getListe_adj(), g.getConfigurations());
+
+		return result;
 	}
 	
 	public JMenuBar createMenu()
@@ -341,7 +360,8 @@ public class RushHourSolverInteractive extends JFrame{
 		  
 		  RHCDij.addActionListener(new ActionListener() { 
 				  public void actionPerformed(ActionEvent e) { 
-					    performRHCDij();
+					    Object[] result = performRHCDij();
+					    afficherResultat(result);
 					  } 
 					} );
 		  
