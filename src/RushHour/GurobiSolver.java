@@ -164,14 +164,29 @@ public class GurobiSolver {
 			int v= 0;
 
 			// Un véhicule par case par tours 
-				for(int k = 0; k < this.N; k++)
+			
+			
+				/*for(int k = 0; k < this.N; k++)
 					for(int i = 0; i < iMax;i++){
 						expr = new GRBLinExpr();
 						for(int j = 0; j < jMax; j++){
 							expr.addTerm(1.0, this.Z[i][j][k]);
 						}
 						model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "marq"+v);
+					}*/
+			
+			for(int j = 0; j < jMax; j++)
+				for(int k = 0; k < this.N;k++)
+				{
+					expr = new GRBLinExpr();
+					
+					for(int i=0;i<iMax;i++)
+					{
+						expr.addTerm(1.0, Z[i][j][k]);
 					}
+					
+					model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_1VehiculeParCase_"+"_"+j+"_"+k);
+				}
 				
 				GRBLinExpr obj = new GRBLinExpr();
 				for(int i=0;i<iMax;i++)
