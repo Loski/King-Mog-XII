@@ -1,5 +1,6 @@
 package RushHour;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -58,7 +59,23 @@ public class GurobiSolver {
 						Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
 	                }
 	}
-	
+	public int[] calculeP(int j, int l, Voiture v){
+		int tmpMax = Math.max(j, l);
+		int tmpMin = Math.min(j, l);
+		j = tmpMin;
+		l = tmpMax;
+		int saut = 1;
+		if(v.getOrientation() == RushHour.VERTICAL)
+			saut = 6;
+		int tab[] = new int[6];
+		int i = 0;
+		while(j  < l){
+			tab[i] = j;
+			i++;
+			j+=saut;
+		}
+		return tab;		
+	}
 	public void solve()
 	{
 		try
@@ -143,21 +160,33 @@ public class GurobiSolver {
 						this.model.addConstr(expr, GRB.LESS_EQUAL,somme, "C_PosVehicule_"+i+"_"+j+"_"+k);
 					}
 			
-			//Contrainte : un seul véhicule par marqueur
 
-			int v = 0;
+			int v= 0;
 
-			for(int i = 0; i < iMax;i++){
-				expr = new GRBLinExpr();
-				for(int j = 0; j < jMax; j++){
-					for(int k = 0; k < this.N; k++)
-					expr.addTerm(1.0, this.X[i][j][k]);
-				}
-				model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "marq"+v);
-			}
-			
-			//Contrainte : ne pas toucher qqchose pendant un déplacement
-			
+			// Un véhicule par case par tours 
+				for(int k = 0; k < this.N; k++)
+					for(int i = 0; i < iMax;i++){
+						expr = new GRBLinExpr();
+						for(int j = 0; j < jMax; j++){
+							expr.addTerm(1.0, this.Z[i][j][k]);
+						}
+						model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "marq"+v);
+					}
+				
+				GRBLinExpr obj = new GRBLinExpr();
+				for(int i=0;i<iMax;i++)
+		            for(int j=0;j<jMax;j++)
+		                for(int l=0;l<lMax;l++)
+		                    for(int k=0;k<N;k++){
+								
+		                    }	
+
+
+		    //Contrainte : ne pas toucher qqchose pendant un déplacement
+
+
+
+		                    
 			this.model.optimize();
 			
 			this.model.dispose();
