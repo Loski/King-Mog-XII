@@ -39,7 +39,7 @@ public class GurobiSolver {
     }*/
 	private void initialisation() throws GRBException{
 		
-		//Crï¿½ation des variables et de la fonction objectif		
+		//Création des variables et de la fonction objectif		
 		
 		GRBLinExpr obj = new GRBLinExpr();
 		for(int i=0;i<iMax;i++)
@@ -76,7 +76,7 @@ public class GurobiSolver {
 			expr.addTerm(1.0,X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N-1]);
 			this.model.addConstr(expr,  GRB.EQUAL, 1.0,  "C_Victoire");
 			
-			//Contrainte : 1 vï¿½hicule dï¿½placï¿½e par mouvement
+			//Contrainte : 1 véhicule déplacée par mouvement
 			for(int k=1;k<N;k++)
 			{
 				expr = new GRBLinExpr();
@@ -111,7 +111,7 @@ public class GurobiSolver {
 					}
 			
 			
-			//Contrainte : dï¿½finir les positions d'un vï¿½hicule
+			//Contrainte : définir les positions d'un véhicule
 			
 			for(int i=0;i<iMax;i++)
 				for(int j=0;j<jMax;j++)
@@ -143,8 +143,9 @@ public class GurobiSolver {
 						this.model.addConstr(expr, GRB.LESS_EQUAL,somme, "C_PosVehicule_"+i+"_"+j+"_"+k);
 					}
 			
-			//Contrainte : un seul vï¿½hicule par marqueur
+			//Contrainte : un seul véhicule par marqueur
 
+			int v = 0;
 
 			for(int i = 0; i < iMax;i++){
 				expr = new GRBLinExpr();
@@ -155,7 +156,7 @@ public class GurobiSolver {
 				model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "marq"+v);
 			}
 			
-			//Contrainte : ne pas toucher qqchose pendant un dï¿½placement
+			//Contrainte : ne pas toucher qqchose pendant un déplacement
 			
 			this.model.optimize();
 			
