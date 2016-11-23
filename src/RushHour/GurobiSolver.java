@@ -90,6 +90,44 @@ public class GurobiSolver {
 		            		}
 			}
 			
+			//Contrainte : MAJ du marqueur
+			
+			//Contrainte : définir les positions d'un véhicule
+			
+			for(int i=0;i<iMax;i++)
+				for(int j=0;j<jMax;j++)
+					for(int k=0;k<N;k++)
+					{
+						expr = new GRBLinExpr();
+						
+						Vehicule vi = this.rh.getVehicules().get(i);
+						int tailleVehicule = vi.getTaille();
+						
+						int [] mij = new int[tailleVehicule];
+						
+						if(vi.getOrientation()==RushHour.HORIZONTAL)
+							for(int s=0;s<tailleVehicule;s++)
+								mij[s]=j+s;
+						else
+							for(int s=0;s<tailleVehicule;s++)
+								mij[s]=j+s*RushHour.DIMENSION_MATRICE;
+						
+						double somme = 0;
+						
+						for(Integer m : mij)
+						{
+							//A VERIFIER
+							somme+=Z[i][m][k].get(GRB.DoubleAttr.X);
+						}
+						
+						expr.addTerm((double)tailleVehicule,X[i][j][k]);
+						this.model.addConstr(expr, GRB.LESS_EQUAL,somme, "C_PosVehicule_"+i+"_"+j+"_"+k);
+					}
+			
+			//Contrainte : un seul véhicule par marqueur
+			
+			//Contrainte : ne pas toucher qqchose pendant un déplacement
+			
 			this.model.optimize();
 			
 			this.model.dispose();
