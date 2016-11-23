@@ -24,14 +24,6 @@ public class GurobiSolver {
     private int nombreVoiture;
     
 	public GurobiSolver(RushHour rh, int N) {
-		try {
-			this.env = new GRBEnv();
-			this.model = new GRBModel(env);
-
-		} catch (GRBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		this.rh = rh;
 		this.N = N;
 		this.iMax = rh.getVehicules().size();
@@ -45,29 +37,25 @@ public class GurobiSolver {
     public boolean IsWin(){
     	return (this.X[this.rh.indice_solution_g][RushHour.CASE_SORTIE][N] == 1)? true: false;
     }*/
-	public void initialisation(){
+	private void initialisation() throws GRBException{
 		
+		//Création des variables et de la fonction objectif		
+		
+		GRBLinExpr obj = new GRBLinExpr();
 		for(int i=0;i<iMax;i++)
             for(int j=0;j<jMax;j++)
                 for(int l=0;l<lMax;l++)
                     for(int k=0;k<N;k++){
-                        try {
-							Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y_"+i+"_"+j+"_"+l+"_"+k);
-						} catch (GRBException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y_"+i+"_"+j+"_"+l+"_"+k);
+						obj.addTerm(1.0,Y[i][j][l][k]);
+						model.setObjective(obj, GRB.MINIMIZE);
                     }
+		
 		for(int i=0;i<iMax;i++)
 	        for(int j=0;j<jMax;j++)
 	            for(int k=0;k<N;k++){
-	                    try {
-							X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
-							Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
-						} catch (GRBException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
+						Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
 	                }
 	}
 	
@@ -82,6 +70,31 @@ public class GurobiSolver {
         model.addConstr(expr, comparaison, compareTo, nomContrainte);
     }
 	
+	public void solve(RushHour r, int N)
+	{
+		try
+		{
+			this.env = new GRBEnv("RH.log");
+			this.model = new GRBModel(env);
+			
+			this.initialisation();
+			
+			HashMap<GRBVar,Double> vars;
+			
+			//Contrainte de victoire
+			vars = new HashMap<GRBVar,Double>();
+			vars.put(X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N],1.0);
+			this.addContrainte(vars, GRB.EQUAL, 1.0, "cVictoire");
+			
+			
+			this.model.optimize();
+			
+			this.model.dispose();
+			this.env.dispose();
+			
+		}catch(Exception e){System.out.println(e.getMessage());}
+		
+	}
 	
 	// Y Initialisation
 	/*	for(int i = 0; i < this.nombreVoiture; i++){
