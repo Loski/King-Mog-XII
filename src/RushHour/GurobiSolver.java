@@ -59,6 +59,19 @@ public class GurobiSolver {
 						X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
 						Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
 	                }
+		for(int i = 0; i <iMax; i++){
+			int position_initial = this.rh.getVehicules().get(i).getPosition(); 
+			X[i][position_initial][0].set(GRB.DoubleAttr.X, 1.0);
+			int saut = 6;
+			if(this.rh.getVehicules().get(i).getOrientation() == RushHour.HORIZONTAL)
+				saut = 1;
+			int taille = this.rh.getVehicules().get(i).getTaille();
+			for(int j = this.rh.getVehicules().get(i).getPosition(); j < position_initial + saut * taille ;j+=saut){
+				Z[i][j][0].set(GRB.DoubleAttr.X, 1.0);
+			}
+				
+		}
+		
 	}
 	public int[] calculeP(int j, int l, Vehicule v){
 		int tmpMax = Math.max(j, l);
