@@ -59,17 +59,6 @@ public class GurobiSolver {
 	                }
 	}
 	
-    private void addContrainte(HashMap<GRBVar,Double> vars,char comparaison,double compareTo,String nomContrainte) throws GRBException
-    {
-        GRBLinExpr expr = new GRBLinExpr();
-        for (Entry<GRBVar, Double> var : vars.entrySet())
-        {
-            expr.addTerm(var.getValue().doubleValue(),var.getKey());
-        }
-        
-        model.addConstr(expr, comparaison, compareTo, nomContrainte);
-    }
-	
 	public void solve()
 	{
 		try
@@ -79,13 +68,27 @@ public class GurobiSolver {
 			
 			this.initialisation();
 			
-			HashMap<GRBVar,Double> vars;
+			//AJOUT CONTRAINTES
+			
+			GRBLinExpr expr = new GRBLinExpr();
 			
 			//Contrainte de victoire
-			vars = new HashMap<GRBVar,Double>();
-			vars.put(X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N],1.0);
-			this.addContrainte(vars, GRB.EQUAL, 1.0, "cVictoire");
+			expr.addTerm(1.0,X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N-1]);
+			this.model.addConstr(expr,  GRB.EQUAL, 1.0,  "C_Victoire");
 			
+			//Contrainte : 1 véhicule déplacée par mouvement
+			for(int k=0;k<N;k++)
+			{
+				expr = new GRBLinExpr();
+				
+				for(int i=0;i<iMax;i++)
+					for(int j=0;j<jMax;j++)
+						for(int l=0;l<lMax;l++)
+		            		{	
+		            			expr.addTerm(1.0,Y[i][j][l][k]);
+		            			this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);	
+		            		}
+			}
 			
 			this.model.optimize();
 			
