@@ -59,17 +59,6 @@ public class GurobiSolver {
 	                }
 	}
 	
-    private void addContrainte(HashMap<GRBVar,Double> vars,char comparaison,double compareTo,String nomContrainte) throws GRBException
-    {
-        GRBLinExpr expr = new GRBLinExpr();
-        for (Entry<GRBVar, Double> var : vars.entrySet())
-        {
-            expr.addTerm(var.getValue().doubleValue(),var.getKey());
-        }
-        
-        model.addConstr(expr, comparaison, compareTo, nomContrainte);
-    }
-	
 	public void solve()
 	{
 		try
@@ -79,22 +68,73 @@ public class GurobiSolver {
 			
 			this.initialisation();
 			int v = 0;
-			HashMap<GRBVar,Double> vars;
+			
+			GRBLinExpr expr = new GRBLinExpr();
 			
 			//Contrainte de victoire
-			vars = new HashMap<GRBVar,Double>();
-			vars.put(X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N-1],1.0);
-			this.addContrainte(vars, GRB.EQUAL, 1.0, "cVictoire");
+			expr.addTerm(1.0,X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N-1]);
+			this.model.addConstr(expr,  GRB.EQUAL, 1.0,  "C_Victoire");
 			
-			// Contrainte 1 marqueur par voiture
+			//Contrainte : 1 v�hicule d�plac�e par mouvement
+			for(int k=0;k<N;k++)
+			{
+				expr = new GRBLinExpr();
+				
+				for(int i=0;i<iMax;i++)
+					for(int j=0;j<jMax;j++)
+						for(int l=0;l<lMax;l++)
+		            		{	
+		            			expr.addTerm(1.0,Y[i][j][l][k]);
+		            			this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);	
+		            		}
+			}
+			
+			//Contrainte : MAJ du marqueur
+			
+			//Contrainte : d�finir les positions d'un v�hicule
+			
+			for(int i=0;i<iMax;i++)
+				for(int j=0;j<jMax;j++)
+					for(int k=0;k<N;k++)
+					{
+						expr = new GRBLinExpr();
+						
+						Vehicule vi = this.rh.getVehicules().get(i);
+						int tailleVehicule = vi.getTaille();
+						
+						int [] mij = new int[tailleVehicule];
+						
+						if(vi.getOrientation()==RushHour.HORIZONTAL)
+							for(int s=0;s<tailleVehicule;s++)
+								mij[s]=j+s;
+						else
+							for(int s=0;s<tailleVehicule;s++)
+								mij[s]=j+s*RushHour.DIMENSION_MATRICE;
+						
+						double somme = 0;
+						
+						for(Integer m : mij)
+						{
+							//A VERIFIER
+							somme+=Z[i][m][k].get(GRB.DoubleAttr.X);
+						}
+						
+						expr.addTerm((double)tailleVehicule,X[i][j][k]);
+						this.model.addConstr(expr, GRB.LESS_EQUAL,somme, "C_PosVehicule_"+i+"_"+j+"_"+k);
+					}
+			
+			//Contrainte : un seul v�hicule par marqueur
+			
+			//Contrainte : ne pas toucher qqchose pendant un d�placement
+
 			
 			for(int i = 0; i < iMax;i++){
-				GRBLinExpr expr = new GRBLinExpr();
+				expr = new GRBLinExpr();
 				for(int j = 0; j < jMax; j++){
 					for(int k = 0; k < this.N; k++)
 					expr.addTerm(1.0, this.X[i][j][k]);
 				}
-				model.addConstr(expr, GRB.LESS_EQUAL, arg2, "marq"+v);
+				model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "marq"+v);
 			}
 			this.model.optimize();
 			
