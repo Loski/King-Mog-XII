@@ -70,7 +70,7 @@ public class GurobiSolver {
         model.addConstr(expr, comparaison, compareTo, nomContrainte);
     }
 	
-	public void solve(RushHour r, int N)
+	public void solve()
 	{
 		try
 		{
