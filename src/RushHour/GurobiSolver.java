@@ -67,7 +67,8 @@ public class GurobiSolver {
 			this.model = new GRBModel(env);
 			
 			this.initialisation();
-			int v = 0;
+			
+			//AJOUT CONTRAINTES
 			
 			GRBLinExpr expr = new GRBLinExpr();
 			
@@ -76,7 +77,7 @@ public class GurobiSolver {
 			this.model.addConstr(expr,  GRB.EQUAL, 1.0,  "C_Victoire");
 			
 			//Contrainte : 1 v�hicule d�plac�e par mouvement
-			for(int k=0;k<N;k++)
+			for(int k=1;k<N;k++)
 			{
 				expr = new GRBLinExpr();
 				
@@ -91,11 +92,30 @@ public class GurobiSolver {
 			
 			//Contrainte : MAJ du marqueur
 			
+			for(int i=0;i<iMax;i++)
+				for(int j=0;j<jMax;j++)
+					for(int k=1;k<N;k++)
+					{
+						expr = new GRBLinExpr();
+						
+						double val = X[i][j][k-1].get(GRB.DoubleAttr.X);
+						for(int l=0;l<lMax;l++)
+						{
+							val-=Y[i][j][l][k].get(GRB.DoubleAttr.X);
+							val+=Y[i][l][j][k].get(GRB.DoubleAttr.X);
+						}
+						
+						expr.addTerm(1.0,X[i][j][k]);
+						this.model.addConstr(expr, GRB.EQUAL,val, "C_MajMarqueur_"+i+"_"+j+"_"+k);
+						
+					}
+			
+			
 			//Contrainte : d�finir les positions d'un v�hicule
 			
 			for(int i=0;i<iMax;i++)
 				for(int j=0;j<jMax;j++)
-					for(int k=0;k<N;k++)
+					for(int k=1;k<N;k++)
 					{
 						expr = new GRBLinExpr();
 						
@@ -124,10 +144,8 @@ public class GurobiSolver {
 					}
 			
 			//Contrainte : un seul v�hicule par marqueur
-			
-			//Contrainte : ne pas toucher qqchose pendant un d�placement
 
-			
+
 			for(int i = 0; i < iMax;i++){
 				expr = new GRBLinExpr();
 				for(int j = 0; j < jMax; j++){
@@ -136,6 +154,9 @@ public class GurobiSolver {
 				}
 				model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "marq"+v);
 			}
+			
+			//Contrainte : ne pas toucher qqchose pendant un d�placement
+			
 			this.model.optimize();
 			
 			this.model.dispose();
