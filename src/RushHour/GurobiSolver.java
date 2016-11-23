@@ -49,8 +49,9 @@ public class GurobiSolver {
                     for(int k=0;k<N;k++){
 						Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y_"+i+"_"+j+"_"+l+"_"+k);
 						obj.addTerm(1.0,Y[i][j][l][k]);
-						model.setObjective(obj, GRB.MINIMIZE);
                     }
+		
+		model.setObjective(obj, GRB.MINIMIZE);
 		
 		for(int i=0;i<iMax;i++)
 	        for(int j=0;j<jMax;j++)
@@ -59,7 +60,7 @@ public class GurobiSolver {
 						Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
 	                }
 	}
-	public int[] calculeP(int j, int l, Voiture v){
+	public int[] calculeP(int j, int l, Vehicule v){
 		int tmpMax = Math.max(j, l);
 		int tmpMin = Math.min(j, l);
 		j = tmpMin;
@@ -102,9 +103,10 @@ public class GurobiSolver {
 					for(int j=0;j<jMax;j++)
 						for(int l=0;l<lMax;l++)
 		            		{	
-		            			expr.addTerm(1.0,Y[i][j][l][k]);
-		            			this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);	
+		            			expr.addTerm(1.0,Y[i][j][l][k]);	
 		            		}
+				
+				this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);
 			}
 			
 			//Contrainte : MAJ du marqueur
@@ -115,15 +117,27 @@ public class GurobiSolver {
 					{
 						expr = new GRBLinExpr();
 						
-						double val = X[i][j][k-1].get(GRB.DoubleAttr.X);
+						/*double val = X[i][j][k-1].get(GRB.DoubleAttr.X);
 						for(int l=0;l<lMax;l++)
 						{
 							val-=Y[i][j][l][k].get(GRB.DoubleAttr.X);
 							val+=Y[i][l][j][k].get(GRB.DoubleAttr.X);
 						}
 						
-						expr.addTerm(1.0,X[i][j][k]);
-						this.model.addConstr(expr, GRB.EQUAL,val, "C_MajMarqueur_"+i+"_"+j+"_"+k);
+						expr.addTerm(1.0,X[i][j][k]);*/
+						
+						
+						expr.addTerm(1.0,X[i][j][k-1]);
+						
+						for(int l=0;l<lMax;l++)
+						{
+							expr.addTerm(-1.0, Y[i][j][l][k]);
+							expr.addTerm(1.0, Y[i][l][j][k]);
+						}
+						
+						expr.addTerm(-1.0,X[i][j][k]);
+						
+						this.model.addConstr(expr, GRB.EQUAL,0.0, "C_MajMarqueur_"+i+"_"+j+"_"+k);
 						
 					}
 			
@@ -132,7 +146,7 @@ public class GurobiSolver {
 			
 			for(int i=0;i<iMax;i++)
 				for(int j=0;j<jMax;j++)
-					for(int k=1;k<N;k++)
+					for(int k=0;k<N;k++)
 					{
 						expr = new GRBLinExpr();
 						
@@ -148,33 +162,21 @@ public class GurobiSolver {
 							for(int s=0;s<tailleVehicule;s++)
 								mij[s]=j+s*RushHour.DIMENSION_MATRICE;
 						
-						double somme = 0;
+						//double somme = 0;
+						
+						expr.addTerm((double)tailleVehicule,X[i][j][k]);
 						
 						for(Integer m : mij)
 						{
-							//A VERIFIER
-							somme+=Z[i][m][k].get(GRB.DoubleAttr.X);
+							//somme+=Z[i][m][k].get(GRB.DoubleAttr.X);
+							expr.addTerm(-1.0,Z[i][m][k]);
 						}
 						
-						expr.addTerm((double)tailleVehicule,X[i][j][k]);
-						this.model.addConstr(expr, GRB.LESS_EQUAL,somme, "C_PosVehicule_"+i+"_"+j+"_"+k);
+						
+						this.model.addConstr(expr, GRB.LESS_EQUAL,0.0, "C_PosVehicule_"+i+"_"+j+"_"+k);
 					}
-			
 
-			int v= 0;
-
-			// Un véhicule par case par tours 
-			
-			
-				/*for(int k = 0; k < this.N; k++)
-					for(int i = 0; i < iMax;i++){
-						expr = new GRBLinExpr();
-						for(int j = 0; j < jMax; j++){
-							expr.addTerm(1.0, this.Z[i][j][k]);
-						}
-						model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "marq"+v);
-					}*/
-			
+			// Un véhicule par case par tours 		
 			for(int j = 0; j < jMax; j++)
 				for(int k = 0; k < this.N;k++)
 				{
@@ -185,20 +187,31 @@ public class GurobiSolver {
 						expr.addTerm(1.0, Z[i][j][k]);
 					}
 					
-					model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_1VehiculeParCase_"+"_"+j+"_"+k);
+					model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_1VehiculeParCase_"+j+"_"+k);
 				}
-				
-				GRBLinExpr obj = new GRBLinExpr();
-				for(int i=0;i<iMax;i++)
-		            for(int j=0;j<jMax;j++)
-		                for(int l=0;l<lMax;l++)
-		                    for(int k=0;k<N;k++){
-								
-		                    }	
-
 
 		    //Contrainte : ne pas toucher qqchose pendant un déplacement
-
+			for(int i=0;i<iMax;i++)
+				for(int j=0;j<jMax;j++)
+					for(int l=0;l<lMax;l++)
+						for(int k=1;k<N;k++)
+						{							
+							int[] pJL = calculeP(j, l,this.rh.getVehicules().get(i));
+							
+							for(Integer p : pJL)
+							{
+								expr = new GRBLinExpr();
+								expr.addTerm(1.0, Y[i][j][l][k]);
+								
+								for(int iPrime=0;iPrime<iMax;iPrime++)
+									if(iPrime!=i)
+									{
+										expr.addTerm(1.0, Z[iPrime][p][k-1]);
+									}
+								
+								model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_CasePasTouchee_"+i+"_"+j+"_"+l+"_"+k+"_"+p);
+							}
+						}
 
 
 		                    
