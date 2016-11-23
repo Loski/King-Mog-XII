@@ -39,7 +39,7 @@ public class GurobiSolver {
     }*/
 	private void initialisation() throws GRBException{
 		
-		//Création des variables et de la fonction objectif		
+		//Crï¿½ation des variables et de la fonction objectif		
 		
 		GRBLinExpr obj = new GRBLinExpr();
 		for(int i=0;i<iMax;i++)
@@ -78,15 +78,24 @@ public class GurobiSolver {
 			this.model = new GRBModel(env);
 			
 			this.initialisation();
-			
+			int v = 0;
 			HashMap<GRBVar,Double> vars;
 			
 			//Contrainte de victoire
 			vars = new HashMap<GRBVar,Double>();
-			vars.put(X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N],1.0);
+			vars.put(X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N-1],1.0);
 			this.addContrainte(vars, GRB.EQUAL, 1.0, "cVictoire");
 			
+			// Contrainte 1 marqueur par voiture
 			
+			for(int i = 0; i < iMax;i++){
+				GRBLinExpr expr = new GRBLinExpr();
+				for(int j = 0; j < jMax; j++){
+					for(int k = 0; k < this.N; k++)
+					expr.addTerm(1.0, this.X[i][j][k]);
+				}
+				model.addConstr(expr, GRB.LESS_EQUAL, arg2, "marq"+v);
+			}
 			this.model.optimize();
 			
 			this.model.dispose();
