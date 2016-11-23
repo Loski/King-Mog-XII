@@ -91,7 +91,7 @@ public class RushHour implements Cloneable {
 		else
 			v.setPosition((byte) (old_value +(direction*DIMENSION_MATRICE)));
 		this.vehicules.set(index, v);
-		//on recréé la voiture dans la grille !
+		//on recrï¿½ï¿½ la voiture dans la grille !
 		creerVehiculeGrille(v, index);
 	}
 	
@@ -257,6 +257,15 @@ public class RushHour implements Cloneable {
 					return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(grille);
+		//result = prime * result + ((vehicules == null) ? 0 : vehicules.hashCode());
+		return result;
 	}
 	
 	public boolean isSolution()

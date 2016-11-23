@@ -2,6 +2,7 @@ package RushHour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
@@ -10,6 +11,7 @@ public class GrapheConfiguration {
 	private HashMap<Integer,HashMap<Integer,Integer>> liste_adj;
 	private ArrayList<Integer> indexOfSolutions; 
 	private ArrayList<RushHour> configurations;
+	private HashSet<RushHour> hash;
 	private static final byte[] all_direction = {RushHour.FORWARD, RushHour.BACKWARD};
 
 	public ArrayList<RushHour> getConfigurations() {
@@ -31,6 +33,8 @@ public class GrapheConfiguration {
 		this.indexOfSolutions = new ArrayList<Integer>();
 		
 		this.liste_adj= new HashMap<>();
+		
+		this.hash = new HashSet<RushHour>();
 		
 		/*int[] arrete = {0,0};
 		ArrayList<Integer> intersect = new ArrayList<Integer>();
@@ -75,7 +79,7 @@ public class GrapheConfiguration {
 						Vehicule vDeplacee=(Vehicule) result.getVehicules().get(i);
 						result = result.deplacement_1(vDeplacee, (vDeplacee.getHash()-1), direction);
 						
-						if(result==null || this.configurations.contains(result))
+						if(result==null || this.hash.contains(result))
 						{
 							//quit=true;
 							break;
@@ -101,6 +105,7 @@ public class GrapheConfiguration {
 	public void addFirstSommet(RushHour r)
 	{
 		this.configurations.add(r);
+		this.hash.add(r);
 		
 		if(r.isSolution())
 			indexOfSolutions.add(0);
@@ -115,6 +120,8 @@ public class GrapheConfiguration {
 		int lastIndex=this.configurations.size();
 		
 			this.configurations.add(r);
+			this.hash.add(r);
+
 		
 			if(r.isSolution())
 				indexOfSolutions.add(lastIndex);
