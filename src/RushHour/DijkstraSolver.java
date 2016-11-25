@@ -17,7 +17,7 @@ public abstract class DijkstraSolver {
 		for(int i=0;i<distances.length;i++)
 		{
 			sommetsNonMarques.add(i);
-			distances[i] = Integer.MAX_VALUE;
+			distances[i] = Integer.MAX_VALUE-1;
 			predecesseurs[i] = i;
 		}
 		
@@ -28,15 +28,15 @@ public abstract class DijkstraSolver {
 		int nvSommetMarque=0;
 		
 		while((!finished) && sommetsNonMarques.size()>0)
-		{		
+		{				
 			int minDistance=Integer.MAX_VALUE;
 			
 			for(Integer sommet : sommetsNonMarques)
 			{
-				if(distances[sommet.intValue()]<=minDistance)
+				if(distances[sommet.intValue()]<minDistance)
 				{
 					nvSommetMarque=sommet.intValue();
-					minDistance=distances[sommet.intValue()];					
+					minDistance=distances[sommet.intValue()];			
 				}
 			}
 			
@@ -46,12 +46,11 @@ public abstract class DijkstraSolver {
 			}
 			
 			else
-			{
+			{				
 				sommetsNonMarques.remove(Integer.valueOf(nvSommetMarque));
-				int i=0;
 				
 				for (Entry<Integer, Integer> successeur : liste_adj.get(Integer.valueOf(nvSommetMarque)).entrySet()) 
-				{
+				{					
 						int distanceToSucc = successeur.getValue().intValue();
 						int indexOfSucc = successeur.getKey().intValue();
 						
@@ -88,7 +87,7 @@ public abstract class DijkstraSolver {
 			currentRushHour=predecesseurs[currentRushHour];
 			sequence.add(configurations.get(currentRushHour));
 			
-			if(configurations.get(currentRushHour).equals(configurations.get(0)))
+			if(currentRushHour==0)
 				configDepart=true;		
 			
 		}
@@ -134,34 +133,27 @@ public abstract class DijkstraSolver {
 		HashMap<Integer,HashMap<Integer,Integer>> copy = new HashMap<Integer,HashMap<Integer,Integer>>();
 		
 		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
-			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
-				System.out.println(successeurs.getKey()+" -> "+sommet.getKey()+" = "+sommet.getValue());
-			}
-			System.out.println("");
-		}
-		
-		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
 			
 			copy.put(successeurs.getKey(),new HashMap<Integer,Integer>());
 			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
-				copy.get(successeurs.getKey()).put(sommet.getValue(),1);
+				copy.get(successeurs.getKey()).put(sommet.getKey(),1);
 			}
 		}
 		
-		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : copy.entrySet()) {
+		/*for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
 			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
-				System.out.println(successeurs.getKey()+" -> "+sommet.getKey()+" = "+sommet.getValue());
+				sommet.setValue(1);
 			}
-			System.out.println("");
-		}
+		}*/
+		
 		
 		int[][] resultDij = resolve(copy, configurations);
 		
 		int[] predecesseurs = resultDij[1];
-		int[] distance = resultDij[0];
 		int indexOfSolution = resultDij[2][0];
 		
-		int nbCaseDeplace = distance[indexOfSolution];
+		
+		int nbCaseDeplace = calculCaseDeplaceeRHM(liste_adj,predecesseurs,indexOfSolution);
 			
 		ArrayList<RushHour> sequence = createSequence(predecesseurs, configurations, indexOfSolution);
 		
@@ -170,6 +162,27 @@ public abstract class DijkstraSolver {
 		result[1] = sequence;
 		
 		return result;
+	}
+
+	private static int calculCaseDeplaceeRHM(HashMap<Integer, HashMap<Integer, Integer>> liste_adj, int[] predecesseurs,int indexOfSolution) {
+
+		boolean configDepart=false;
+		int currentRushHour=indexOfSolution;
+		
+		int nbCase=0;
+		
+		while(!configDepart)
+		{			
+			nbCase+=liste_adj.get(Integer.valueOf(currentRushHour)).get(Integer.valueOf(predecesseurs[currentRushHour]));
+			currentRushHour=predecesseurs[currentRushHour];
+			
+			if(currentRushHour==0)
+				configDepart=true;		
+			
+		}
+		
+		return nbCase;
+		
 	}
 	
 	
