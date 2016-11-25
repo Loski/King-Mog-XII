@@ -101,26 +101,24 @@ public class GurobiSolver {
 		GRBLinExpr exprL, exprR;
 		for(int i=0;i<iMax;i++)
 		{
-			int caseMax=-1;
-			
 			Vehicule vi = this.rh.getVehicules().get(i);
-			
+			/*int caseMax=-1;	
 			if(vi.getOrientation()==RushHour.HORIZONTAL)
 				caseMax=RushHour.TAILLE_MATRICE - vi.getTaille();
 			else
-				caseMax=RushHour.TAILLE_MATRICE - RushHour.DIMENSION_MATRICE * vi.getTaille()+ RushHour.DIMENSION_MATRICE-1;
+				caseMax=RushHour.TAILLE_MATRICE - RushHour.DIMENSION_MATRICE * vi.getTaille()+ RushHour.DIMENSION_MATRICE-1;*/
 			
-			for(int j=0;j<=caseMax;j++)
+			for(int j=0;j<=jMax;j++)
 			{
-				int saut = 6;
+				/*int saut = 6;
 				if(vi.getOrientation()==RushHour.HORIZONTAL){
 					saut = 1;
-					if(j%6 + saut * vi.getTaille() >= 6)
+					if(j%6 + saut * vi.getTaille() > 6)
 						continue;
 				}
 				else
-					if(j + saut * vi.getTaille() >= 36)
-						continue;
+					if(j + saut * vi.getTaille() > 36)
+						continue;*/
 				
 				for(int k=0;k<N;k++)
 				{
@@ -225,7 +223,7 @@ public class GurobiSolver {
 	}
 	
 	public int[] calculeP(int j, int l, Vehicule v){
-		int tmpMax = Math.max(j, l);
+		/*int tmpMax = Math.max(j, l);
 		int tmpMin = Math.min(j, l);
 		j = tmpMin;
 		l = tmpMax;
@@ -239,7 +237,18 @@ public class GurobiSolver {
 			i++;
 			j+=saut;
 		}
-		return tab;		
+		return tab;*/
+		
+		int[] p = new int[l-j+1];
+		int index =0;
+		
+		for(int i=j;i<=l;i++)
+		{
+			p[index]=i;
+			index++;
+		}
+		
+		return p;
 	}
 	
 	public int[] calculMij(Vehicule vi, int j){
@@ -251,7 +260,8 @@ public class GurobiSolver {
 			saut = 1;
 		}
 		for(int z = 0; z < vi.getTaille();z++)
-			mij[z]=j+z*saut;
+			if(j+z*saut < 36)
+				mij[z]=j+z*saut;
 		return mij;
 	}
 	public void solve()
