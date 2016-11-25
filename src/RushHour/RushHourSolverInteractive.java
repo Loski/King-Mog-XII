@@ -28,6 +28,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -182,10 +183,32 @@ public class RushHourSolverInteractive extends JFrame{
 		this.setJMenuBar(createMenu());
 		this.getContentPane().setLayout(new GridLayout(2,1));
 		this.getContentPane().add(grille);
-		this.getContentPane().add(createPanelInformations());
+		//this.getContentPane().add(createPane());
 		
 		this.setContentPane(this.getContentPane());
 		this.revalidate();
+	}
+	
+	public JPanel resultPanel()
+	{
+		JPanel pan = new JPanel();
+		pan.setLayout(new BorderLayout());
+		
+		
+		return pan;
+		
+	}
+	
+	public JPanel consoleArea()
+	{
+		JPanel pan = new JPanel();
+		pan.setLayout(new BorderLayout());
+		
+		JTextArea consoleArea = new JTextArea();
+		
+		pan.add(consoleArea,BorderLayout.CENTER);
+		
+		return pan;
 	}
 	
 	public JPanel loadFile()
@@ -336,6 +359,15 @@ public class RushHourSolverInteractive extends JFrame{
 		return result;
 	}
 	
+	public Object[] performRHMDij()
+	{
+		r.afficher();
+		this.g = new GrapheConfiguration(r);
+		Object[] result = DijkstraSolver.resolveRHM(g.getListe_adj(), g.getConfigurations());
+
+		return result;
+	}
+	
 	public JMenuBar createMenu()
 	{
 		  JMenuBar menuBar = new JMenuBar();
@@ -365,9 +397,10 @@ public class RushHourSolverInteractive extends JFrame{
 					  } 
 					} );
 		  
-		  RHCDij.addActionListener(new ActionListener() { 
+		  RHMDij.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-				    
+				    Object[] result = performRHMDij();
+				    afficherResultat(result);
 				  } 
 				} );
 		  
@@ -387,6 +420,7 @@ public class RushHourSolverInteractive extends JFrame{
 		  return menuBar;
 	}
 	
+	/*
 	public JPanel createPanelInformations()
 	{
 		JPanel pan = new JPanel();
@@ -436,7 +470,7 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		
 		return pan;
-	}
+	}*/
 	
 	public JPanel createSettingsPanel()
 	{
