@@ -138,7 +138,7 @@ public class GurobiSolver {
 		            		}
 				
 				this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);
-			} 
+			}
 			
 			//Contrainte : MAJ du marqueur
 			
@@ -197,8 +197,8 @@ public class GurobiSolver {
 						else
 							if(j + saut * vi.getTaille() >= 36)
 								continue;
-						for(int z = 0; z < vi.getTaille();z+=saut)
-							mij[z]=j+z;
+						for(int z = 0; z < vi.getTaille();z++)
+							mij[z]=j+z*saut;
 						//double somme = 0;
 						
 						expr.addTerm((double)tailleVehicule,X[i][j][k]);
