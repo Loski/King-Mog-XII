@@ -40,7 +40,7 @@ public class GurobiSolver {
     }*/
 	private void initialisation() throws GRBException{
 		
-		//Création des variables et de la fonction objectif		
+		//Crï¿½ation des variables et de la fonction objectif		
 		
 		GRBLinExpr obj = new GRBLinExpr();
 		for(int i=0;i<iMax;i++)
@@ -58,16 +58,18 @@ public class GurobiSolver {
 	            for(int k=0;k<N;k++){
 						X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
 						Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
+						Z[i][j][k].set(GRB.DoubleAttr.Start, 0.0);
+						X[i][j][k].set(GRB.DoubleAttr.Start, 0.0);
 	                }
 		for(int i = 0; i <iMax; i++){
 			int position_initial = this.rh.getVehicules().get(i).getPosition(); 
-			X[i][position_initial][0].set(GRB.DoubleAttr.X, 1.0);
+			X[i][position_initial][0].set(GRB.DoubleAttr.Start, 1.0);
 			int saut = 6;
 			if(this.rh.getVehicules().get(i).getOrientation() == RushHour.HORIZONTAL)
 				saut = 1;
 			int taille = this.rh.getVehicules().get(i).getTaille();
 			for(int j = this.rh.getVehicules().get(i).getPosition(); j < position_initial + saut * taille ;j+=saut){
-				Z[i][j][0].set(GRB.DoubleAttr.X, 1.0);
+				Z[i][j][0].set(GRB.DoubleAttr.Start, 1.0);
 			}
 				
 		}
@@ -81,7 +83,7 @@ public class GurobiSolver {
 		int saut = 1;
 		if(v.getOrientation() == RushHour.VERTICAL)
 			saut = 6;
-		int tab[] = new int[6];
+		int tab[] = new int[l-j];
 		int i = 0;
 		while(j  < l){
 			tab[i] = j;
@@ -89,6 +91,22 @@ public class GurobiSolver {
 			j+=saut;
 		}
 		return tab;		
+	}
+	public int[] calculMij(int i, int j, int k) throws GRBException{
+		double z = this.X[i][j][k].get(GRB.DoubleAttr.Start);
+		if(z == 0.0)
+			return null;
+		Vehicule v = this.rh.getVehicules().get(i);
+		int tab[] = new int[v.getTaille()];
+		int saut = RushHour.FORWARD;
+		if(v.getOrientation() == RushHour.VERTICAL)
+			saut = RushHour.DOWN;
+		int position_initial = v.getPosition();
+		int b = 0;
+		for(int h = position_initial; h < position_initial + v.getTaille() * saut; h+= saut){
+			tab[b] = j;
+		}
+		return tab;
 	}
 	public void solve()
 	{
@@ -107,7 +125,7 @@ public class GurobiSolver {
 			expr.addTerm(1.0,X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N-1]);
 			this.model.addConstr(expr,  GRB.EQUAL, 1.0,  "C_Victoire");
 			
-			//Contrainte : 1 véhicule déplacée par mouvement
+			//Contrainte : 1 vï¿½hicule dï¿½placï¿½e par mouvement
 			for(int k=1;k<N;k++)
 			{
 				expr = new GRBLinExpr();
@@ -120,7 +138,7 @@ public class GurobiSolver {
 		            		}
 				
 				this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);
-			}
+			} 
 			
 			//Contrainte : MAJ du marqueur
 			
@@ -155,7 +173,7 @@ public class GurobiSolver {
 					}
 			
 			
-			//Contrainte : définir les positions d'un véhicule
+			//Contrainte : dï¿½finir les positions d'un vï¿½hicule
 			
 			for(int i=0;i<iMax;i++)
 				for(int j=0;j<jMax;j++)
@@ -166,30 +184,38 @@ public class GurobiSolver {
 						Vehicule vi = this.rh.getVehicules().get(i);
 						int tailleVehicule = vi.getTaille();
 						
+						expr = new GRBLinExpr();
+
+						
 						int [] mij = new int[tailleVehicule];
-						
-						if(vi.getOrientation()==RushHour.HORIZONTAL)
-							for(int s=0;s<tailleVehicule;s++)
-								mij[s]=j+s;
+						int saut = 6;
+						if(vi.getOrientation()==RushHour.HORIZONTAL){
+							saut = 1;
+							if(j%6 + saut * vi.getTaille() >= 6)
+								continue;
+						}
 						else
-							for(int s=0;s<tailleVehicule;s++)
-								mij[s]=j+s*RushHour.DIMENSION_MATRICE;
-						
+							if(j + saut * vi.getTaille() >= 36)
+								continue;
+						for(int z = 0; z < vi.getTaille();z+=saut)
+							mij[z]=j+z;
 						//double somme = 0;
 						
 						expr.addTerm((double)tailleVehicule,X[i][j][k]);
-						
+			             System.out.println("Je patine... ");       
+
 						for(Integer m : mij)
 						{
 							//somme+=Z[i][m][k].get(GRB.DoubleAttr.X);
 							expr.addTerm(-1.0,Z[i][m][k]);
 						}
+				
 						
 						
 						this.model.addConstr(expr, GRB.LESS_EQUAL,0.0, "C_PosVehicule_"+i+"_"+j+"_"+k);
 					}
 
-			// Un véhicule par case par tours 		
+			// Un vï¿½hicule par case par tours 		
 			for(int j = 0; j < jMax; j++)
 				for(int k = 0; k < this.N;k++)
 				{
@@ -203,14 +229,15 @@ public class GurobiSolver {
 					model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_1VehiculeParCase_"+j+"_"+k);
 				}
 
-		    //Contrainte : ne pas toucher qqchose pendant un déplacement
+		    //Contrainte : ne pas toucher qqchose pendant un dï¿½placement
 			for(int i=0;i<iMax;i++)
 				for(int j=0;j<jMax;j++)
-					for(int l=0;l<lMax;l++)
+					for(int l=0;l<lMax;l++){
+						if(j==l)
+							continue;
+						int[] pJL = calculeP(j, l,this.rh.getVehicules().get(i));
 						for(int k=1;k<N;k++)
-						{							
-							int[] pJL = calculeP(j, l,this.rh.getVehicules().get(i));
-							
+						{					
 							for(Integer p : pJL)
 							{
 								expr = new GRBLinExpr();
@@ -225,15 +252,19 @@ public class GurobiSolver {
 								model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_CasePasTouchee_"+i+"_"+j+"_"+l+"_"+k+"_"+p);
 							}
 						}
+					}
 
 
-		                    
+		             System.out.println("j'optimise ");       
 			this.model.optimize();
 			
 			this.model.dispose();
 			this.env.dispose();
 			
-		}catch(Exception e){System.out.println(e.getMessage());}
+		}catch(GRBException e){
+			System.out.println("Execption" + e.getErrorCode() + e.getMessage());
+			e.printStackTrace();
+		}
 		
 	}
 	
