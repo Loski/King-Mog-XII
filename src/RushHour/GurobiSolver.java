@@ -85,7 +85,8 @@ public class GurobiSolver {
 					exprL = new GRBLinExpr();
 					exprR = new GRBLinExpr();
 					exprL.addTerm(1.0,X[i][j][k-1]);	
-					exprR.addTerm(-1.0,X[i][j][k]);
+					exprR.addTerm(1.0,X[i][j][k]);
+					
 					for(int l=0;l<lMax;l++)
 					{
 						exprL.addTerm(-1.0, Y[i][j][l][k]);
@@ -102,19 +103,29 @@ public class GurobiSolver {
 		{
 			int caseMax=-1;
 			
-			Vehicule v = this.rh.getVehicules().get(i);
+			Vehicule vi = this.rh.getVehicules().get(i);
 			
-			if(v.getOrientation()==RushHour.HORIZONTAL)
-				caseMax=RushHour.TAILLE_MATRICE - v.getTaille();
+			if(vi.getOrientation()==RushHour.HORIZONTAL)
+				caseMax=RushHour.TAILLE_MATRICE - vi.getTaille();
 			else
-				caseMax=RushHour.TAILLE_MATRICE - RushHour.DIMENSION_MATRICE * v.getTaille()+ RushHour.DIMENSION_MATRICE-1;
+				caseMax=RushHour.TAILLE_MATRICE - RushHour.DIMENSION_MATRICE * vi.getTaille()+ RushHour.DIMENSION_MATRICE-1;
 			
 			for(int j=0;j<=caseMax;j++)
+			{
+				int saut = 6;
+				if(vi.getOrientation()==RushHour.HORIZONTAL){
+					saut = 1;
+					if(j%6 + saut * vi.getTaille() >= 6)
+						continue;
+				}
+				else
+					if(j + saut * vi.getTaille() >= 36)
+						continue;
+				
 				for(int k=0;k<N;k++)
 				{
 					exprL = new GRBLinExpr();
 					exprR = new GRBLinExpr();
-					Vehicule vi = this.rh.getVehicules().get(i);
 					int tailleVehicule = vi.getTaille();
 					int[] mij = calculMij(vi,j);
 					exprL.addTerm((double)tailleVehicule,X[i][j][k]);
@@ -124,6 +135,7 @@ public class GurobiSolver {
 					}
 					this.model.addConstr(exprL, GRB.LESS_EQUAL, exprR, "C_PosVehicule_"+i+"_"+j+"_"+k);
 				}
+			}
 		}
 	}
 	
