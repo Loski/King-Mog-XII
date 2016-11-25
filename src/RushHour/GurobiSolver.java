@@ -2,6 +2,7 @@ package RushHour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import gurobi.GRB;
@@ -110,12 +111,24 @@ public class GurobiSolver {
 	private void defPosVehicule() throws GRBException{
 		GRBLinExpr expr;
 		for(int i=0;i<iMax;i++)
-			for(int j=0;j<jMax;j++)
+		{
+			int caseMax=-1;
+			
+			Vehicule v = this.rh.getVehicules().get(i);
+			
+			if(v.getOrientation()==RushHour.HORIZONTAL)
+				caseMax=RushHour.TAILLE_MATRICE - v.getTaille();
+			else
+				caseMax=RushHour.TAILLE_MATRICE - RushHour.DIMENSION_MATRICE * v.getTaille()+ RushHour.DIMENSION_MATRICE-1;
+			
+			for(int j=0;j<=caseMax;j++)
 				for(int k=0;k<N;k++)
 				{
 					expr = new GRBLinExpr();
 					Vehicule vi = this.rh.getVehicules().get(i);
-					int tailleVehicule = vi.getTaille();		
+					int tailleVehicule = vi.getTaille();
+					
+					/*
 					int [] mij = new int[tailleVehicule];
 					int saut = 6;
 					if(vi.getOrientation()==RushHour.HORIZONTAL){
@@ -127,24 +140,26 @@ public class GurobiSolver {
 						if(j + saut * vi.getTaille() >= 36)
 							continue;
 					for(int z = 0; z < vi.getTaille();z++)
-						mij[z]=j+z*saut;
-					//double somme = 0;				
+						mij[z]=j+z*saut;*/
+					
+					int[] mij = calculMij(vi,j);
+		
 					expr.addTerm((double)tailleVehicule,X[i][j][k]);
 					for(Integer m : mij)
 					{
-						//somme+=Z[i][m][k].get(GRB.DoubleAttr.X);
 						expr.addTerm(-1.0,Z[i][m][k]);
 					}
 					this.model.addConstr(expr, GRB.LESS_EQUAL,0.0, "C_PosVehicule_"+i+"_"+j+"_"+k);
 				}
+		}
 	}
 	private void contrainteDeDeplacement() throws GRBException{
 		GRBLinExpr expr;
 		for(int i=0;i<iMax;i++)
 			for(int j=0;j<jMax;j++)
 				for(int l=0;l<lMax;l++){
-					if(j==l)
-						continue;
+					/*if(j==l)
+						continue;*/
 					int[] pJL = calculeP(j, l,this.rh.getVehicules().get(i));
 					for(int k=1;k<N;k++)
 					{					
@@ -188,6 +203,7 @@ public class GurobiSolver {
 						Z[i][j][k].set(GRB.DoubleAttr.Start, 0.0);
 						X[i][j][k].set(GRB.DoubleAttr.Start, 0.0);
 	                }
+		
 		for(int i = 0; i <iMax; i++){
 			int position_initial = this.rh.getVehicules().get(i).getPosition(); 
 			X[i][position_initial][0].set(GRB.DoubleAttr.Start, 1.0);
@@ -202,6 +218,7 @@ public class GurobiSolver {
 		}
 		
 	}
+	
 	public int[] calculeP(int j, int l, Vehicule v){
 		int tmpMax = Math.max(j, l);
 		int tmpMin = Math.min(j, l);
@@ -219,8 +236,9 @@ public class GurobiSolver {
 		}
 		return tab;		
 	}
-	public int[] calculMij(int i, int j, int k) throws GRBException{
-		double z = this.X[i][j][k].get(GRB.DoubleAttr.Start);
+	
+	public int[] calculMij(Vehicule vi, int j){
+		/*double z = this.X[i][j][k].get(GRB.DoubleAttr.Start);
 		if(z == 0.0)
 			return null;
 		Vehicule v = this.rh.getVehicules().get(i);
@@ -233,7 +251,20 @@ public class GurobiSolver {
 		for(int h = position_initial; h < position_initial + v.getTaille() * saut; h+= saut){
 			tab[b] = j;
 		}
-		return tab;
+		return tab;*/
+		
+		int mij[] = new int[vi.getTaille()];
+		int saut = RushHour.DIMENSION_MATRICE;
+		
+		if(vi.getOrientation()==RushHour.HORIZONTAL){
+			saut = 1;
+		}
+
+		for(int z = 0; z < vi.getTaille();z++)
+			mij[z]=j+z*saut;
+			
+			return mij;
+		
 	}
 	public void solve()
 	{
