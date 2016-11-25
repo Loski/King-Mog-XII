@@ -88,8 +88,8 @@ public class GurobiSolver {
 					exprR.addTerm(-1.0,X[i][j][k]);
 					for(int l=0;l<lMax;l++)
 					{
-						exprL.addTerm(1.0, Y[i][j][l][k]);
-						exprL.addTerm(-1.0, Y[i][l][j][k]);
+						exprL.addTerm(-1.0, Y[i][j][l][k]);
+						exprL.addTerm(1.0, Y[i][l][j][k]);
 					}
 					this.model.addConstr(exprL, GRB.EQUAL, exprR, "C_MajMarqueur_"+i+"_"+j+"_"+k);
 				}
