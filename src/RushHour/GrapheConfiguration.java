@@ -12,6 +12,7 @@ public class GrapheConfiguration {
 	private ArrayList<Integer> indexOfSolutions; 
 	private ArrayList<RushHour> configurations;
 	private HashSet<RushHour> hash;
+	private HashMap<Integer,Integer> indexOfRushHour;
 	private static final byte[] all_direction = {RushHour.FORWARD, RushHour.BACKWARD};
 
 	public ArrayList<RushHour> getConfigurations() {
@@ -35,6 +36,8 @@ public class GrapheConfiguration {
 		this.liste_adj= new HashMap<>();
 		
 		this.hash = new HashSet<RushHour>();
+		
+		this.indexOfRushHour = new HashMap<>();
 		
 		/*int[] arrete = {0,0};
 		ArrayList<Integer> intersect = new ArrayList<Integer>();
@@ -79,7 +82,7 @@ public class GrapheConfiguration {
 						Vehicule vDeplacee=(Vehicule) result.getVehicules().get(i);
 						result = result.deplacement_1(vDeplacee, (vDeplacee.getHash()-1), direction);
 						
-						if(result==null || this.hash.contains(result))
+						if(result==null /*|| this.hash.contains(result)*/)
 						{
 							//quit=true;
 							break;
@@ -106,6 +109,7 @@ public class GrapheConfiguration {
 	{
 		this.configurations.add(r);
 		this.hash.add(r);
+		this.indexOfRushHour.put(r.hashCode(),0);
 		
 		if(r.isSolution())
 			indexOfSolutions.add(0);
@@ -117,22 +121,32 @@ public class GrapheConfiguration {
 	{
 		//System.out.println(this.configurations.size());
 		
-		int lastIndex=this.configurations.size();
+		int indexOfR=this.configurations.size();
+		
+		if(! this.hash.contains(r))
+		{
 		
 			this.configurations.add(r);
 			this.hash.add(r);
 
-		
 			if(r.isSolution())
-				indexOfSolutions.add(lastIndex);
-		
-		this.liste_adj.put(Integer.valueOf(lastIndex), new HashMap<>());
+				indexOfSolutions.add(indexOfR);
+	
+			this.liste_adj.put(indexOfR, new HashMap<>());
+			
+			this.indexOfRushHour.put(r.hashCode(), indexOfR);
+		}
+		else 
+		{
+			indexOfR=this.indexOfRushHour.get(r.hashCode());
+		}
+			
 		
 		HashMap<Integer,Integer> succ = this.liste_adj.get(Integer.valueOf(previousNode));
-		succ.put(Integer.valueOf(lastIndex), costToReach);
+		succ.put(Integer.valueOf(indexOfR), costToReach);
 		
-		HashMap<Integer,Integer> succReverse = this.liste_adj.get(Integer.valueOf(lastIndex));
-			succReverse.put(Integer.valueOf(previousNode), costToReach);
+		/*HashMap<Integer,Integer> succReverse = this.liste_adj.get(Integer.valueOf(lastIndex));
+			succReverse.put(Integer.valueOf(previousNode), costToReach);*/
 	}
 	
 	/*public void setSuccesseur(int sommetPere, int sommetFils, int cout)

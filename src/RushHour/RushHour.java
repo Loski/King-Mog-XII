@@ -263,7 +263,7 @@ public class RushHour implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(grille);
+		result = prime * result + Arrays.hashCode(grille);	
 		//result = prime * result + ((vehicules == null) ? 0 : vehicules.hashCode());
 		return result;
 	}
@@ -306,7 +306,7 @@ public class RushHour implements Cloneable {
 		for(Vehicule v: this.vehicules){
 			if(v instanceof Camion){
 				compteur_camion++;
-				nom ="t" + compteur_camion;
+				nom ="c" + compteur_camion;
 			}
 			else{
 				compteur_voiture++;
@@ -323,4 +323,5 @@ public class RushHour implements Cloneable {
 		}
 		return str;
 	}
+	
 }
