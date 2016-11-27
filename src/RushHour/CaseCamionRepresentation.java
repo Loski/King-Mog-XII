@@ -18,6 +18,7 @@ public class CaseCamionRepresentation extends JPanel{
 	private byte orientation;
 	private int partOfImg;
 	private int tailleVoiture;
+	private String theme;
 	
 	 public void paint(Graphics g)
 	 {
@@ -28,7 +29,13 @@ public class CaseCamionRepresentation extends JPanel{
 		 g.fillRect(2,2,this.getWidth()-2,this.getHeight()-2);
 		 
 		 
-    	 File file = new File("cars/truck.png");
+    	 File file = null;
+    	 
+    	 if(this.orientation==RushHour.HORIZONTAL)
+    		 file = new File("cars/"+theme+"/truck_h.png");
+    	 else
+    		 file = new File("cars/"+theme+"/truck.png");
+    	 
          BufferedImage image = null;
 		try {
 			image = ImageIO.read(file);
@@ -38,23 +45,31 @@ public class CaseCamionRepresentation extends JPanel{
 		}
 		Graphics2D g2 = (Graphics2D) g;
 		
-		int coupeL = image.getWidth()/3;
-		int coupeH = image.getHeight()/3;
-		
-		image = image.getSubimage(0,coupeH*this.partOfImg,image.getWidth(),coupeH);
-		
-		
+		int coupe = 0;
 		if(this.orientation==RushHour.HORIZONTAL)
-			g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);
+		{
+			coupe = image.getWidth()/3;
+			image = image.getSubimage(coupe*this.partOfImg,0,coupe,image.getHeight());
+		}
+		else
+		{
+			coupe = image.getHeight()/3;
+			image = image.getSubimage(0,coupe*this.partOfImg,image.getWidth(),coupe);
+		}
+		
+		
+		/*if(this.orientation==RushHour.HORIZONTAL)
+			g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);*/
 		
 			g2.drawImage(image, 1, 1, this.getWidth()-1, this.getHeight()-1, Color.WHITE, this);
 	 }
 	 
-	  public CaseCamionRepresentation(int h, int l, byte orientation, int partOfImg)
+	  public CaseCamionRepresentation(int h, int l, byte orientation, int partOfImg,String theme)
 	  {
 		  this.l=l;
 		  this.h=h;
 		  this.orientation=orientation;
 		  this.partOfImg=partOfImg;
+		  this.theme=theme;
 	  }
 }

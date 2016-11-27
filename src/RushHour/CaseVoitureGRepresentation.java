@@ -12,8 +12,8 @@ import javax.imageio.ImageIO;
 
 public class CaseVoitureGRepresentation extends CaseVoitureRepresentation{
 
-	public CaseVoitureGRepresentation(int h, int l,int partOfImg) {
-		super(h, l,RushHour.HORIZONTAL, partOfImg);
+	public CaseVoitureGRepresentation(int h, int l,int partOfImg,String theme) {
+		super(h, l,RushHour.HORIZONTAL, partOfImg,theme);
 		// TODO Auto-generated constructor stub
 	}
 	 
@@ -26,7 +26,7 @@ public class CaseVoitureGRepresentation extends CaseVoitureRepresentation{
 		 g.fillRect(2,2,this.getWidth()-2,this.getHeight()-2);
 		 
 		 
-    	 File file = new File("cars/batman.png");
+    	 File file = new File("cars/"+theme+"/g.png");
          BufferedImage image = null;
 		try {
 			image = ImageIO.read(file);
@@ -37,15 +37,13 @@ public class CaseVoitureGRepresentation extends CaseVoitureRepresentation{
 			e.printStackTrace();
 		}
 		
-		int coupeL = image.getWidth()/2;
-		int coupeH = image.getHeight()/2;
-		
-		image = image.getSubimage(0,coupeH*this.partOfImg,image.getWidth(),coupeH);
+		int coupe = image.getWidth()/2;
+		image = image.getSubimage(coupe*this.partOfImg,0,coupe,image.getHeight());
 		
 		
 		Graphics2D g2 = (Graphics2D) g;
 		
-		g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);
+		//g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);
 		g2.drawImage(image, 1, 1, this.getWidth()-1, this.getHeight()-1, Color.WHITE, this);
 
 	 }
