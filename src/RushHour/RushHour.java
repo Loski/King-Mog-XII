@@ -306,11 +306,11 @@ public class RushHour implements Cloneable {
 		for(Vehicule v: this.vehicules){
 			if(v instanceof Camion){
 				compteur_camion++;
-				nom ="c" + compteur_camion;
+				nom ="t" + compteur_camion;
 			}
 			else{
 				compteur_voiture++;
-				nom = "t" + compteur_voiture;
+				nom = "c" + compteur_voiture;
 			}
 			for(int i = 0; i < v.getTaille(); i++){
 				if(v.getOrientation() == RushHour.HORIZONTAL){
