@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -283,11 +284,48 @@ public class RushHourSolverInteractive extends JFrame{
 	    //System.out.println(this.r.getNbColonne());
 	    grille.setLayout(new GridLayout(this.r.getNbLigne(), this.r.getNbColonne()));
 		
+	    HashMap<String,Byte> map = new HashMap<>();
+	    
+		int compteur_voiture = 0;
+		int compteur_camion = 0;
+		int j=0;
+		for(Vehicule v: this.r.getVehicules()){
+			if(v instanceof Camion){
+				compteur_camion++;
+				map.put("t" + compteur_camion,v.getOrientation());
+			}
+			else if(j!=RushHour.indice_solution_g){
+				compteur_voiture++;
+				map.put("c" + compteur_voiture,v.getOrientation());
+			}
+			
+			j++;
+		}
+	    
 	    String[] grilleStr= this.r.TabIntToStrTab();
 	    
+	    HashMap<String,Byte> partsOfImg = new HashMap<>();
+	    
 		for(int i=0;i<RushHour.TAILLE_MATRICE;i++)
-		{
-			grille.add(new CaseRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),grilleStr[i]));
+		{			
+			if(grilleStr[i].equals("0"))
+			{
+				grille.add(new EmptyCaseRepresentation());
+			}
+			else
+			{
+				if(partsOfImg.containsKey(grilleStr[i]))
+					partsOfImg.put(grilleStr[i], (byte) (partsOfImg.get(grilleStr[i])+1));
+				else
+					partsOfImg.put(grilleStr[i], (byte) 0);
+				
+				if(grilleStr[i].charAt(0)=='t')
+					grille.add(new CaseCamionRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),map.get(grilleStr[i]),partsOfImg.get(grilleStr[i])));
+				else if(grilleStr[i].charAt(0)=='c')
+					grille.add(new CaseVoitureRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),map.get(grilleStr[i]),partsOfImg.get(grilleStr[i])));
+				else
+					grille.add(new CaseVoitureGRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),partsOfImg.get(grilleStr[i])));
+			}
 		}
 		
 		this.grille.add(new JPanel());
@@ -299,9 +337,10 @@ public class RushHourSolverInteractive extends JFrame{
 		for(int i=0;i<this.r.getNbLigne();i++)
 		{
 			if(i==(int)(RushHour.CASE_SORTIE)/this.r.getNbColonne())
-				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),"EXIT"));
+				grilleSortie.add(new CaseExitRepresentation(this.r.getNbLigne(),this.r.getNbColonne()));
 			else
-				grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),null));
+				//grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),null));
+				grilleSortie.add(new JPanel());
 		}
 		
 		this.grille.add(grilleSortie);
