@@ -1,6 +1,7 @@
 package RushHour;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -31,15 +32,17 @@ public class CaseCamionRepresentation extends JPanel{
          BufferedImage image = null;
 		try {
 			image = ImageIO.read(file);
-			int coupeL = image.getWidth()/3;
-			int coupeH = image.getHeight()/3;
-			
-			image = image.getSubimage(0,coupeH*this.partOfImg,image.getWidth(),coupeH);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Graphics2D g2 = (Graphics2D) g;
+		
+		int coupeL = image.getWidth()/3;
+		int coupeH = image.getHeight()/3;
+		
+		image = image.getSubimage(0,coupeH*this.partOfImg,image.getWidth(),coupeH);
+		
 		
 		if(this.orientation==RushHour.HORIZONTAL)
 			g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);

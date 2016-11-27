@@ -274,13 +274,17 @@ public class RushHourSolverInteractive extends JFrame{
 	}
 	
 	public void drawGrille()
-	{
+	{		
 		//JPanel pan = new JPanel();
 		//this.grille = new JPanel();
 		this.grille.removeAll();
-		this.grille.setLayout(new GridLayout(1, 3));
+		//this.grille.setLayout(new GridLayout(1, 3));
+
 	    
 	    JPanel grille = new JPanel();
+		grille.setPreferredSize(new Dimension(300,300));
+		grille.setMinimumSize(new Dimension(300,300));
+		grille.setMaximumSize(new Dimension(800,800));
 	    //System.out.println(this.r.getNbColonne());
 	    grille.setLayout(new GridLayout(this.r.getNbLigne(), this.r.getNbColonne()));
 		
@@ -328,16 +332,24 @@ public class RushHourSolverInteractive extends JFrame{
 			}
 		}
 		
-		this.grille.add(new JPanel());
+		//this.grille.add(new JPanel());
 		this.grille.add(grille);
 		
 		
 		JPanel grilleSortie = new JPanel();
+		
 		grilleSortie.setLayout(new GridLayout(r.getNbLigne(),1));
 		for(int i=0;i<this.r.getNbLigne();i++)
 		{
 			if(i==(int)(RushHour.CASE_SORTIE)/this.r.getNbColonne())
-				grilleSortie.add(new CaseExitRepresentation(this.r.getNbLigne(),this.r.getNbColonne()));
+			{
+				JPanel caseExit = new CaseExitRepresentation(this.r.getNbLigne(),this.r.getNbColonne());
+				grilleSortie.add(caseExit);
+				grilleSortie.setPreferredSize(new Dimension(300,300));
+				grilleSortie.setMinimumSize(new Dimension(300,300));
+				grilleSortie.setMaximumSize(new Dimension(800,800));
+			}
+				
 			else
 				//grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),null));
 				grilleSortie.add(new JPanel());
