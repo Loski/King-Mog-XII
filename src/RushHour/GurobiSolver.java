@@ -50,7 +50,7 @@ public class GurobiSolver {
 		for(Vehicule v: this.rh.getVehicules()){
 			byte position = v.getPosition();
 			byte orientation = v.getOrientation();
-			byte saut = 1;
+			byte saut = 6;
 			if(orientation == RushHour.VERTICAL){
 				saut =  RushHour.DIMENSION_MATRICE;
 				while(position - saut >= 0){
@@ -73,31 +73,38 @@ public class GurobiSolver {
 		this.pij = new int[36][36][];
 		int saut;
 		
-		for(int i = 0; i < 36; i++){
-			for(int j = 0; j < 36; j++){
+		for(int iFor = 0; iFor < 36; iFor++){
+			for(int jFor = 0; jFor < 36; jFor++){
 				ArrayList<Integer> a = new ArrayList<Integer>();
 				int k = 0;
-				if(j > i){
+				int j=jFor;
+				int i=iFor;
+				if(iFor>jFor){
 					int tmp = i;
 					i = j;
 					j = tmp;
 				}
+				
+				int compteur=0;
+				
 				if((int)i/6 == (int) j/6){
 					saut = 1;
-					for(k = 0; k < 6  && j + j * saut < 6; k++){
-						a.add(j + k*saut);
+					for(k = i;k<=j; k+=saut){
+						a.add(k);
+						compteur++;
 					}
 				}
 				else if(i%6 == j%6){
-					saut = 6;
-					for(k = 0; k < 6  && j + j * saut <= 35; k++){
-						a.add(j + k*saut);
+					saut = 6;	
+					for(k = i;k<=j; k+=saut){
+						a.add(k);
+						compteur++;
 					}
 				}
-				else{k =0;}
-				this.pij[i][j] = new int[k];
-				for(int z = 0; z < k; z++){
-					this.pij[i][j][z] = a.get(z);
+				
+				this.pij[iFor][jFor] = new int[compteur];
+				for(int z = 0; z < compteur; z++){
+					this.pij[iFor][jFor][z] = a.get(z);
 				}
 			}
 		}
@@ -411,4 +418,29 @@ public class GurobiSolver {
 		}
 	
 	}
+	
+	public int[] getMarqueurPossible(int i)
+	{
+		return this.positionMarqueurPossible[i];
+	}
+	
+	public int[] getPositionPossible(int i)
+	{
+		return this.positionPossible[i];
+	}
+	
+	public int[] getPIJ(int i,int j)
+	{
+		return this.pij[i][j];
+	}
+	
+	/*public static void main(String args[])
+	{
+		RushHour r = new RushHour("./puzzles/débutant/jam1.txt");
+		GurobiSolver g = new GurobiSolver(r,50);
+		for(Integer i:g.getPIJ(0,7))
+			System.out.println(i.intValue());
+	}*/
+	
+	
 }
