@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 public class RushHour implements Cloneable {
 
 	public static final byte CASE_SORTIE = 16;
+	public static final byte CASE_SORTIE = 6;
 	public static final byte EMPTY = 0;
 	public static final byte DIMENSION_MATRICE = 6;
 	public static final byte TAILLE_MATRICE = 36;
@@ -186,7 +187,7 @@ public class RushHour implements Cloneable {
     						vehicules.get(this.vehicules.size()-1).setOrientation(RushHour.HORIZONTAL);
     					else
     						vehicules.get(this.vehicules.size()-1).setOrientation(RushHour.VERTICAL);
-            			for(byte z = 0; z < 6; z++)
+            			for(byte z = 0; z < RushHour.DIMENSION_MATRICE; z++)
             			while(( indice = tmp.get(z).indexOf(s)) != -1){
             				tmp.get(z).set(indice,new Integer(Vehicule.getCompteur_voiture()-1).toString());
             			}
