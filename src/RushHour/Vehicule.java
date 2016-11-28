@@ -71,4 +71,9 @@ public abstract class Vehicule implements Cloneable{
 		return compteur_voiture;
 	}
 	
+	public static void resetCompteur()
+	{
+		Vehicule.compteur_voiture=1;
+	}
+	
 }

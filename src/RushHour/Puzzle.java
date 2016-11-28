@@ -52,12 +52,12 @@ public class Puzzle {
 	      dir = location.listFiles(fileFilter);
 	      */
 	      
-		 File[] dir = new File[5];
+		 File[] dir = new File[4];
 		 dir[0]=new File("./puzzles/débutant/");
 		 dir[1]=new File("./puzzles/intermédiaire/");
 		 dir[2]=new File("./puzzles/avancé/");
 		 dir[3]=new File("./puzzles/expert/");
-		 dir[4]=new File("./puzzles/debug/");
+		 //dir[4]=new File("./puzzles/debug/");
 		
 	      FileFilter fileTextFilter = new FileFilter() {
 		         public boolean accept(File file) {

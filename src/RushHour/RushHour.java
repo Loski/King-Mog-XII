@@ -131,6 +131,8 @@ public class RushHour implements Cloneable {
 	public RushHour(){}
 	public RushHour(String filename)
 	{
+		Vehicule.resetCompteur();
+		
 		BufferedReader buffer;
 		String x;
 		ArrayList<ArrayList<String>>  tmp = new ArrayList<ArrayList<String>>();
@@ -304,14 +306,17 @@ public class RushHour implements Cloneable {
 		int compteur_camion = 0;
 		String nom;
 		String[] str= {"0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0", "0", "0", "0", "0","0", "0","0", "0", "0", "0","0", "0"};
+		int index=0;
 		for(Vehicule v: this.vehicules){
 			if(v instanceof Camion){
 				compteur_camion++;
-				nom ="c" + compteur_camion;
+				nom ="t" + compteur_camion;
 			}
+			else if(index==RushHour.indice_solution_g)
+				nom = "g";
 			else{
 				compteur_voiture++;
-				nom = "t" + compteur_voiture;
+				nom = "c" + compteur_voiture;
 			}
 			for(int i = 0; i < v.getTaille(); i++){
 				if(v.getOrientation() == RushHour.HORIZONTAL){
@@ -321,6 +326,8 @@ public class RushHour implements Cloneable {
 					str[v.getPosition() + i * RushHour.DIMENSION_MATRICE] = nom;
 				}
 			}
+			
+			index++;
 		}
 		return str;
 	}
