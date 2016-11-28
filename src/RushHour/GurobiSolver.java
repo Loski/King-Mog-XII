@@ -39,7 +39,7 @@ public class GurobiSolver {
 		this.X = new GRBVar[iMax][][];
 		this.Z = new GRBVar[iMax][][];
 		this.positionMarqueurPossible = new int[iMax][];
-		this.positionPossible = new int[iMax][6];
+		this.positionPossible = new int[iMax][RushHour.DIMENSION_MATRICE];
 		this.calculMarqueurPossible();
 		this.calculPositionPossible();
 		this.calculPIJ();
@@ -50,7 +50,7 @@ public class GurobiSolver {
 		for(Vehicule v: this.rh.getVehicules()){
 			byte position = v.getPosition();
 			byte orientation = v.getOrientation();
-			byte saut = 6;
+			byte saut = RushHour.DIMENSION_MATRICE;
 			if(orientation == RushHour.VERTICAL){
 				saut =  RushHour.DIMENSION_MATRICE;
 				while(position - saut >= 0){
@@ -70,11 +70,11 @@ public class GurobiSolver {
 	}
 	
 	private void calculPIJ(){
-		this.pij = new int[36][36][];
+		this.pij = new int[RushHour.TAILLE_MATRICE][RushHour.TAILLE_MATRICE][];
 		int saut;
 		
-		for(int iFor = 0; iFor < 36; iFor++){
-			for(int jFor = 0; jFor < 36; jFor++){
+		for(int iFor = 0; iFor < RushHour.TAILLE_MATRICE; iFor++){
+			for(int jFor = 0; jFor < RushHour.TAILLE_MATRICE; jFor++){
 				ArrayList<Integer> a = new ArrayList<Integer>();
 				int k = 0;
 				int j=jFor;
@@ -87,15 +87,15 @@ public class GurobiSolver {
 				
 				int compteur=0;
 				
-				if((int)i/6 == (int) j/6){
+				if((int)i/RushHour.DIMENSION_MATRICE == (int) j/RushHour.DIMENSION_MATRICE){
 					saut = 1;
 					for(k = i;k<=j; k+=saut){
 						a.add(k);
 						compteur++;
 					}
 				}
-				else if(i%6 == j%6){
-					saut = 6;	
+				else if(i%RushHour.DIMENSION_MATRICE == j%RushHour.DIMENSION_MATRICE){
+					saut = RushHour.DIMENSION_MATRICE;	
 					for(k = i;k<=j; k+=saut){
 						a.add(k);
 						compteur++;
