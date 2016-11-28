@@ -2,6 +2,7 @@ package RushHour;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -24,6 +25,7 @@ public class GurobiSolver {
     private int iMax, jMax, lMax;
     private int positionPossible[][];
     private int[][][] pij;
+    private int[][][] mij;
     private int positionMarqueurPossible[][];
     
     private RushHour rh;
@@ -35,16 +37,38 @@ public class GurobiSolver {
 		this.iMax = rh.getVehicules().size();
 		this.jMax = RushHour.DIMENSION_MATRICE;
 		this.lMax = jMax;
-		this.Y = new GRBVar[iMax][][][];
-		this.X = new GRBVar[iMax][][];
-		this.Z = new GRBVar[iMax][][];
+		this.Y = new GRBVar[iMax][jMax][lMax][N+1];
+		this.X = new GRBVar[iMax][jMax][N+1];
+		this.Z = new GRBVar[iMax][jMax][N+1];
 		this.positionMarqueurPossible = new int[iMax][];
 		this.positionPossible = new int[iMax][RushHour.DIMENSION_MATRICE];
 		this.calculMarqueurPossible();
 		this.calculPositionPossible();
 		this.calculPIJ();
+		this.calculMij();
 	}
 	
+	private void calculMij() {
+		this.mij = new int[this.rh.getVehicules().size()][RushHour.TAILLE_MATRICE][0];
+		
+		
+		int i=0;
+		
+		for(Vehicule vi : this.rh.getVehicules())
+		{
+			for(int pos:this.getMarqueurPossible(i))
+			{	
+				this.mij[i][pos] = new int[vi.getTaille()];
+				
+				for(int k=0;k<vi.getTaille();k++)
+					this.mij[i][pos][k]=pos+k;
+			}	
+				
+			i++;
+		}
+
+	}
+
 	public void calculPositionPossible(){
 		int vehicule = 0;
 		for(Vehicule v: this.rh.getVehicules()){
@@ -162,17 +186,20 @@ public class GurobiSolver {
 		this.model.addConstr(expr,  GRB.EQUAL, 1.0,  "C_Victoire");
 	}
 	
-	  private void seulementViCase() throws GRBException{
+	private void seulementViCase() throws GRBException{
 	        GRBLinExpr expr;
 	        for(int i=0;i<iMax;i++)
 	            for(int k=0;k<N;k++)
 	            {
 	                expr = new GRBLinExpr();
 	                
-	                    for(int j=0;j<jMax;j++)
+	                int[] pos = this.getMarqueurPossible(i);
+	                
+	                    for(int j:pos)
 	                        expr.addTerm(1.0,Z[i][j][k]);    
 	                
-	                this.model.addConstr(expr, GRB.EQUAL, this.rh.getVehicules().get(i).getTaille(), "C_1VehiculeDeplace_"+k);
+	                if(pos.length>0)
+	                	this.model.addConstr(expr, GRB.EQUAL, this.rh.getVehicules().get(i).getTaille(), "C_1VehiculeDeplace_"+k);
 	            }
 	    }
 	  
@@ -182,13 +209,17 @@ public class GurobiSolver {
 		for(int k=1;k<N;k++)
 		{
 			expr = new GRBLinExpr();
+			int[] pos = new int[0];
 			
 			for(int i=0;i<iMax;i++)
-				for(int j=0;j<jMax;j++)
-					for(int l=0;l<lMax;l++)
+			{
+				pos = this.getMarqueurPossible(i);
+				for(int j:pos)
+					for(int l:pos)
 	            		{	
 	            			expr.addTerm(1.0,Y[i][j][l][k]);	
 	            		}
+			}
 			
 			this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);
 		}
@@ -198,7 +229,10 @@ public class GurobiSolver {
 	private void majMarqueur() throws GRBException{
 		GRBLinExpr exprL, exprR;
 		for(int i=0;i<iMax;i++)
-			for(int j=0;j<jMax;j++)
+		{
+			int [] pos = this.getMarqueurPossible(i);
+			
+			for(int j:pos)
 				for(int k=1;k<N;k++)
 				{
 					exprL = new GRBLinExpr();
@@ -206,13 +240,14 @@ public class GurobiSolver {
 					exprL.addTerm(1.0,X[i][j][k-1]);	
 					exprR.addTerm(1.0,X[i][j][k]);
 					
-					for(int l=0;l<lMax;l++)
+					for(int l:pos)
 					{
 						exprL.addTerm(-1.0, Y[i][j][l][k]);
 						exprL.addTerm(1.0, Y[i][l][j][k]);
 					}
 					this.model.addConstr(exprL, GRB.EQUAL, exprR, "C_MajMarqueur_"+i+"_"+j+"_"+k);
 				}
+		}
 	}
 	
 	//18
@@ -221,38 +256,24 @@ public class GurobiSolver {
 		for(int i=0;i<iMax;i++)
 		{
 			Vehicule vi = this.rh.getVehicules().get(i);
-			/*int caseMax=-1;	
-			if(vi.getOrientation()==RushHour.HORIZONTAL)
-				caseMax=RushHour.TAILLE_MATRICE - vi.getTaille();
-			else
-				caseMax=RushHour.TAILLE_MATRICE - RushHour.DIMENSION_MATRICE * vi.getTaille()+ RushHour.DIMENSION_MATRICE-1;*/
+			int [] pos = this.getMarqueurPossible(i);
 			
-			for(int j=0;j<jMax;j++)
-			{
-				/*int saut = 6;
-				if(vi.getOrientation()==RushHour.HORIZONTAL){
-					saut = 1;
-					if(j%6 + saut * vi.getTaille() > 6)
-						continue;
-				}
-				else
-					if(j + saut * vi.getTaille() > 36)
-						continue;*/
-				
+			for(int j:pos)
+			{				
 				for(int k=0;k<N;k++)
 				{
 					exprL = new GRBLinExpr();
 					exprR = new GRBLinExpr();
 					int tailleVehicule = vi.getTaille();
-					int[] mij = calculMij(vi,j);
 					exprL.addTerm((double)tailleVehicule,X[i][j][k]);
-					if(mij == null)
-						continue;
-					for(Integer m : mij)
+					
+					for(int m : this.getMIJ(i, j))
 					{
 						exprR.addTerm(1.0,Z[i][m][k]);
 					}
-					this.model.addConstr(exprL, GRB.LESS_EQUAL, exprR, "C_PosVehicule_"+i+"_"+j+"_"+k);
+					
+					if(this.getMIJ(i, j).length>0)
+						this.model.addConstr(exprL, GRB.LESS_EQUAL, exprR, "C_PosVehicule_"+i+"_"+j+"_"+k);
 				}
 			}
 		}
@@ -261,17 +282,32 @@ public class GurobiSolver {
 	// Un v√©hicule par case par tour ! (19)
 	private void caseByTurn() throws GRBException{
 		GRBLinExpr expr = new GRBLinExpr();
-		for(int j = 0; j < jMax; j++)
+		
+		List<List<int[]>> listOfPos = new ArrayList<List<int[]>>();
+		
+		for(int i=0;i<iMax;i++)
+		{
+			listOfPos.add(Arrays.asList(this.getPositionPossible(i)));
+		}
+		
+		
+		for(int j = 0; j < RushHour.DIMENSION_MATRICE; j++)
 			for(int k = 0; k < this.N;k++)
 			{
 				expr = new GRBLinExpr();
+				boolean added = false;
 				
 				for(int i=0;i<iMax;i++)
 				{
-					expr.addTerm(1.0, Z[i][j][k]);
+					if(listOfPos.get(i).contains(j))
+					{
+						expr.addTerm(1.0, Z[i][j][k]);
+						added = true;
+					}
 				}
 				
-				this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_1VehiculeParCase_"+j+"_"+k);
+				if(added)
+					this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_1VehiculeParCase_"+j+"_"+k);
 			}
 	}
 	
@@ -279,14 +315,12 @@ public class GurobiSolver {
 	private void contrainteDeDeplacement() throws GRBException{
 		GRBLinExpr expr;
 		for(int i=0;i<iMax;i++)
-			for(int j=0;j<jMax;j++)
-				for(int l=0;l<lMax;l++){
-					/*if(j==l)
-						continue;*/
-					int[] pJL = calculeP(j, l,this.rh.getVehicules().get(i));
+			for(int j:this.getMarqueurPossible(i))
+				for(int l:this.getMarqueurPossible(i)){
+					
 					for(int k=1;k<N;k++)
 					{					
-						for(Integer p : pJL)
+						for(int p: this.getPIJ(j, l))
 						{
 							expr = new GRBLinExpr();
 							expr.addTerm(1.0, Y[i][j][l][k]);
@@ -309,19 +343,19 @@ public class GurobiSolver {
 		
 		GRBLinExpr obj = new GRBLinExpr();
 		for(int i=0;i<iMax;i++)
-            for(int j=0;j<jMax;j++)
-                for(int l=0;l<lMax;l++)
+            for(int j:this.getMarqueurPossible(i))
+                for(int l:this.getMarqueurPossible(i))
                     for(int k=0;k<N;k++){
 						Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y_"+i+"_"+j+"_"+l+"_"+k);
+						X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
 						obj.addTerm(1.0,Y[i][j][l][k]);
                     }
 		
 		model.setObjective(obj, GRB.MINIMIZE);
 		
 		for(int i=0;i<iMax;i++)
-	        for(int j=0;j<jMax;j++)
-	            for(int k=0;k<N;k++){
-						X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
+            for(int j:this.getPositionPossible(i))
+                    for(int k=0;k<N;k++){
 						Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
 	                }
 		
@@ -383,6 +417,7 @@ public class GurobiSolver {
 				mij[z]=j+z*saut;
 		return (mij.length == 0) ? null : mij;
 	}
+	
 	public void solve()
 	{
 		try
@@ -434,11 +469,16 @@ public class GurobiSolver {
 		return this.pij[i][j];
 	}
 	
+	public int[] getMIJ(int i,int j)
+	{
+		return this.mij[i][j];
+	}
+	
 	/*public static void main(String args[])
 	{
 		RushHour r = new RushHour("./puzzles/dÈbutant/jam1.txt");
 		GurobiSolver g = new GurobiSolver(r,50);
-		for(Integer i:g.getPIJ(0,7))
+		for(Integer i:g.getPIJ(0, 0))
 			System.out.println(i.intValue());
 	}*/
 	
