@@ -291,12 +291,18 @@ public class GurobiSolver {
 	private void caseByTurn() throws GRBException{
 		GRBLinExpr expr = new GRBLinExpr();
 		
-		List<List<int[]>> listOfPos = new ArrayList<List<int[]>>();
+		ArrayList<ArrayList<Integer>> listOfPos = new ArrayList<ArrayList<Integer>>();
 		
-		for(int i=0;i<iMax;i++)
-		{
-			listOfPos.add(Arrays.asList(this.getPositionPossible(i)));
+		for (int i=0;i<iMax;i++)
+		{	
+			ArrayList<Integer> liste = new ArrayList<Integer>();
+			int[] tmp = this.getPositionPossible(i);
+			for(Integer t : tmp){
+				liste.add(t);
+			}
+			listOfPos.add(liste);
 		}
+		
 		
 		
 		for(int j = 0; j < RushHour.TAILLE_MATRICE; j++)
@@ -307,7 +313,8 @@ public class GurobiSolver {
 				
 				for(int i=0;i<iMax;i++)
 				{
-					if(listOfPos.get(i).contains(j))
+
+					if(listOfPos.get(i).contains(Integer.valueOf(j)))
 					{
 						expr.addTerm(1.0, Z[i][j][k]);
 						added = true;
@@ -322,12 +329,18 @@ public class GurobiSolver {
 	//  20 
 	private void contrainteDeDeplacement() throws GRBException{
 		GRBLinExpr expr;
-		List<List<int[]>> listOfPos = new ArrayList<List<int[]>>();
+		ArrayList<ArrayList<Integer>> listOfPos = new ArrayList<ArrayList<Integer>>();
 		
 		for (int i=0;i<iMax;i++)
 		{	
-			listOfPos.add(Arrays.asList(this.getPositionPossible(i)));	
+			ArrayList<Integer> liste = new ArrayList<Integer>();
+			int[] tmp = this.getPositionPossible(i);
+			for(Integer t : tmp){
+				liste.add(t);
+			}
+			listOfPos.add(liste);
 		}
+		
 		
 		for(int i=0;i<iMax;i++)
 		{			
@@ -344,8 +357,7 @@ public class GurobiSolver {
 							for(int iPrime=0;iPrime<iMax;iPrime++)
 								if(iPrime!=i)
 								{
-									if(listOfPos.get(i).contains(Integer.valueOf(p))){
-										System.out.println(Z[iPrime][p][k-1]);
+									if(listOfPos.get(iPrime).contains(Integer.valueOf(p))){
 										expr.addTerm(1.0, Z[iPrime][p][k-1]);
 										possible = true;
 									}
@@ -420,15 +432,32 @@ public class GurobiSolver {
 			this.model.optimize();
 			
 			    PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
+				int compteurX = 0, compteurY =0, compteurZ=0;
+
 			for(int k = 0; k < N; k++)
 			for(int i=0;i<iMax;i++)
 	            for(int j : this.getMarqueurPossible(i))
 	             {
-	            	for(int l :this.getMarqueurPossible(i))
+	            	for(int l :this.getMarqueurPossible(i)){
 	            		if(this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
 	            			System.out.println("\nTour " + k + "  i=" + i + "\tj=" +j + "\tl="+ l +"Y="+this.Y[i][j][l][k].get(GRB.DoubleAttr.X));
 	            		}
-	             }
+	            	if(this.Y[i][j][l][k] != null)
+	            		compteurY++;
+	             }}
+			for(int k = 0; k < N; k++)
+                for(int i=0;i<iMax;i++)
+                    for(int j = 0; j < RushHour.TAILLE_MATRICE ; j++)
+                     {
+
+                            if(this.Z[i][j][k]!=null){
+                                compteurZ++;
+                            }
+                            if(this.X[i][j][k]!=null){
+                                compteurX++;
+                            }
+                     }
+            System.out.println("ContrainteY " + compteurY + "ContrainteX " + compteurX + "ContrainteZ " + compteurZ + "SommeAll " + (compteurY+compteurX+compteurZ) + model.getVars().length);
 			this.model.dispose();
 			this.env.dispose();
 			
