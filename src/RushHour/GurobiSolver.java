@@ -97,7 +97,7 @@ public class GurobiSolver {
 	}
 	
 	private void calculPIJ(){
-		this.pij = new int[RushHour.TAILLE_MATRICE][RushHour.TAILLE_MATRICE][];
+		this.pij = new int[RushHour.TAILLE_MATRICE][RushHour.TAILLE_MATRICE][0];
 		int saut;
 		
 		for(int iFor = 0; iFor < RushHour.TAILLE_MATRICE; iFor++){
@@ -224,7 +224,8 @@ public class GurobiSolver {
 	            		}
 			}
 			
-			this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);
+			if(pos.length>0)
+				this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, "C_1VehiculeDeplace_"+k);
 		}
 	}
 	
@@ -248,7 +249,9 @@ public class GurobiSolver {
 						exprL.addTerm(-1.0, Y[i][j][l][k]);
 						exprL.addTerm(1.0, Y[i][l][j][k]);
 					}
-					this.model.addConstr(exprL, GRB.EQUAL, exprR, "C_MajMarqueur_"+i+"_"+j+"_"+k);
+					
+					if(pos.length>0)
+						this.model.addConstr(exprL, GRB.EQUAL, exprR, "C_MajMarqueur_"+i+"_"+j+"_"+k);
 				}
 		}
 	}
@@ -296,7 +299,7 @@ public class GurobiSolver {
 		}
 		
 		
-		for(int j = 0; j < RushHour.DIMENSION_MATRICE; j++)
+		for(int j = 0; j < RushHour.TAILLE_MATRICE; j++)
 			for(int k = 0; k < this.N;k++)
 			{
 				expr = new GRBLinExpr();
@@ -320,6 +323,11 @@ public class GurobiSolver {
 	private void contrainteDeDeplacement() throws GRBException{
 		GRBLinExpr expr;
 		for(int i=0;i<iMax;i++)
+		{
+			
+			List<List<int[]>> listOfPos = new ArrayList<List<int[]>>();
+			listOfPos.add(Arrays.asList(this.getPositionPossible(i)));		
+			
 			for(int j:this.getMarqueurPossible(i))
 				for(int l:this.getMarqueurPossible(i)){
 					
@@ -333,7 +341,7 @@ public class GurobiSolver {
 							for(int iPrime=0;iPrime<iMax;iPrime++)
 								if(iPrime!=i)
 								{
-									if(Z[iPrime][p][k-1] != null){
+									if(listOfPos.get(i).contains(Integer.valueOf(p))){
 										System.out.println(Z[iPrime][p][k-1]);
 										expr.addTerm(1.0, Z[iPrime][p][k-1]);
 										possible = true;
@@ -344,6 +352,7 @@ public class GurobiSolver {
 						}
 					}
 				}
+		}
 
 	}
 	private void initialisation() throws GRBException{
@@ -353,12 +362,18 @@ public class GurobiSolver {
 		GRBLinExpr obj = new GRBLinExpr();
 		for(int i=0;i<iMax;i++)
             for(int j:this.getMarqueurPossible(i))
-                for(int l:this.getMarqueurPossible(i))
-                    for(int k=0;k<N;k++){
+            {
+            	for(int k=0;k<N;k++)
+            	{
+            		X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
+            		
+            		for(int l:this.getMarqueurPossible(i))
+            		{
 						Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y_"+i+"_"+j+"_"+l+"_"+k);
-						X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
 						obj.addTerm(1.0,Y[i][j][l][k]);
-                    }
+            		}
+            	}            	
+            }
 		
 		model.setObjective(obj, GRB.MINIMIZE);
 		
