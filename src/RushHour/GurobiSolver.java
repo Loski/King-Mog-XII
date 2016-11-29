@@ -1,6 +1,8 @@
 package RushHour;
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,11 +37,11 @@ public class GurobiSolver {
 		N++;
 		this.N = N;
 		this.iMax = rh.getVehicules().size();
-		this.jMax = RushHour.DIMENSION_MATRICE;
+		this.jMax = RushHour.TAILLE_MATRICE;
 		this.lMax = jMax;
-		this.Y = new GRBVar[iMax][jMax][lMax][N+1];
-		this.X = new GRBVar[iMax][jMax][N+1];
-		this.Z = new GRBVar[iMax][jMax][N+1];
+		this.Y = new GRBVar[iMax][jMax][lMax][this.N];
+		this.X = new GRBVar[iMax][jMax][this.N];
+		this.Z = new GRBVar[iMax][jMax][this.N];
 		this.positionMarqueurPossible = new int[iMax][];
 		this.positionPossible = new int[iMax][RushHour.DIMENSION_MATRICE];
 		this.calculMarqueurPossible();
@@ -50,18 +52,19 @@ public class GurobiSolver {
 	
 	private void calculMij() {
 		this.mij = new int[this.rh.getVehicules().size()][RushHour.TAILLE_MATRICE][0];
-		
-		
 		int i=0;
-		
+		int saut;
 		for(Vehicule vi : this.rh.getVehicules())
 		{
 			for(int pos:this.getMarqueurPossible(i))
 			{	
 				this.mij[i][pos] = new int[vi.getTaille()];
-				
+				if(vi.getOrientation() == RushHour.VERTICAL)
+					saut = RushHour.DIMENSION_MATRICE;
+				else
+					saut = 1;
 				for(int k=0;k<vi.getTaille();k++)
-					this.mij[i][pos][k]=pos+k;
+					this.mij[i][pos][k]=pos+k * saut;
 			}	
 				
 			i++;
@@ -193,7 +196,7 @@ public class GurobiSolver {
 	            {
 	                expr = new GRBLinExpr();
 	                
-	                int[] pos = this.getMarqueurPossible(i);
+	                int[] pos = this.getPositionPossible(i);
 	                
 	                    for(int j:pos)
 	                        expr.addTerm(1.0,Z[i][j][k]);    
@@ -272,8 +275,10 @@ public class GurobiSolver {
 						exprR.addTerm(1.0,Z[i][m][k]);
 					}
 					
-					if(this.getMIJ(i, j).length>0)
-						this.model.addConstr(exprL, GRB.LESS_EQUAL, exprR, "C_PosVehicule_"+i+"_"+j+"_"+k);
+					
+					if(this.getMIJ(i, j).length > 0){
+						this.model.addConstr(exprL, GRB.LESS_EQUAL, exprR, "C_PosVehicule_"+i+"_"+j+"_"+k+"_"+this.getMIJ(i, j)[0]);
+					}
 				}
 			}
 		}
@@ -324,14 +329,18 @@ public class GurobiSolver {
 						{
 							expr = new GRBLinExpr();
 							expr.addTerm(1.0, Y[i][j][l][k]);
-							
+							boolean possible = false;
 							for(int iPrime=0;iPrime<iMax;iPrime++)
 								if(iPrime!=i)
 								{
-									expr.addTerm(1.0, Z[iPrime][p][k-1]);
+									if(Z[iPrime][p][k-1] != null){
+										System.out.println(Z[iPrime][p][k-1]);
+										expr.addTerm(1.0, Z[iPrime][p][k-1]);
+										possible = true;
+									}
 								}
-							
-							model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_CasePasTouchee_"+i+"_"+j+"_"+l+"_"+k+"_"+p);
+							if(possible)
+								model.addConstr(expr, GRB.LESS_EQUAL, 1.0,"C_CasePasTouchee_"+i+"_"+j+"_"+l+"_"+k+"_"+p);
 						}
 					}
 				}
@@ -374,49 +383,7 @@ public class GurobiSolver {
 		}
 		
 	}
-	
-	public int[] calculeP(int j, int l, Vehicule v){
-		int tmpMax = Math.max(j, l);
-		int tmpMin = Math.min(j, l);
-		j = tmpMin;
-		l = tmpMax;/*
-		int saut = 1;
-		if(v.getOrientation() == RushHour.VERTICAL)
-			saut = 6;
-		int tab[] = new int[l-j];
-		int i = 0;
-		while(j  < l){
-			tab[i] = j;
-			i++;
-			j+=saut;
-		}
-		return tab;*/
-		
-		int[] p = new int[l-j+1];
-		int index =0;
-		
-		for(int i=j;i<l;i++)
-		{
-			p[index]=i;
-			index++;
-		}
-		
-		return p;
-	}
-	
-	public int[] calculMij(Vehicule vi, int j){
-	
-		int mij[] = new int[vi.getTaille()];
-		int saut = RushHour.DIMENSION_MATRICE;
-		
-		if(vi.getOrientation()==RushHour.HORIZONTAL){
-			saut = 1;
-		}
-		for(int z = 0; z < vi.getTaille();z++)
-			if(j+z*saut < RushHour.TAILLE_MATRICE)
-				mij[z]=j+z*saut;
-		return (mij.length == 0) ? null : mij;
-	}
+
 	
 	public void solve()
 	{
@@ -437,9 +404,9 @@ public class GurobiSolver {
 			    PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
 			for(int k = 0; k < N; k++)
 			for(int i=0;i<iMax;i++)
-	            for(int j=0;j<jMax;j++)
+	            for(int j : this.getMarqueurPossible(i))
 	             {
-	            	for(int l=0;l<jMax;l++)
+	            	for(int l :this.getMarqueurPossible(i))
 	            		if(this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
 	            			System.out.println("\nTour " + k + "  i=" + i + "\tj=" +j + "\tl="+ l +"Y="+this.Y[i][j][l][k].get(GRB.DoubleAttr.X));
 	            		}
@@ -447,8 +414,8 @@ public class GurobiSolver {
 			this.model.dispose();
 			this.env.dispose();
 			
-		}catch(Exception e){
-			System.out.println("Execption"  + e.getMessage());
+		}catch(GRBException | FileNotFoundException | UnsupportedEncodingException e){
+			System.out.println("Execption" +((GRBException) e).getErrorCode() + e.getMessage());
 			e.printStackTrace();
 		}
 	
@@ -476,7 +443,7 @@ public class GurobiSolver {
 	
 	/*public static void main(String args[])
 	{
-		RushHour r = new RushHour("./puzzles/débutant/jam1.txt");
+		RushHour r = new RushHour("./puzzles/dï¿½butant/jam1.txt");
 		GurobiSolver g = new GurobiSolver(r,50);
 		for(Integer i:g.getPIJ(0, 0))
 			System.out.println(i.intValue());
