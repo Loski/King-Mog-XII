@@ -9,10 +9,10 @@ import java.util.StringTokenizer;
 
 public class RushHour implements Cloneable {
 
-	public static final byte CASE_SORTIE = 6;
+	public static final byte CASE_SORTIE = 16;
 	public static final byte EMPTY = 0;
-	public static final byte DIMENSION_MATRICE = 4;
-	public static final byte TAILLE_MATRICE = 4*4;
+	public static final byte DIMENSION_MATRICE = 6;
+	public static final byte TAILLE_MATRICE = 36;
 	public final static byte NO_DIRECTION = -1;
 	public final static byte VERTICAL = 1;
 	public final static byte HORIZONTAL = 0;
