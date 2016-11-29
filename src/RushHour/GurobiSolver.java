@@ -322,12 +322,15 @@ public class GurobiSolver {
 	//  20 
 	private void contrainteDeDeplacement() throws GRBException{
 		GRBLinExpr expr;
+		List<List<int[]>> listOfPos = new ArrayList<List<int[]>>();
+		
+		for (int i=0;i<iMax;i++)
+		{	
+			listOfPos.add(Arrays.asList(this.getPositionPossible(i)));	
+		}
+		
 		for(int i=0;i<iMax;i++)
-		{
-			
-			List<List<int[]>> listOfPos = new ArrayList<List<int[]>>();
-			listOfPos.add(Arrays.asList(this.getPositionPossible(i)));		
-			
+		{			
 			for(int j:this.getMarqueurPossible(i))
 				for(int l:this.getMarqueurPossible(i)){
 					
