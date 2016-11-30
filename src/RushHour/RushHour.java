@@ -28,7 +28,19 @@ public class RushHour implements Cloneable {
 	private ArrayList<Vehicule> vehicules;
 
 
-
+	public void majGrille(){
+		this.grille = new byte[TAILLE_MATRICE];
+		int saut;
+		for(Vehicule v : this.vehicules){
+			if(v.getOrientation() == RushHour.HORIZONTAL){
+				saut = 1;
+			}else{
+				saut = 6;
+			}
+			for(int i = 0; i < v.getTaille(); i++)
+				this.grille[v.getPosition() + saut * i] = v.getHash();
+		}
+	}
 
 	public ArrayList<RushHour> deplacement_multiple(Vehicule v, byte index, byte direction, byte nombre_deplacement){
         ArrayList<RushHour> sommetAccessible = new ArrayList<RushHour>();
