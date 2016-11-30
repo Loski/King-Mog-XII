@@ -201,7 +201,6 @@ public class RushHourSolverInteractive extends JFrame{
         {
         	listData[i][0]=p.getDifficulty();
         	listData[i][1]=p.getTxtFileName();
-        	this.N=p.getN();
         	i++;
         }
         
@@ -225,9 +224,9 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 	        public void valueChanged(ListSelectionEvent event) {
-	        	
 	            String difficulty = table.getValueAt(table.getSelectedRow(), 0).toString();
 	            String name = table.getValueAt(table.getSelectedRow(), 1).toString();
+	            N=puzzleList.get(table.getSelectedRow()).getN();
 	            r = new RushHour("./puzzles/"+difficulty+"/"+name);      	
 	            fileLoaded=name;
 	            drawGrille();
@@ -506,10 +505,10 @@ public class RushHourSolverInteractive extends JFrame{
 					  } 
 					} );
 		  
-		  JMenuItem RHCGuro = new JMenuItem("GUROBI");
+		  JMenuItem RHCGuro = new JMenuItem("Avec Gurobi");
 		  JMenuItem RHCDij = new JMenuItem("Avec Dijkstra");
 		  
-		  JMenuItem RHMGuro = new JMenuItem("GUROBI");
+		  JMenuItem RHMGuro = new JMenuItem("Avec Gurobi");
 		  JMenuItem RHMDij = new JMenuItem("Avec Dijkstra");
 		  
 		  
