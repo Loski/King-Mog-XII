@@ -428,9 +428,10 @@ public class GurobiSolver {
 			lancementContrainte();
 
 			this.model.optimize();
-			Object result[] = new Object[2];
+			Object result[] = new Object[3];
 			ArrayList<RushHour> graphe = new ArrayList<RushHour>();
 			RushHour precedent = (RushHour) rh.clone();
+			int nbCase = 0;
 			for(byte k = 0; k < N; k++)
 				for(byte i=0;i<iMax;i++)
 					for(byte j=0;j<jMax;j++)
@@ -442,6 +443,10 @@ public class GurobiSolver {
 		            			 tmp.majGrille();
 		            			 graphe.add(tmp);
 		            			 precedent = tmp;
+		            			 if(this.rh.getVehicules().get(i).getOrientation()==RushHour.HORIZONTAL)
+		            				 nbCase+=Math.abs(j-l);
+		            			 else
+		            				 nbCase+=Math.abs(j-l)/this.rh.getNbColonne();
 							}
 					}
 			int status = model.get(GRB.IntAttr.Status);
@@ -454,8 +459,12 @@ public class GurobiSolver {
 		    }
 		    	
 		    
-		    result[0] = (Integer)(int)model.get(GRB.DoubleAttr.ObjVal);
+		    if(methode==RushHour.RHC)
+		    	result[0] = (Integer)(int)model.get(GRB.DoubleAttr.ObjVal);
+		    else
+		    	result[0] = nbCase;
 			result[1] = graphe;
+			result[2]=(Integer)(int)model.get(GRB.DoubleAttr.ObjVal);
 			this.model.dispose();
 			this.env.dispose();
 				
