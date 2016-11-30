@@ -22,6 +22,8 @@ public class RushHour implements Cloneable {
 	public final static byte BACKWARD = -1;
 	public static final byte RHM = 0;
     public static final byte RHC = 1;
+    
+    public byte pos_g;
 	
 	
 	public static byte indice_solution_g;
@@ -194,6 +196,7 @@ public class RushHour implements Cloneable {
         			else if(s.startsWith("g")){
         				this.vehicules.add(new Voiture((byte)(v*getNbLigne()+j)));
         				RushHour.indice_solution_g = (byte) (this.vehicules.size()-1);
+        				this.pos_g=(byte)(v*getNbLigne()+j);
         			}
         			else
         				vehicule = false;

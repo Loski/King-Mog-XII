@@ -99,7 +99,7 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		bouton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-				  if(RushHour.indice_solution_g/r.getNbColonne() == RushHour.CASE_SORTIE/r.getNbColonne())
+				  if(r.pos_g/r.getNbColonne() == RushHour.CASE_SORTIE/r.getNbColonne())
 					  afficherMenuRushHourSolver();
 				  else
 					  JOptionPane.showMessageDialog(new JFrame(), "Le fichier n'est pas conforme : G n'est pas sur la bonne ligne", "ERREUR",
