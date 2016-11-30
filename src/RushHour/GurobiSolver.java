@@ -382,7 +382,7 @@ public class GurobiSolver {
                         int nbCase = Math.abs(j-l); 
                         if(this.rh.getVehicules().get(i).getOrientation()==RushHour.VERTICAL)
                             nbCase= nbCase/6;
-                        if(methode==RushHour.RHM || nbCase<=1)
+                        if(methode==RushHour.RHM)
                         	obj.addTerm(1.0,Y[i][j][l][k]);
                         else
                             obj.addTerm(nbCase,Y[i][j][l][k]);
@@ -430,7 +430,8 @@ public class GurobiSolver {
 			this.model.optimize();
 			Object result[] = new Object[3];
 			ArrayList<RushHour> graphe = new ArrayList<RushHour>();
-			RushHour precedent = new RushHour(rh);
+			graphe.add(rh);
+			RushHour precedent = rh;
 			int nbCase = 0;
 			for(byte k = 0; k < N; k++)
 				for(byte i=0;i<iMax;i++)
@@ -438,6 +439,7 @@ public class GurobiSolver {
 					{
 						for(byte l=0;l<jMax;l++)
 							if(this.Y[i][j][l][k] != null && this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
+								System.out.println("Salut");
 		            			 RushHour tmp = new RushHour(precedent);
 		            			 tmp.getVehicules().get(i).setPosition(l);
 		            			 tmp.majGrille();
