@@ -50,7 +50,7 @@ public class GrapheConfiguration {
 			creerGraphe(nodeToTest);
 			nodeToTest++;
 		}while(nodeToTest<this.configurations.size());
-		System.out.println("OVER");
+		//System.out.println("OVER");
 		//System.out.println(this.configurations.size());
 	}
 	

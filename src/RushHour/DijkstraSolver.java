@@ -122,8 +122,8 @@ public abstract class DijkstraSolver {
 
 		long duration = (endTime - startTime); 
 		
-		System.out.println("DIJKSTRA WAS DONE IN "+duration/1000000+" ms");
-		System.out.println("Nombre de Sommet = " + configurations.size());
+		/*System.out.println("DIJKSTRA WAS DONE IN "+duration/1000000+" ms");
+		System.out.println("Nombre de Sommet = " + configurations.size());*/
 		
 		return result;
 	}

@@ -367,7 +367,7 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		this.sequence=(ArrayList<RushHour>) result[1];
 		
-		JPanel pan =  new JPanel();
+		JPanel panelConfig =  new JPanel();
 		this.previousButton = new JButton("PREVIOUS");
 		this.nextButton = new JButton("NEXT");
 		this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+" / "+(this.sequence.size()-1)+")");
@@ -386,11 +386,13 @@ public class RushHourSolverInteractive extends JFrame{
 				} );
 	  
 		
-		pan.add(previousButton);
-		pan.add(this.currentConfigDisplay);
-		pan.add(nextButton);
+		panelConfig.add(previousButton);
+		panelConfig.add(this.currentConfigDisplay);
+		panelConfig.add(nextButton);
 		
-		pan.add(this.resultPanel());
+		
+		JPanel res = new JPanel();
+		res.add(this.resultPanel());
 		
 		this.getContentPane().removeAll();
 		this.getContentPane().setLayout(new BorderLayout());
@@ -398,11 +400,13 @@ public class RushHourSolverInteractive extends JFrame{
 		JLabel methodePanel = new JLabel(this.methode,JLabel.CENTER);
 		methodePanel.setFont(new Font("Verdana", Font.BOLD, 28));
 		this.getContentPane().add(methodePanel,BorderLayout.NORTH);
+		
 		JPanel center = new JPanel();
 		center.setLayout(new BorderLayout());
 		center.add(grille,BorderLayout.CENTER);
+		center.add(panelConfig,BorderLayout.SOUTH);
 		this.getContentPane().add(center,BorderLayout.CENTER);
-		this.getContentPane().add(pan,BorderLayout.SOUTH);
+		//this.getContentPane().add(pan,BorderLayout.SOUTH);
 		this.revalidate();
 		this.repaint();
 	}
