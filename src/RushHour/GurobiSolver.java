@@ -415,7 +415,7 @@ public class GurobiSolver {
 	}
 
 	
-	public void solve()
+	public Object[] solve()
 	{
 		try
 		{
@@ -427,47 +427,45 @@ public class GurobiSolver {
 		
 			lancementContrainte();
 
-
-		             System.out.println("j'optimise ");       
 			this.model.optimize();
-			
-			    PrintWriter writer = new PrintWriter("the-file-name.txt", "UTF-8");
-				int compteurX = 0, compteurY =0, compteurZ=0;
-
-			for(int k = 0; k < N; k++)
-			for(int i=0;i<iMax;i++)
-	            for(int j : this.getMarqueurPossible(i))
-	             {
-	            	for(int l :this.getMarqueurPossible(i)){
-	            		if(this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
-	            			System.out.println("\nTour " + k + "  i=" + i + "\tj=" +j + "\tl="+ l +"Y="+this.Y[i][j][l][k].get(GRB.DoubleAttr.X));
-	            		}
-	            	if(this.Y[i][j][l][k] != null)
-	            		compteurY++;
-	             }}
-			for(int k = 0; k < N; k++)
-                for(int i=0;i<iMax;i++)
-                    for(int j = 0; j < RushHour.TAILLE_MATRICE ; j++)
-                     {
-
-                            if(this.Z[i][j][k]!=null){
-                                compteurZ++;
-                            }
-                            if(this.X[i][j][k]!=null){
-                                compteurX++;
-                            }
-                     }
-            System.out.println("ContrainteY " + compteurY + "ContrainteX " + compteurX + "ContrainteZ " + compteurZ + "SommeAll " + (compteurY+compteurX+compteurZ) + model.getVars().length);
+			Object result[] = new Object[2];
+			ArrayList<RushHour> graphe = new ArrayList<RushHour>();
+			RushHour precedent = (RushHour) rh.clone();
+			for(byte k = 0; k < N; k++)
+				for(byte i=0;i<iMax;i++)
+					for(byte j=0;j<jMax;j++)
+					{
+						for(byte l=0;l<jMax;l++)
+							if(this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
+		            			 RushHour tmp = (RushHour) precedent.clone();
+		            			 tmp.getVehicules().get(i).setPosition(l);
+		            			 tmp.majGrille();
+		            			 graphe.add(tmp);
+		            			 precedent = tmp;
+							}
+					}
+			int status = model.get(GRB.IntAttr.Status);
+		    if (status == GRB.Status.INF_OR_UNBD ||
+		        status == GRB.Status.INFEASIBLE  ||
+		        status == GRB.Status.UNBOUNDED     ){
+		    	this.model.dispose();
+				this.env.dispose();
+				return null;
+		    }
+		    	
+		    
+		    result[0] = (Integer)(int)model.get(GRB.DoubleAttr.ObjVal);
+			result[1] = graphe;
 			this.model.dispose();
 			this.env.dispose();
-			
-		}catch(GRBException | FileNotFoundException | UnsupportedEncodingException e){
-			System.out.println("Execption" +((GRBException) e).getErrorCode() + e.getMessage());
-			e.printStackTrace();
-		}
-	
+				
+			return result;
+			}catch(Exception e){
+				System.out.println("Execption"  + e.getMessage());
+				e.printStackTrace();
+			}
+		return null;
 	}
-	
 	public int[] getMarqueurPossible(int i)
 	{
 		return this.positionMarqueurPossible[i];
