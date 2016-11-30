@@ -44,6 +44,7 @@ public class CaseCamionRepresentation extends JPanel{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.err.println(e.getMessage()+ theme);
 		}
 		Graphics2D g2 = (Graphics2D) g;
 		
