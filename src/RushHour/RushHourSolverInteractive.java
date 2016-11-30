@@ -530,7 +530,7 @@ public class RushHourSolverInteractive extends JFrame{
 			  public void actionPerformed(ActionEvent e) { 
 				  if(RushHourSolverInteractive.isGurobiRunnable)
 				  {
-				    Object[] result = performRHCGuro();
+				    Object[] result = performRHMGuro();
 				    afficherResultat(result);
 				  }
 				  else
@@ -545,7 +545,7 @@ public class RushHourSolverInteractive extends JFrame{
 		  public void actionPerformed(ActionEvent e) { 
 			  if(RushHourSolverInteractive.isGurobiRunnable)
 			  {
-			    Object[] result = performRHMGuro();
+			    Object[] result = performRHCGuro();
 			    afficherResultat(result);
 			  }
 			  else
