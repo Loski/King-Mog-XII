@@ -90,10 +90,10 @@ public class RushHourSolverInteractive extends JFrame{
 	}
 	
 	public void afficherMenuRushHourSelect()
-	{
+	{	
 		this.getContentPane().removeAll();
 		JPanel pan = new JPanel();
-	    pan.setLayout(new GridLayout(3,1));
+	    pan.setLayout(new GridLayout(2,1));
 	    pan.add(this.loadFile());
 	    
 	    this.grille = new JPanel();
@@ -101,11 +101,13 @@ public class RushHourSolverInteractive extends JFrame{
 	    this.drawGrille();
 	    
 	    pan.add(grille);
-	    pan.add(this.createButtonLoad());
+	    //pan.add(this.createButtonLoad());
 	    
-	    this.setContentPane(pan);  
+	    this.getContentPane().add(pan, BorderLayout.CENTER);
+	    this.getContentPane().add(this.createButtonLoad(), BorderLayout.SOUTH);
 	    this.setJMenuBar(null);
 	    this.revalidate();
+	    this.repaint();
 	}
 	
 	public void nextConfiguration()
@@ -233,8 +235,9 @@ public class RushHourSolverInteractive extends JFrame{
 	            r = new RushHour("./puzzles/"+difficulty+"/"+name);      	
 	            drawGrille();
 	            getContentPane().remove(loadRushHour);
-	            getContentPane().add(createButtonLoad());
+	            getContentPane().add(createButtonLoad(),BorderLayout.SOUTH);
 	            revalidate();
+	            repaint();
 	        }
 	    });
 		
@@ -257,7 +260,7 @@ public class RushHourSolverInteractive extends JFrame{
 		//JPanel pan = new JPanel();
 		//this.grille = new JPanel();
 		this.grille.removeAll();
-		this.grille.setLayout(new GridLayout(1, 2));
+		this.grille.setLayout(new BorderLayout());
 
 	    
 	    JPanel grille = new JPanel();
@@ -289,47 +292,45 @@ public class RushHourSolverInteractive extends JFrame{
 	    
 	    HashMap<String,Byte> partsOfImg = new HashMap<>();
 	    
-		for(int i=0;i<RushHour.TAILLE_MATRICE;i++)
-		{			
-			if(grilleStr[i].equals("0"))
+	    int ligneActuel=0;
+	    
+		for(int iTotal=0;iTotal<RushHour.TAILLE_MATRICE+RushHour.DIMENSION_MATRICE;iTotal++)
+		{	
+			if((iTotal+1)%(this.r.getNbColonne()+1)==0 && iTotal!=0)
 			{
-				grille.add(new EmptyCaseRepresentation());
+				if(ligneActuel==2)
+					grille.add(new CaseExitRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),this.theme));
+				else
+					grille.add(new JPanel());
+				ligneActuel++;
 			}
 			else
 			{
-				if(partsOfImg.containsKey(grilleStr[i]))
-					partsOfImg.put(grilleStr[i], (byte) (partsOfImg.get(grilleStr[i])+1));
-				else
-					partsOfImg.put(grilleStr[i], (byte) 0);
+			
+				int i= iTotal-ligneActuel;
 				
-				if(grilleStr[i].charAt(0)=='t')
-					grille.add(new CaseCamionRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),map.get(grilleStr[i]),partsOfImg.get(grilleStr[i]),this.theme));
-				else if(grilleStr[i].charAt(0)=='c')
-					grille.add(new CaseVoitureRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),map.get(grilleStr[i]),partsOfImg.get(grilleStr[i]),this.theme));
+				if(grilleStr[i].equals("0"))
+				{
+					grille.add(new EmptyCaseRepresentation());
+				}
 				else
-					grille.add(new CaseVoitureGRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),partsOfImg.get(grilleStr[i]),this.theme));
+				{
+					if(partsOfImg.containsKey(grilleStr[i]))
+						partsOfImg.put(grilleStr[i], (byte) (partsOfImg.get(grilleStr[i])+1));
+					else
+						partsOfImg.put(grilleStr[i], (byte) 0);
+					
+					if(grilleStr[i].charAt(0)=='t')
+						grille.add(new CaseCamionRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),map.get(grilleStr[i]),partsOfImg.get(grilleStr[i]),this.theme));
+					else if(grilleStr[i].charAt(0)=='c')
+						grille.add(new CaseVoitureRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),map.get(grilleStr[i]),partsOfImg.get(grilleStr[i]),this.theme));
+					else
+						grille.add(new CaseVoitureGRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),partsOfImg.get(grilleStr[i]),this.theme));
+				}
 			}
 		}
 		
-		this.grille.add(grille);
-		
-		JPanel grilleSortie = new JPanel();
-		grilleSortie.setLayout(new GridLayout(this.r.getNbLigne(), this.r.getNbColonne()));
-		
-		for(int i=0;i<RushHour.TAILLE_MATRICE;i++)
-		{			
-			if(i==(int)(RushHour.CASE_SORTIE)+2-RushHour.DIMENSION_MATRICE)
-			{
-				JPanel caseExit = new CaseExitRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),this.theme);
-				grilleSortie.add(caseExit);
-			}
-				
-			else
-				//grilleSortie.add(new CaseRepresentation(r.getNbLigne(),r.getNbColonne(),null));
-				grilleSortie.add(new JPanel());
-		}
-		
-		this.grille.add(grilleSortie);
+		this.grille.add(grille,BorderLayout.CENTER);
 		
 		//this.getContentPane().remove(this.grille);
 		//this.grille = pan;
@@ -376,7 +377,7 @@ public class RushHourSolverInteractive extends JFrame{
 		this.getContentPane().setLayout(new BorderLayout());
 		
 		JLabel methodePanel = new JLabel(this.methode,JLabel.CENTER);
-		methodePanel.setFont(new Font("Verdana", Font.BOLD, 14));
+		methodePanel.setFont(new Font("Verdana", Font.BOLD, 28));
 		this.getContentPane().add(methodePanel,BorderLayout.NORTH);
 		JPanel center = new JPanel();
 		center.setLayout(new BorderLayout());
