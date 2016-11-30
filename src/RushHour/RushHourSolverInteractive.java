@@ -83,7 +83,7 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		super();
 		this.theme=string;
-		this.r=new RushHour("puzzles/débutant/jam1.txt");
+		this.r=new RushHour("puzzles/dÃ©butant/jam1.txt");
 	    this.setTitle("RushHour Solver");
 	    this.setSize(800,800);
 	    this.setLocationRelativeTo(null);
@@ -204,7 +204,7 @@ public class RushHourSolverInteractive extends JFrame{
         	i++;
         }
         
-        String[] columnNames = {"Difficulté","Nom du Fichier"};
+        String[] columnNames = {"Difficultï¿½","Nom du Fichier"};
 
         JTable table = new JTable(listData, columnNames)
         {
@@ -389,7 +389,7 @@ public class RushHourSolverInteractive extends JFrame{
 		objWrapper.setMinimumSize(new Dimension(this.getWidth(),200));
 		objWrapper.setMaximumSize(new Dimension(this.getWidth(),800));
 		
-		objWrapper.add(new JLabel("Résultat pour le fichier "+this.fileLoaded),BorderLayout.NORTH);
+		objWrapper.add(new JLabel("Rï¿½sultat pour le fichier "+this.fileLoaded),BorderLayout.NORTH);
 		objWrapper.add(obj,BorderLayout.CENTER);
 		
 		
@@ -422,7 +422,7 @@ public class RushHourSolverInteractive extends JFrame{
 			else
 				nbMV = new JLabel("Nombre minimal de Mouvement: "+(sequence.size()-1));
 			
-			nbCase = new JLabel("Avec "+result[0]+" cases déplacées");
+			nbCase = new JLabel("Avec "+result[0]+" cases dï¿½placï¿½es");
 			
 			pan.add(nbMV);
 			pan.add(nbCase);
@@ -431,10 +431,10 @@ public class RushHourSolverInteractive extends JFrame{
 		if(result.length==2)
 		{
 			pan.add(new JLabel("Nombre de Configuration-but : "+this.g.getIndexOfSolutions().size()));
-			pan.add(new JLabel("Nombre de configurations réalisables : "+(this.g.getConfigurations().size()-1)));
+			pan.add(new JLabel("Nombre de configurations rï¿½alisables : "+(this.g.getConfigurations().size()-1)));
 		}
 		
-		pan.add(new JLabel("Temps d'éxécution de l'ALGO : SOON"));
+		pan.add(new JLabel("Temps d'ï¿½xï¿½cution de l'ALGO : SOON"));
 		
 		return pan;
 	}
@@ -443,7 +443,7 @@ public class RushHourSolverInteractive extends JFrame{
 	public Object[] performRHCDij()
 	{
 		this.methodeUsed=RushHour.RHC;
-		this.methode="Résolution de RHC par l'algorithme de Dijkstra";
+		this.methode="Rï¿½solution de RHC par l'algorithme de Dijkstra";
 		//r.afficher();
 		if(this.g==null)
 			this.g = new GrapheConfiguration(r);
@@ -455,7 +455,7 @@ public class RushHourSolverInteractive extends JFrame{
 	public Object[] performRHMDij()
 	{
 		this.methodeUsed=RushHour.RHM;
-		this.methode="Résolution de RHM par l'algorithme de Dijkstra";
+		this.methode="Rï¿½solution de RHM par l'algorithme de Dijkstra";
 		//r.afficher();
 		if(this.g==null)
 			this.g = new GrapheConfiguration(r);
@@ -469,7 +469,7 @@ public class RushHourSolverInteractive extends JFrame{
 		Object[] result =null;
 		this.methodeUsed=RushHour.RHC;
 		
-		this.methode="Résolution de RHC par PL via Gurobi";
+		this.methode="Rï¿½solution de RHC par PL via Gurobi";
 		
 		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
 		result = solver.solve(RushHour.RHC);
@@ -481,7 +481,7 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		Object[] result =null;
 		this.methodeUsed=RushHour.RHM;
-		this.methode="Résolution de RHC par PL via Gurobi";
+		this.methode="Rï¿½solution de RHC par PL via Gurobi";
 		
 		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
 		result = solver.solve(RushHour.RHM);
@@ -493,8 +493,8 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		  JMenuBar menuBar = new JMenuBar();
 		  JMenu menuFichier = new JMenu("Fichier");
-		  JMenu menuRHC = new JMenu("Résoudre un problème RHC");
-		  JMenu menuRHM = new JMenu("Résoudre un problème RHM");
+		  JMenu menuRHC = new JMenu("Rï¿½soudre un problï¿½me RHC");
+		  JMenu menuRHM = new JMenu("Rï¿½soudre un problï¿½me RHM");
 
 		  JMenuItem loadFile = new JMenuItem("Charger un autre fichier");
 		  
@@ -535,7 +535,7 @@ public class RushHourSolverInteractive extends JFrame{
 				  }
 				  else
 				  {
-					  JOptionPane.showMessageDialog(new JFrame(), "Gurobi n'est pas installé", "ERREUR",
+					  JOptionPane.showMessageDialog(new JFrame(), "Gurobi n'est pas installï¿½", "ERREUR",
 						        JOptionPane.ERROR_MESSAGE);  
 				  }
 				  } 
@@ -550,7 +550,7 @@ public class RushHourSolverInteractive extends JFrame{
 			  }
 			  else
 			  {
-				  JOptionPane.showMessageDialog(new JFrame(), "Gurobi n'est pas installé", "ERREUR",
+				  JOptionPane.showMessageDialog(new JFrame(), "Gurobi n'est pas installï¿½", "ERREUR",
 					        JOptionPane.ERROR_MESSAGE);
 			  }
 			  
@@ -580,7 +580,7 @@ public class RushHourSolverInteractive extends JFrame{
 		pan.setLayout(new GridLayout(0,2));
 		
 		
-		JLabel nbDeplacementText = new JLabel("Nombre de déplacement minimal : ");
+		JLabel nbDeplacementText = new JLabel("Nombre de dï¿½placement minimal : ");
 		JLabel nbDeplacementValue = new JLabel("A REMPLIR");
 		
 		nbDeplacementValue.setForeground (Color.red);
@@ -609,7 +609,7 @@ public class RushHourSolverInteractive extends JFrame{
 		pan.add(nbConfigurationsText);
 		pan.add(nbConfigurationsValue);
 		
-		JLabel timeAlgoText = new JLabel("Temps d'éxécution de l'algorithme : ");
+		JLabel timeAlgoText = new JLabel("Temps d'ï¿½xï¿½cution de l'algorithme : ");
 		JLabel timeAlgoValue = new JLabel("A REMPLIR");
 		
 		pan.add(timeAlgoText);

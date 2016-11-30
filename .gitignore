@@ -1,3 +1,4 @@
 *.class
 bin/RushHour.class
 src/RushHour/TMP
+src/RushHour/Puzzle.java
