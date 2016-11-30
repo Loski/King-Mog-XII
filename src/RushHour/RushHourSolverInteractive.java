@@ -27,6 +27,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -34,6 +35,8 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import gurobi.GRBException;
 
 public class RushHourSolverInteractive extends JFrame{
 	
@@ -55,6 +58,22 @@ public class RushHourSolverInteractive extends JFrame{
 	private int N;
 
 	private String methode;
+	
+	private static boolean isGurobiRunnable = true;
+	
+	
+	static
+	{
+	    try
+	    {
+	       System.loadLibrary("GurobiJni70");
+	    }
+	    catch(java.lang.UnsatisfiedLinkError e)
+	    {
+	    	RushHourSolverInteractive.isGurobiRunnable=false;
+	    }
+	}
+
 	
 	public RushHourSolverInteractive(String string)
 	{
@@ -413,22 +432,25 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	public Object[] performRHCGuro()
 	{
+		Object[] result =null;
+		
 		this.methode="Résolution de RHC par PL via Gurobi";
 		
 		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
-		solver.solve(RushHour.RHC);
+		result = solver.solve(RushHour.RHC);
 
-		return null;
+		return result;
 	}
 	
 	public Object[] performRHMGuro()
 	{
+		Object[] result =null;
 		this.methode="Résolution de RHC par PL via Gurobi";
 		
 		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
-		solver.solve(RushHour.RHM);
-
-		return null;
+		result = solver.solve(RushHour.RHM);
+		
+		return result;
 	}
 	
 	public JMenuBar createMenu()
@@ -467,6 +489,37 @@ public class RushHourSolverInteractive extends JFrame{
 				    afficherResultat(result);
 				  } 
 				} );
+		  
+		  RHMGuro.addActionListener(new ActionListener() { 
+			  public void actionPerformed(ActionEvent e) { 
+				  if(RushHourSolverInteractive.isGurobiRunnable)
+				  {
+				    Object[] result = performRHCGuro();
+				    afficherResultat(result);
+				  }
+				  else
+				  {
+					  JOptionPane.showMessageDialog(new JFrame(), "Gurobi n'est pas installé", "ERREUR",
+						        JOptionPane.ERROR_MESSAGE);  
+				  }
+				  } 
+				} );
+	  
+		  RHCGuro.addActionListener(new ActionListener() { 
+		  public void actionPerformed(ActionEvent e) { 
+			  if(RushHourSolverInteractive.isGurobiRunnable)
+			  {
+			    Object[] result = performRHMGuro();
+			    afficherResultat(result);
+			  }
+			  else
+			  {
+				  JOptionPane.showMessageDialog(new JFrame(), "Gurobi n'est pas installé", "ERREUR",
+					        JOptionPane.ERROR_MESSAGE);
+			  }
+			  
+			  } 
+			} );
 		  
 		  
 		  menuFichier.add(loadFile);
