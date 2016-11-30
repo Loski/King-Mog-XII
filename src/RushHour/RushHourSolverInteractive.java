@@ -40,6 +40,9 @@ import gurobi.GRBException;
 
 public class RushHourSolverInteractive extends JFrame{
 	
+	public static byte GUROBI = 0;
+	public static byte DIJKSTRA = 1;
+	
 	private String theme;
 	
 	private RushHour r;
@@ -62,6 +65,7 @@ public class RushHourSolverInteractive extends JFrame{
 	private static boolean isGurobiRunnable = true;
 	
 	private int methodeUsed;
+	private int logicielUsed;
 	
 	private String fileLoaded;
 	
@@ -417,7 +421,7 @@ public class RushHourSolverInteractive extends JFrame{
 		}
 		else
 		{
-			if(result.length==3)
+			if(this.logicielUsed==RushHourSolverInteractive.GUROBI)
 				nbMV = new JLabel("Nombre minimal de Mouvement: "+result[2]);
 			else
 				nbMV = new JLabel("Nombre minimal de Mouvement: "+(sequence.size()-1));
@@ -428,7 +432,7 @@ public class RushHourSolverInteractive extends JFrame{
 			pan.add(nbCase);
 		}
 		
-		if(result.length==2)
+		if(this.logicielUsed==RushHourSolverInteractive.DIJKSTRA) 
 		{
 			pan.add(new JLabel("Nombre de Configuration-but : "+this.g.getIndexOfSolutions().size()));
 			pan.add(new JLabel("Nombre de configurations réalisables : "+(this.g.getConfigurations().size()-1)));
@@ -443,6 +447,7 @@ public class RushHourSolverInteractive extends JFrame{
 	public Object[] performRHCDij()
 	{
 		this.methodeUsed=RushHour.RHC;
+		this.logicielUsed=RushHourSolverInteractive.DIJKSTRA;
 		this.methode="Résolution de RHC par l'algorithme de Dijkstra";
 		//r.afficher();
 		if(this.g==null)
@@ -455,6 +460,7 @@ public class RushHourSolverInteractive extends JFrame{
 	public Object[] performRHMDij()
 	{
 		this.methodeUsed=RushHour.RHM;
+		this.logicielUsed=RushHourSolverInteractive.DIJKSTRA;
 		this.methode="Résolution de RHM par l'algorithme de Dijkstra";
 		//r.afficher();
 		if(this.g==null)
@@ -468,6 +474,7 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		Object[] result =null;
 		this.methodeUsed=RushHour.RHC;
+		this.logicielUsed=RushHourSolverInteractive.GUROBI;
 		
 		this.methode="Résolution de RHC par PL via Gurobi";
 		
@@ -481,6 +488,7 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		Object[] result =null;
 		this.methodeUsed=RushHour.RHM;
+		this.logicielUsed=RushHourSolverInteractive.GUROBI;
 		this.methode="Résolution de RHC par PL via Gurobi";
 		
 		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
