@@ -389,7 +389,9 @@ public class GurobiSolver {
                         int nbCase = Math.abs(j-l); 
 
                         if(methode==RushHour.RHM || nbCase<=1)
+                        	obj.addTerm(1.0,Y[i][j][l][k]);
                         else
+                            obj.addTerm(nbCase,Y[i][j][l][k]);
                     }
             	}            	
             }
