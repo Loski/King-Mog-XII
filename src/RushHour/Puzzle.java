@@ -53,9 +53,9 @@ public class Puzzle {
 	      */
 	      
 		 File[] dir = new File[4];
-		 dir[0]=new File("./puzzles/dÃ©butant/");
-		 dir[1]=new File("./puzzles/intermÃ©diaire/");
-		 dir[2]=new File("./puzzles/avancÃ©/");
+		 dir[0]=new File("./puzzles/débutant/");
+		 dir[1]=new File("./puzzles/intermédiaire/");
+		 dir[2]=new File("./puzzles/avancé/");
 		 dir[3]=new File("./puzzles/expert/");
 		 //dir[4]=new File("./puzzles/debug/");
 		
@@ -79,11 +79,11 @@ public class Puzzle {
 	}
 
 	public int getN() {
-        if(difficulty.equals("dÃ©butant"))
+        if(difficulty.equals("débutant"))
         	return 14;
-        else if(difficulty.equals("intermÃ©diaire"))
+        else if(difficulty.equals("intermédiaire"))
         	return 25;
-        else if(difficulty.equals("avancÃ©"))
+        else if(difficulty.equals("avancé"))
         	return 31;
         else if(difficulty.equals("expert"))
         	return 50;
