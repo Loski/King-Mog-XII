@@ -61,6 +61,10 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	private static boolean isGurobiRunnable = true;
 	
+	private int methodeUsed;
+	
+	private String fileLoaded;
+	
 	
 	static
 	{
@@ -184,37 +188,6 @@ public class RushHourSolverInteractive extends JFrame{
 		this.repaint();
 	}
 	
-	public JPanel resultPanel()
-	{
-		JPanel pan = new JPanel();
-		pan.setLayout(new BorderLayout());
-		
-		pan.add(consoleArea());
-		
-		return pan;
-		
-	}
-	
-	public JPanel consoleArea()
-	{
-		JPanel pan = new JPanel();
-		pan.setLayout(new BorderLayout());
-		
-		JTextArea consoleArea = new JTextArea();
-		
-		String s = "Nombre de configuration-But : "+this.g.getIndexOfSolutions().size();
-		s+="\n";
-		s+= "Nombre de voitures : "+this.r.getVehicules().size();
-		s+="\n";
-		s+= "Nombre de configurations réalisables : "+this.g.getConfigurations().size();
-		
-		consoleArea.setText(s);;
-		
-		pan.add(consoleArea,BorderLayout.CENTER);
-		
-		return pan;
-	}
-	
 	public JPanel loadFile()
 	{
 		
@@ -256,6 +229,7 @@ public class RushHourSolverInteractive extends JFrame{
 	            String difficulty = table.getValueAt(table.getSelectedRow(), 0).toString();
 	            String name = table.getValueAt(table.getSelectedRow(), 1).toString();
 	            r = new RushHour("./puzzles/"+difficulty+"/"+name);      	
+	            fileLoaded=name;
 	            drawGrille();
 	            getContentPane().remove(loadRushHour);
 	            getContentPane().add(createButtonLoad(),BorderLayout.SOUTH);
@@ -284,7 +258,6 @@ public class RushHourSolverInteractive extends JFrame{
 		//this.grille = new JPanel();
 		this.grille.removeAll();
 		this.grille.setLayout(new BorderLayout());
-
 	    
 	    JPanel grille = new JPanel();
 		/*grille.setPreferredSize(new Dimension(200,200));
@@ -364,6 +337,7 @@ public class RushHourSolverInteractive extends JFrame{
 		this.grille.revalidate();
 		this.grille.repaint();
 		this.revalidate();
+		this.repaint();
 		
 	}
 	
@@ -394,10 +368,6 @@ public class RushHourSolverInteractive extends JFrame{
 		panelConfig.add(this.currentConfigDisplay);
 		panelConfig.add(nextButton);
 		
-		
-		JPanel res = new JPanel();
-		res.add(this.resultPanel());
-		
 		this.getContentPane().removeAll();
 		this.getContentPane().setLayout(new BorderLayout());
 		
@@ -410,14 +380,70 @@ public class RushHourSolverInteractive extends JFrame{
 		center.add(grille,BorderLayout.CENTER);
 		center.add(panelConfig,BorderLayout.SOUTH);
 		this.getContentPane().add(center,BorderLayout.CENTER);
-		//this.getContentPane().add(pan,BorderLayout.SOUTH);
+		
+		JPanel objWrapper = new JPanel();
+		
+		JPanel obj = panelObj(result);
+		objWrapper.setLayout(new BorderLayout());
+		
+		objWrapper.setPreferredSize(new Dimension(this.getWidth(),200));
+		objWrapper.setMinimumSize(new Dimension(this.getWidth(),200));
+		objWrapper.setMaximumSize(new Dimension(this.getWidth(),800));
+		
+		objWrapper.add(new JLabel("Résultat pour le fichier "+this.fileLoaded),BorderLayout.NORTH);
+		objWrapper.add(obj,BorderLayout.CENTER);
+		
+		
+		this.getContentPane().add(objWrapper,BorderLayout.SOUTH);
 		this.revalidate();
 		this.repaint();
+	}
+	
+	public JPanel panelObj(Object[] result)
+	{
+		JPanel pan = new JPanel();
+		pan.setLayout(new GridLayout(0,2));
+		
+		JLabel nbCase = null;
+		
+		JLabel nbMV = null;
+		
+		if(this.methodeUsed == RushHour.RHC)
+		{
+			nbCase = new JLabel("Nombre minimal de cases : "+result[0]);
+			nbMV = new JLabel("Avec "+(sequence.size()-1)+ " mouvements");
+			
+			pan.add(nbCase);
+			pan.add(nbMV);
+		}
+		else
+		{
+			if(result.length==3)
+				nbMV = new JLabel("Nombre minimal de Mouvement: "+result[2]);
+			else
+				nbMV = new JLabel("Nombre minimal de Mouvement: "+(sequence.size()-1));
+			
+			nbCase = new JLabel("Avec "+result[0]+" cases déplacées");
+			
+			pan.add(nbMV);
+			pan.add(nbCase);
+		}
+		
+		if(result.length==2)
+		{
+			pan.add(new JLabel("Nombre de Configuration-but : "+this.g.getIndexOfSolutions().size()));
+			pan.add(new JLabel("Nombre de configurations réalisables : "+(this.g.getConfigurations().size()-1)));
+		}
+		
+		pan.add(new JLabel("Temps d'éxécution de l'ALGO : SOON"));
+		
+		return pan;
 	}
 	
 	
 	public Object[] performRHCDij()
 	{
+		this.methodeUsed=RushHour.RHC;
 		this.methode="Résolution de RHC par l'algorithme de Dijkstra";
 		//r.afficher();
 		if(this.g==null)
@@ -429,6 +455,7 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	public Object[] performRHMDij()
 	{
+		this.methodeUsed=RushHour.RHM;
 		this.methode="Résolution de RHM par l'algorithme de Dijkstra";
 		//r.afficher();
 		if(this.g==null)
@@ -441,6 +468,7 @@ public class RushHourSolverInteractive extends JFrame{
 	public Object[] performRHCGuro()
 	{
 		Object[] result =null;
+		this.methodeUsed=RushHour.RHC;
 		
 		this.methode="Résolution de RHC par PL via Gurobi";
 		
@@ -453,6 +481,7 @@ public class RushHourSolverInteractive extends JFrame{
 	public Object[] performRHMGuro()
 	{
 		Object[] result =null;
+		this.methodeUsed=RushHour.RHM;
 		this.methode="Résolution de RHC par PL via Gurobi";
 		
 		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
