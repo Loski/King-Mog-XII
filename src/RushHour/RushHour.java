@@ -20,6 +20,8 @@ public class RushHour implements Cloneable {
 	public final static byte DOWN = DIMENSION_MATRICE;
 	public final static byte FORWARD = 1;
 	public final static byte BACKWARD = -1;
+	public static final byte RHM = 0;
+    public static final byte RHC = 1;
 	
 	
 	public static byte indice_solution_g;

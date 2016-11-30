@@ -370,7 +370,7 @@ public class GurobiSolver {
 		}
 
 	}
-	private void initialisation() throws GRBException{
+	private void initialisation(byte methode) throws GRBException{
 		
 		//Cr�ation des variables et de la fonction objectif		
 		
@@ -383,10 +383,14 @@ public class GurobiSolver {
             		X[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"X_"+i+"_"+j+"_"+k);
             		
             		for(int l:this.getMarqueurPossible(i))
-            		{
-						Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y_"+i+"_"+j+"_"+l+"_"+k);
-						obj.addTerm(1.0,Y[i][j][l][k]);
-            		}
+                    {
+                        Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y"+i+""+j+""+l+""+k);
+
+                        int nbCase = Math.abs(j-l); 
+
+                        if(methode==RushHour.RHM || nbCase<=1)
+                        else
+                    }
             	}            	
             }
 		
@@ -415,13 +419,13 @@ public class GurobiSolver {
 	}
 
 	
-	public Object[] solve()
+	public Object[] solve(byte methode)
 	{
 		try
 		{
 			this.env = new GRBEnv("RH.log");
 			this.model = new GRBModel(env);			
-			this.initialisation();
+			this.initialisation(methode);
 			
 			//AJOUT CONTRAINTES
 		

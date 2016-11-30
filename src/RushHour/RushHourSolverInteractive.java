@@ -3,6 +3,7 @@ package RushHour;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
@@ -51,6 +52,10 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	JLabel currentConfigDisplay;
 	
+	private int N;
+
+	private String methode;
+	
 	public RushHourSolverInteractive(String string)
 	{
 		super();
@@ -61,42 +66,6 @@ public class RushHourSolverInteractive extends JFrame{
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   
 	    this.setBackground(Color.WHITE);  
-	 
-	    
-	    //pan.setLayout(new GridLayout(3,1));
-	          
-	    
-		/*JComboBox puzzleList = new JComboBox(getListofPuzzle());
-		
-		pan.add(petList);
-		
-		petList.setSelectedIndex(4);*/
-	    
-	    /*JFileChooser fileChooser = new JFileChooser("./puzzles");
-	    fileChooser.setFileFilter(new FileFilter(){
-
-			@Override
-			public boolean accept(File arg0) {
-				// TODO Auto-generated method stub
-				return true;
-			}
-
-			@Override
-			public String getDescription() {
-				// TODO Auto-generated method stub
-				return "";
-			}
-	      
-	    });
-	    
-	    pan.add(fileChooser);
-	    /*
-	    pan.add(drawGrille(r));
-	    pan.add(createPanelInformations());  
-	    */
-	    
-	    
-	   // setJMenuBar(createMenu());
 	    
 	    afficherMenuRushHourSelect();
 	    
@@ -152,11 +121,10 @@ public class RushHourSolverInteractive extends JFrame{
 			//DIABLED NEXT
 			this.nextButton.setEnabled(false);
 		}		
-		
-		//SI PREVIOUS disabled : enabled
+
 		this.previousButton.setEnabled(true);
 		
-		this.currentConfigDisplay.setText("ETAPE ("+this.currentConfig+")");		
+		this.currentConfigDisplay.setText("ETAPE ("+this.currentConfig+" / "+(this.sequence.size()-1)+")");		
 		this.drawGrille();
 	}
 	
@@ -176,22 +144,19 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		this.nextButton.setEnabled(true);
 		
-		//SI NEXT disabled : next Enabled
-		
-		this.currentConfigDisplay.setText("ETAPE ("+this.currentConfig+")");
+		this.currentConfigDisplay.setText("ETAPE ("+this.currentConfig+" / "+(this.sequence.size()-1)+")");	
 		this.drawGrille();
 	}
 	
 	public void afficherMenuRushHourSolver()
 	{
 		this.getContentPane().removeAll();
-		this.setJMenuBar(createMenu());
-		this.getContentPane().setLayout(new GridLayout(2,1));
+		this.setJMenuBar(createMenu());		
 		this.getContentPane().add(grille);
 		//this.getContentPane().add(createPane());
 		
-		this.setContentPane(this.getContentPane());
 		this.revalidate();
+		this.repaint();
 	}
 	
 	public JPanel resultPanel()
@@ -238,6 +203,7 @@ public class RushHourSolverInteractive extends JFrame{
         {
         	listData[i][0]=p.getDifficulty();
         	listData[i][1]=p.getTxtFileName();
+        	this.N=p.getN();
         	i++;
         }
         
@@ -264,7 +230,7 @@ public class RushHourSolverInteractive extends JFrame{
 	        	
 	            String difficulty = table.getValueAt(table.getSelectedRow(), 0).toString();
 	            String name = table.getValueAt(table.getSelectedRow(), 1).toString();
-	            r = new RushHour("./puzzles/"+difficulty+"/"+name);
+	            r = new RushHour("./puzzles/"+difficulty+"/"+name);      	
 	            drawGrille();
 	            getContentPane().remove(loadRushHour);
 	            getContentPane().add(createButtonLoad());
@@ -291,7 +257,7 @@ public class RushHourSolverInteractive extends JFrame{
 		//JPanel pan = new JPanel();
 		//this.grille = new JPanel();
 		this.grille.removeAll();
-		this.grille.setLayout(new GridLayout(1, 3));
+		this.grille.setLayout(new GridLayout(1, 2));
 
 	    
 	    JPanel grille = new JPanel();
@@ -345,7 +311,6 @@ public class RushHourSolverInteractive extends JFrame{
 			}
 		}
 		
-		this.grille.add(new JPanel());
 		this.grille.add(grille);
 		
 		JPanel grilleSortie = new JPanel();
@@ -385,7 +350,7 @@ public class RushHourSolverInteractive extends JFrame{
 		JPanel pan =  new JPanel();
 		this.previousButton = new JButton("PREVIOUS");
 		this.nextButton = new JButton("NEXT");
-		this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+")");
+		this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+" / "+(this.sequence.size()-1)+")");
 		previousButton.setEnabled(false);
 		
 		nextButton.addActionListener(new ActionListener() { 
@@ -408,8 +373,16 @@ public class RushHourSolverInteractive extends JFrame{
 		pan.add(this.resultPanel());
 		
 		this.getContentPane().removeAll();
-		this.getContentPane().add(grille);
-		this.getContentPane().add(pan);
+		this.getContentPane().setLayout(new BorderLayout());
+		
+		JLabel methodePanel = new JLabel(this.methode,JLabel.CENTER);
+		methodePanel.setFont(new Font("Verdana", Font.BOLD, 14));
+		this.getContentPane().add(methodePanel,BorderLayout.NORTH);
+		JPanel center = new JPanel();
+		center.setLayout(new BorderLayout());
+		center.add(grille,BorderLayout.CENTER);
+		this.getContentPane().add(center,BorderLayout.CENTER);
+		this.getContentPane().add(pan,BorderLayout.SOUTH);
 		this.revalidate();
 		this.repaint();
 	}
@@ -417,8 +390,10 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	public Object[] performRHCDij()
 	{
+		this.methode="Résolution de RHC par l'algorithme de Dijkstra";
 		//r.afficher();
-		this.g = new GrapheConfiguration(r);
+		if(this.g==null)
+			this.g = new GrapheConfiguration(r);
 		Object[] result = DijkstraSolver.resolveRHC(g.getListe_adj(), g.getConfigurations());
 
 		return result;
@@ -426,11 +401,33 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	public Object[] performRHMDij()
 	{
+		this.methode="Résolution de RHM par l'algorithme de Dijkstra";
 		//r.afficher();
-		this.g = new GrapheConfiguration(r);
+		if(this.g==null)
+			this.g = new GrapheConfiguration(r);
 		Object[] result = DijkstraSolver.resolveRHM(g.getListe_adj(), g.getConfigurations());
 
 		return result;
+	}
+	
+	public Object[] performRHCGuro()
+	{
+		this.methode="Résolution de RHC par PL via Gurobi";
+		
+		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
+		solver.solve(RushHour.RHC);
+
+		return null;
+	}
+	
+	public Object[] performRHMGuro()
+	{
+		this.methode="Résolution de RHC par PL via Gurobi";
+		
+		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
+		solver.solve(RushHour.RHM);
+
+		return null;
 	}
 	
 	public JMenuBar createMenu()
@@ -444,6 +441,7 @@ public class RushHourSolverInteractive extends JFrame{
 		  
 			loadFile.addActionListener(new ActionListener() { 
 				  public void actionPerformed(ActionEvent e) { 
+					  g=null;
 					  afficherMenuRushHourSelect();
 					  } 
 					} );
@@ -535,27 +533,7 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		
 		return pan;
-	}*/
-	
-	public JPanel createSettingsPanel()
-	{
-		JPanel pan = new JPanel();
-		pan.setLayout(new GridLayout(1,2));
-		
-	/*	pan.setPreferredSize(new Dimension(this.getWidth(), this.getHeight()/3));
-		pan.setMinimumSize(new Dimension(this.getWidth(), this.getHeight()/3));
-		pan.setMaximumSize(new Dimension(this.getWidth(), this.getHeight()/3));
-		
-		JButton RHCSolver = new JButton("RHC");
-		JButton RHMSolver = new JButton("RHM");
-	
-		
-		pan.add(RHCSolver);
-		pan.add(RHMSolver);*/
-		
-		return pan;
-	}
-	
+	}*/	
 	
 	public static void main(String[] args)
 	{
@@ -563,5 +541,7 @@ public class RushHourSolverInteractive extends JFrame{
 			new RushHourSolverInteractive(args[0]);
 		else
 			new RushHourSolverInteractive("default");
+		
+		return;
 	}
 }

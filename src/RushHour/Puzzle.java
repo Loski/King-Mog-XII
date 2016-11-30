@@ -77,4 +77,17 @@ public class Puzzle {
 	      
 		return list;
 	}
+
+	public int getN() {
+        if(difficulty.equals("débutant"))
+        	return 14;
+        else if(difficulty.equals("intermédiaire"))
+        	return 25;
+        else if(difficulty.equals("avancé"))
+        	return 31;
+        else if(difficulty.equals("expert"))
+        	return 50;
+        else
+        	return 50;
+	}
 }
