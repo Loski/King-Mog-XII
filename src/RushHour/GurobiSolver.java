@@ -46,7 +46,7 @@ public class GurobiSolver {
 		this.positionPossible = new int[iMax][RushHour.DIMENSION_MATRICE];
 		this.calculMarqueurPossible();
 		this.calculPositionPossible();
-		this.calculPIJ();
+		this.calculPjl();
 		this.calculMij();
 	}
 	
@@ -96,7 +96,7 @@ public class GurobiSolver {
 		}
 	}
 	
-	private void calculPIJ(){
+	private void calculPjl(){
 		this.pij = new int[RushHour.TAILLE_MATRICE][RushHour.TAILLE_MATRICE][0];
 		int saut;
 		
@@ -387,7 +387,8 @@ public class GurobiSolver {
                         Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y"+i+""+j+""+l+""+k);
 
                         int nbCase = Math.abs(j-l); 
-
+                        if(this.rh.getVehicules().get(i).getOrientation()==RushHour.VERTICAL)
+                            nbCase= nbCase/6;
                         if(methode==RushHour.RHM || nbCase<=1)
                         	obj.addTerm(1.0,Y[i][j][l][k]);
                         else
@@ -442,7 +443,7 @@ public class GurobiSolver {
 					for(byte j=0;j<jMax;j++)
 					{
 						for(byte l=0;l<jMax;l++)
-							if(this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
+							if(this.Y[i][j][l][k] != null && this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
 		            			 RushHour tmp = (RushHour) precedent.clone();
 		            			 tmp.getVehicules().get(i).setPosition(l);
 		            			 tmp.majGrille();
