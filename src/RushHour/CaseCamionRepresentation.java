@@ -25,7 +25,7 @@ public class CaseCamionRepresentation extends JPanel{
 		 g.setColor(Color.BLACK);
 		 g.drawRect(0,0,this.getWidth(),this.getHeight());
 		 
-		 g.setColor(Color.GRAY);
+		 g.setColor(Color.DARK_GRAY);
 		 g.fillRect(2,2,this.getWidth()-2,this.getHeight()-2);
 		 
 		 
@@ -36,6 +36,8 @@ public class CaseCamionRepresentation extends JPanel{
     	 else
     		 file = new File("cars/"+theme+"/truck.png");
     	 
+		 if(file.exists() && !file.isDirectory()) { 
+
          BufferedImage image = null;
 		try {
 			image = ImageIO.read(file);
@@ -62,6 +64,7 @@ public class CaseCamionRepresentation extends JPanel{
 			g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);*/
 		
 			g2.drawImage(image, 1, 1, this.getWidth()-1, this.getHeight()-1, Color.WHITE, this);
+		 }
 	 }
 	 
 	  public CaseCamionRepresentation(int h, int l, byte orientation, int partOfImg,String theme)

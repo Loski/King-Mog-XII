@@ -99,7 +99,11 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		bouton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-				    afficherMenuRushHourSolver();
+				  if(RushHour.indice_solution_g/r.getNbColonne() == RushHour.CASE_SORTIE/r.getNbColonne())
+					  afficherMenuRushHourSolver();
+				  else
+					  JOptionPane.showMessageDialog(new JFrame(), "Le fichier n'est pas conforme : G n'est pas sur la bonne ligne", "ERREUR",
+						        JOptionPane.ERROR_MESSAGE); 
 				  } 
 				} );
 		

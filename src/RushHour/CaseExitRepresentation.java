@@ -19,7 +19,9 @@ public class CaseExitRepresentation extends JPanel {
 	
 	 public void paint(Graphics g)
 	 {
-		 if(this.theme.equals("default"))
+		 File file = new File("cars/"+theme+"/exit.png");
+		 
+		 if(this.theme.equals("default") || !file.exists() || file.isDirectory())
 		 {
 			 g.setColor(Color.BLACK);
 			 g.drawRect(0,0, this.getWidth(), this.getHeight());
@@ -37,9 +39,6 @@ public class CaseExitRepresentation extends JPanel {
 		 
 		 else
 		 {
-		 
-		 
-	    	 File file = new File("cars/"+theme+"/exit.png");
 	         BufferedImage image = null;
 			try {
 				image = ImageIO.read(file);
