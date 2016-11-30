@@ -430,7 +430,7 @@ public class GurobiSolver {
 			this.model.optimize();
 			Object result[] = new Object[3];
 			ArrayList<RushHour> graphe = new ArrayList<RushHour>();
-			RushHour precedent = (RushHour) rh.clone();
+			RushHour precedent = new RushHour(rh);
 			int nbCase = 0;
 			for(byte k = 0; k < N; k++)
 				for(byte i=0;i<iMax;i++)
@@ -438,7 +438,7 @@ public class GurobiSolver {
 					{
 						for(byte l=0;l<jMax;l++)
 							if(this.Y[i][j][l][k] != null && this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
-		            			 RushHour tmp = (RushHour) precedent.clone();
+		            			 RushHour tmp = new RushHour(precedent);
 		            			 tmp.getVehicules().get(i).setPosition(l);
 		            			 tmp.majGrille();
 		            			 graphe.add(tmp);

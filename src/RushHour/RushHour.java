@@ -137,11 +137,15 @@ public class RushHour implements Cloneable {
 	}
 	
 	public RushHour(RushHour r){	
-		this.grille = Arrays.copyOf(r.getGrille(),  RushHour.TAILLE_MATRICE);
-		this.vehicules = (ArrayList<Vehicule>) r.vehicules.clone();
-		/*for(Vehicule v : r.vehicules){
-			this.vehicules.add((Vehicule) v.clone());
-		}*/
+		byte grilletmp[] = new byte[RushHour.TAILLE_MATRICE];
+		for(byte i = 0; i < RushHour.TAILLE_MATRICE; i++)
+			grilletmp[i] = r.grille[i];
+		this.grille = grilletmp;
+		ArrayList<Vehicule> vh = new ArrayList<Vehicule>();
+		for(Vehicule v : r.vehicules){
+			vh.add((Vehicule) v.clone());
+		}
+		this.vehicules = vh;
 	}
 	public RushHour(){}
 	public RushHour(String filename)
