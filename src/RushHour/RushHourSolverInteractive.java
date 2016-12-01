@@ -391,7 +391,7 @@ public class RushHourSolverInteractive extends JFrame{
 		JPanel panelConfig =  new JPanel();
 		this.previousButton = new JButton("PREVIOUS");
 		this.nextButton = new JButton("NEXT");
-		this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+" / "+(this.sequence.size()-1)+")");
+		this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+File.separator+(this.sequence.size()-1)+")");
 		previousButton.setEnabled(false);
 		
 		nextButton.addActionListener(new ActionListener() { 
