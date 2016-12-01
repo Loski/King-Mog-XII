@@ -19,7 +19,7 @@ public class GurobiSolver {
     private int N;
     private int iMax, jMax, lMax;
     private int positionPossible[][];
-    private int[][][] pij;
+    private int[][][] pjl;
     private int[][][] mij;
     private int positionMarqueurPossible[][];
     
@@ -90,7 +90,7 @@ public class GurobiSolver {
 	}
 	
 	private void calculPjl(){
-		this.pij = new int[RushHour.TAILLE_MATRICE][RushHour.TAILLE_MATRICE][0];
+		this.pjl = new int[RushHour.TAILLE_MATRICE][RushHour.TAILLE_MATRICE][0];
 		int saut;
 		
 		for(int iFor = 0; iFor < RushHour.TAILLE_MATRICE; iFor++){
@@ -122,9 +122,9 @@ public class GurobiSolver {
 					}
 				}
 				
-				this.pij[iFor][jFor] = new int[compteur];
+				this.pjl[iFor][jFor] = new int[compteur];
 				for(int z = 0; z < compteur; z++){
-					this.pij[iFor][jFor][z] = a.get(z);
+					this.pjl[iFor][jFor][z] = a.get(z);
 				}
 			}
 		}
@@ -341,7 +341,7 @@ public class GurobiSolver {
 					
 					for(int k=1;k<N;k++)
 					{					
-						for(int p: this.getPIJ(j, l))
+						for(int p: this.getPJL(j, l))
 						{
 							expr = new GRBLinExpr();
 							expr.addTerm(1.0, Y[i][j][l][k]);
@@ -378,9 +378,7 @@ public class GurobiSolver {
                     {
             				Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y"+i+""+j+""+l+""+k);
 
-                        int nbCase = Math.abs(j-l); 
-                        if(this.rh.getVehicules().get(i).getOrientation()==RushHour.VERTICAL)
-                            nbCase= nbCase/6;
+                        int nbCase = this.getPJL(j, l).length-1; 
                         
 	                        if(methode==RushHour.RHM)
 	                        	obj.addTerm(1.0,Y[i][j][l][k]);
@@ -504,9 +502,9 @@ public class GurobiSolver {
 		return this.positionPossible[i];
 	}
 	
-	public int[] getPIJ(int i,int j)
+	public int[] getPJL(int j,int l)
 	{
-		return this.pij[i][j];
+		return this.pjl[j][l];
 	}
 	
 	public int[] getMIJ(int i,int j)
@@ -514,6 +512,13 @@ public class GurobiSolver {
 		return this.mij[i][j];
 	}
 	
+	/*public static void main(String[] args)
+	{
+		RushHour r = new RushHour("./puzzles/débutant/jam1.txt");
+		GurobiSolver g = new GurobiSolver(r,10);
+		
+		System.out.println(g.getPJL(0,12).length-1);
+	}*/
 
 	
 }
