@@ -393,9 +393,7 @@ public class RushHourSolverInteractive extends JFrame{
 		this.drawGrille();
 		
 		if((this.logicielUsed==RushHourSolverInteractive.DIJKSTRA && this.g.getIndexOfSolutions().size()!=0) ||
-				result[1]==null ||
-				((ArrayList<RushHour>) result[1]).size()<=1
-				)
+				(this.logicielUsed==RushHourSolverInteractive.GUROBI && result!=null && result.length>=2 && result[1]!=null && ((ArrayList<RushHour>) result[1]).size()>1))
 		{
 			this.sequence=(ArrayList<RushHour>) result[1];
 			
