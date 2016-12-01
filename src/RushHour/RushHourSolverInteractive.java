@@ -391,65 +391,75 @@ public class RushHourSolverInteractive extends JFrame{
 		this.currentRushHour=this.r;
 		this.currentConfig=0;
 		this.drawGrille();
-		this.sequence=(ArrayList<RushHour>) result[1];
 		
-		JPanel panelConfig =  new JPanel();
-		this.previousButton = new JButton("PREVIOUS");
-		this.nextButton = new JButton("NEXT");
-		this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+" / "+(this.sequence.size()-1)+")");
-		previousButton.setEnabled(false);
-		
-		nextButton.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  nextConfiguration();
-				  } 
-				} );
-		
-		previousButton.addActionListener(new ActionListener() { 
-			  public void actionPerformed(ActionEvent e) { 
-				  previousConfiguration();
-				  } 
-				} );
-	  
-		
-		panelConfig.add(previousButton);
-		panelConfig.add(this.currentConfigDisplay);
-		panelConfig.add(nextButton);
-		
-		this.getContentPane().removeAll();
-		this.getContentPane().setLayout(new BorderLayout());
-		
-		JLabel methodeLabel = new JLabel(this.methode,JLabel.CENTER);
-		methodeLabel.setFont(new Font("Verdana", Font.BOLD, 28));
-		methodeLabel.setForeground(Color.BLACK);
-		this.getContentPane().add(methodeLabel,BorderLayout.NORTH);
-		
-		JPanel center = new JPanel();
-		center.setLayout(new BorderLayout());
-		center.add(grille,BorderLayout.CENTER);
-		center.add(panelConfig,BorderLayout.SOUTH);
-		this.getContentPane().add(center,BorderLayout.CENTER);
-		
-		JPanel objWrapper = new JPanel();
-		
-		JPanel obj = panelObj(result);
-		objWrapper.setLayout(new BorderLayout());
-		
-		objWrapper.setPreferredSize(new Dimension(this.getWidth(),200));
-		objWrapper.setMinimumSize(new Dimension(this.getWidth(),200));
-		objWrapper.setMaximumSize(new Dimension(this.getWidth(),800));
-		
-		JLabel file = new JLabel("Résultat pour le fichier "+this.fileLoaded);
-		file.setHorizontalAlignment(JLabel.CENTER);
-		file.setFont(new Font("Verdana", Font.BOLD, 14));
-		
-		objWrapper.add(file,BorderLayout.NORTH);
-		objWrapper.add(obj,BorderLayout.CENTER);
-		
-		
-		this.getContentPane().add(objWrapper,BorderLayout.SOUTH);
-		this.revalidate();
-		this.repaint();
+		if((this.logicielUsed==RushHourSolverInteractive.DIJKSTRA && this.g.getIndexOfSolutions().size()!=0) ||
+				result[1]==null ||
+				((ArrayList<RushHour>) result[1]).size()<=1
+				)
+		{
+			this.sequence=(ArrayList<RushHour>) result[1];
+			
+			JPanel panelConfig =  new JPanel();
+			this.previousButton = new JButton("PREVIOUS");
+			this.nextButton = new JButton("NEXT");
+			this.currentConfigDisplay = new JLabel("ETAPE ("+this.currentConfig+" / "+(this.sequence.size()-1)+")");
+			previousButton.setEnabled(false);
+			
+			nextButton.addActionListener(new ActionListener() { 
+				  public void actionPerformed(ActionEvent e) { 
+					  nextConfiguration();
+					  } 
+					} );
+			
+			previousButton.addActionListener(new ActionListener() { 
+				  public void actionPerformed(ActionEvent e) { 
+					  previousConfiguration();
+					  } 
+					} );
+		  
+			
+			panelConfig.add(previousButton);
+			panelConfig.add(this.currentConfigDisplay);
+			panelConfig.add(nextButton);
+			
+			this.getContentPane().removeAll();
+			this.getContentPane().setLayout(new BorderLayout());
+			
+			JLabel methodeLabel = new JLabel(this.methode,JLabel.CENTER);
+			methodeLabel.setFont(new Font("Verdana", Font.BOLD, 28));
+			methodeLabel.setForeground(Color.BLACK);
+			this.getContentPane().add(methodeLabel,BorderLayout.NORTH);
+			
+			JPanel center = new JPanel();
+			center.setLayout(new BorderLayout());
+			center.add(grille,BorderLayout.CENTER);
+			center.add(panelConfig,BorderLayout.SOUTH);
+			this.getContentPane().add(center,BorderLayout.CENTER);
+			
+			JPanel objWrapper = new JPanel();
+			
+			JPanel obj = panelObj(result);
+			objWrapper.setLayout(new BorderLayout());
+			
+			objWrapper.setPreferredSize(new Dimension(this.getWidth(),200));
+			objWrapper.setMinimumSize(new Dimension(this.getWidth(),200));
+			objWrapper.setMaximumSize(new Dimension(this.getWidth(),800));
+			
+			JLabel file = new JLabel("Résultat pour le fichier "+this.fileLoaded);
+			file.setHorizontalAlignment(JLabel.CENTER);
+			file.setFont(new Font("Verdana", Font.BOLD, 14));
+			
+			objWrapper.add(file,BorderLayout.NORTH);
+			objWrapper.add(obj,BorderLayout.CENTER);
+			
+			
+			this.getContentPane().add(objWrapper,BorderLayout.SOUTH);
+			this.revalidate();
+			this.repaint();
+		}
+		else
+			  JOptionPane.showMessageDialog(new JFrame(), "Aucune solution trouvée", "ERREUR",
+				        JOptionPane.ERROR_MESSAGE);  
 	}
 	
 	public JPanel panelObj(Object[] result)

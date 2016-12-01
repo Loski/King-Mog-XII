@@ -446,9 +446,9 @@ public class GurobiSolver {
 		    if (status == GRB.Status.INF_OR_UNBD ||
 			        status == GRB.Status.INFEASIBLE  ||
 			        status == GRB.Status.UNBOUNDED     ){
+		    		result[0] = (Integer)(int)model.get(GRB.DoubleAttr.ObjVal)+1000;
 			    	this.model.dispose();
 					this.env.dispose();
-					result[0] = (Integer)(int)model.get(GRB.DoubleAttr.ObjVal)+1000;
 			    	System.out.println("N TROP PETIT");
 			    	return result;
 			    }
@@ -468,10 +468,7 @@ public class GurobiSolver {
 		            			 tmp.majGrille();
 		            			 graphe.add(tmp);
 		            			 precedent = tmp;
-		            			 if(this.rh.getVehicules().get(i).getOrientation()==RushHour.HORIZONTAL)
-		            				 nbCase+=Math.abs(j-l);
-		            			 else
-		            				 nbCase+=Math.abs(j-l)/this.rh.getNbColonne();
+		            			 nbCase+=this.getPJL(j, l).length-1;
 							}
 					}
 		    	
