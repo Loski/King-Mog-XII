@@ -46,6 +46,7 @@ public class RushHourSolverInteractive extends JFrame{
 	private String theme;
 	
 	private RushHour r;
+	private RushHour currentRushHour;
 	private GrapheConfiguration g;
 	private ArrayList<RushHour> sequence;
 	int currentConfig = 0;
@@ -87,7 +88,7 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		super();
 		this.theme=string;
-		this.r=new RushHour("puzzles/débutant/jam1.txt");
+		//this.r=new RushHour("puzzles/débutant/jam1.txt");
 	    this.setTitle("RushHour Solver");
 	    this.setSize(800,800);
 	    this.setLocationRelativeTo(null);
@@ -107,8 +108,13 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		bouton.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
-				  if(r.pos_g/r.getNbColonne() == RushHour.CASE_SORTIE/r.getNbColonne())
-					  afficherMenuRushHourSolver();
+				  if(r==null)
+					  JOptionPane.showMessageDialog(new JFrame(), "Aucun fichier chargé", "ERREUR",
+						        JOptionPane.ERROR_MESSAGE);
+				  else if(r.pos_g/r.getNbColonne() == RushHour.CASE_SORTIE/r.getNbColonne())
+				  {
+						  afficherMenuRushHourSolver();
+				  }
 				  else
 					  JOptionPane.showMessageDialog(new JFrame(), "Le fichier n'est pas conforme : G n'est pas sur la bonne ligne", "ERREUR",
 						        JOptionPane.ERROR_MESSAGE); 
@@ -146,7 +152,8 @@ public class RushHourSolverInteractive extends JFrame{
 		if(this.currentConfig+1<this.sequence.size())
 		{
 			this.currentConfig++;
-			this.r=this.sequence.get(currentConfig);	
+			this.currentRushHour=this.sequence.get(currentConfig);
+			//this.r=this.sequence.get(currentConfig);	
 		}
 		
 		if(this.currentConfig+1>=this.sequence.size())
@@ -166,7 +173,8 @@ public class RushHourSolverInteractive extends JFrame{
 		if(this.currentConfig-1>=0)
 		{
 			this.currentConfig--;
-			this.r=this.sequence.get(currentConfig);	
+			this.currentRushHour=this.sequence.get(currentConfig);
+			//this.r=this.sequence.get(currentConfig);	
 		}
 		
 		if(this.currentConfig==0)
@@ -231,13 +239,24 @@ public class RushHourSolverInteractive extends JFrame{
 	            String difficulty = table.getValueAt(table.getSelectedRow(), 0).toString();
 	            String name = table.getValueAt(table.getSelectedRow(), 1).toString();
 	            N=puzzleList.get(table.getSelectedRow()).getN();
-	            r = new RushHour("./puzzles/"+difficulty+"/"+name);      	
-	            fileLoaded=name;
-	            drawGrille();
-	            getContentPane().remove(loadRushHour);
-	            getContentPane().add(createButtonLoad(),BorderLayout.SOUTH);
-	            revalidate();
-	            repaint();
+	            r = new RushHour("./puzzles/"+difficulty+"/"+name);
+	            currentRushHour=r;
+	            
+	            if(r.getVehicules().size()==0)
+	            {
+	            	JOptionPane.showMessageDialog(new JFrame(), "Le fichier n'est pas conforme", "ERREUR",
+					        JOptionPane.ERROR_MESSAGE);
+	            }
+	            else
+	            {
+	            	currentConfig=0;
+		            fileLoaded=name;
+		            drawGrille();
+		            getContentPane().remove(loadRushHour);
+		            getContentPane().add(createButtonLoad(),BorderLayout.SOUTH);
+		            revalidate();
+		            repaint();
+	            }
 	        }
 	    });
 		
@@ -257,6 +276,8 @@ public class RushHourSolverInteractive extends JFrame{
 	
 	public void drawGrille()
 	{		
+		if(this.currentRushHour!=null)
+		{
 		//JPanel pan = new JPanel();
 		//this.grille = new JPanel();
 		this.grille.removeAll();
@@ -274,7 +295,7 @@ public class RushHourSolverInteractive extends JFrame{
 		int compteur_voiture = 0;
 		int compteur_camion = 0;
 		int j=0;
-		for(Vehicule v: this.r.getVehicules()){
+		for(Vehicule v: this.currentRushHour.getVehicules()){
 			if(v instanceof Camion){
 				compteur_camion++;
 				map.put("t" + compteur_camion,v.getOrientation());
@@ -287,7 +308,7 @@ public class RushHourSolverInteractive extends JFrame{
 			j++;
 		}
 	    
-	    String[] grilleStr= this.r.TabIntToStrTab();
+	    String[] grilleStr= this.currentRushHour.TabIntToStrTab();
 	    
 	    HashMap<String,Byte> partsOfImg = new HashMap<>();
 	    
@@ -341,11 +362,15 @@ public class RushHourSolverInteractive extends JFrame{
 		this.grille.repaint();
 		this.revalidate();
 		this.repaint();
+		}
 		
 	}
 	
 	public void afficherResultat(Object[] result)
 	{
+		this.currentRushHour=this.r;
+		this.currentConfig=0;
+		this.drawGrille();
 		this.sequence=(ArrayList<RushHour>) result[1];
 		
 		JPanel panelConfig =  new JPanel();
@@ -489,7 +514,7 @@ public class RushHourSolverInteractive extends JFrame{
 		Object[] result =null;
 		this.methodeUsed=RushHour.RHM;
 		this.logicielUsed=RushHourSolverInteractive.GUROBI;
-		this.methode="Résolution de RHC par PL via Gurobi";
+		this.methode="Résolution de RHM par PL via Gurobi";
 		
 		GurobiSolver solver =  new GurobiSolver(this.r, this.N);
 		result = solver.solve(RushHour.RHM);
