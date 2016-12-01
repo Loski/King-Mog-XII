@@ -176,7 +176,7 @@ public class GurobiSolver {
 	}
 
 	
-	//Contrainte de victoire (15)
+	//Contrainte de victoire
 	private void victoire() throws GRBException{
 		GRBLinExpr expr = new GRBLinExpr();
 		expr.addTerm(1.0,X[RushHour.indice_solution_g][RushHour.CASE_SORTIE][N-1]);
@@ -200,7 +200,7 @@ public class GurobiSolver {
 	            }
 	    }
 	  
-	//1 mvm par tour (16)
+	//1 mvm par tour
 	private void onlyOneMvmByTurn() throws GRBException{
 		GRBLinExpr expr = new GRBLinExpr();
 		for(int k=1;k<N;k++)
@@ -223,7 +223,7 @@ public class GurobiSolver {
 		}
 	}
 	
-	//Contrainte maj marqueur  (17)
+	//Contrainte maj marqueur
 	private void majMarqueur() throws GRBException{
 		GRBLinExpr exprL, exprR;
 		for(int i=0;i<iMax;i++)
@@ -250,7 +250,6 @@ public class GurobiSolver {
 		}
 	}
 	
-	//18
 	private void defPosVehicule() throws GRBException{
 		GRBLinExpr exprL, exprR;
 		for(int i=0;i<iMax;i++)
@@ -281,7 +280,7 @@ public class GurobiSolver {
 		}
 	}
 	
-	// Un véhicule par case par tour ! (19)
+	// Un véhicule par case par tour
 	private void caseByTurn() throws GRBException{
 		GRBLinExpr expr = new GRBLinExpr();
 		
@@ -320,7 +319,6 @@ public class GurobiSolver {
 			}
 	}
 	
-	//  20 
 	private void contrainteDeDeplacement() throws GRBException{
 		GRBLinExpr expr;
 		ArrayList<ArrayList<Integer>> listOfPos = new ArrayList<ArrayList<Integer>>();
