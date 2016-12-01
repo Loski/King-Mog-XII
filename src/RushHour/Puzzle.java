@@ -34,7 +34,7 @@ public class Puzzle {
 	
 	public String getTxtFileName()
 	{
-		return this.txtFileLocation.substring(this.txtFileLocation.lastIndexOf("j"));
+		return this.txtFileLocation.substring(this.txtFileLocation.lastIndexOf(File.separator)+1);
 	}
 	
 	public static ArrayList<Puzzle> getListofPuzzle()
