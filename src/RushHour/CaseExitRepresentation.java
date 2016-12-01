@@ -13,15 +13,11 @@ import javax.swing.JPanel;
 
 public class CaseExitRepresentation extends JPanel {
 	
-	private int l;
-	private int h;
-	private String theme;
+	private BufferedImage IMG;
 	
 	 public void paint(Graphics g)
-	 {
-		 File file = new File("cars/"+theme+"/exit.png");
-		 
-		 if(this.theme.equals("default") || !file.exists() || file.isDirectory())
+	 {		 
+		 if(this.IMG==null)
 		 {
 			 g.setColor(Color.BLACK);
 			 g.drawRect(0,0, this.getWidth(), this.getHeight());
@@ -39,29 +35,16 @@ public class CaseExitRepresentation extends JPanel {
 		 
 		 else
 		 {
-	         BufferedImage image = null;
-			try {
-				image = ImageIO.read(file);
-	
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
 			Graphics2D g2 = (Graphics2D) g;
 			
 			//g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);
-			g2.drawImage(image, 1, 1, this.getWidth()-1, this.getHeight()-1,this);
+			g2.drawImage(this.IMG, 1, 1, this.getWidth()-1, this.getHeight()-1,this);
 		 }
 	 }
 	
-	  public CaseExitRepresentation(int h, int l, String theme)
+	  public CaseExitRepresentation(BufferedImage img)
 	  {
-		  this.l=l;
-		  this.h=h;
-		  this.theme=theme;
+		  this.IMG = img;
 	  }
 	
 }

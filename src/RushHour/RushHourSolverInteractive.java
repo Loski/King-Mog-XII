@@ -10,6 +10,7 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -71,10 +72,12 @@ public class RushHourSolverInteractive extends JFrame{
 	private String fileLoaded;
 	private CaseImageLoader imageLoader;
 	
+	private long timer;
+	
 	
 	static
 	{
-	   /* try
+	   try
 	    {
 	       System.loadLibrary("GurobiJni70");
 	    }
@@ -94,7 +97,7 @@ public class RushHourSolverInteractive extends JFrame{
 		    {
 		    	RushHourSolverInteractive.isGurobiRunnable=false;
 		    }
-	    }*/
+	    }
 	}
 
 	
@@ -334,7 +337,7 @@ public class RushHourSolverInteractive extends JFrame{
 			if((iTotal+1)%(this.r.getNbColonne()+1)==0 && iTotal!=0)
 			{
 				if(ligneActuel==2)
-					grille.add(new CaseExitRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),this.theme));
+					grille.add(new CaseExitRepresentation(this.imageLoader.getIMGExit()));
 				else
 					grille.add(new JPanel());
 				ligneActuel++;
@@ -358,9 +361,11 @@ public class RushHourSolverInteractive extends JFrame{
 					if(grilleStr[i].charAt(0)=='t')
 						grille.add(new CaseCamionRepresentation(map.get(grilleStr[i]),partsOfImg.get(grilleStr[i]),this.imageLoader.getIMGOfCamion()));
 					else if(grilleStr[i].charAt(0)=='c')
-						grille.add(new CaseVoitureRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),map.get(grilleStr[i]),partsOfImg.get(grilleStr[i]),this.theme));
+						grille.add(new CaseVoitureRepresentation(map.get(grilleStr[i]),partsOfImg.get(grilleStr[i]),this.imageLoader.getIMGOfVoiture()));
 					else
-						grille.add(new CaseVoitureGRepresentation(this.r.getNbLigne(),this.r.getNbColonne(),partsOfImg.get(grilleStr[i]),this.theme));
+					{
+						grille.add(new CaseVoitureGRepresentation(partsOfImg.get(grilleStr[i]),this.imageLoader.getIMGVoitureG()));
+					}
 				}
 			}
 		}
@@ -414,9 +419,10 @@ public class RushHourSolverInteractive extends JFrame{
 		this.getContentPane().removeAll();
 		this.getContentPane().setLayout(new BorderLayout());
 		
-		JLabel methodePanel = new JLabel(this.methode,JLabel.CENTER);
-		methodePanel.setFont(new Font("Verdana", Font.BOLD, 28));
-		this.getContentPane().add(methodePanel,BorderLayout.NORTH);
+		JLabel methodeLabel = new JLabel(this.methode,JLabel.CENTER);
+		methodeLabel.setFont(new Font("Verdana", Font.BOLD, 28));
+		methodeLabel.setForeground(Color.BLACK);
+		this.getContentPane().add(methodeLabel,BorderLayout.NORTH);
 		
 		JPanel center = new JPanel();
 		center.setLayout(new BorderLayout());
@@ -433,7 +439,11 @@ public class RushHourSolverInteractive extends JFrame{
 		objWrapper.setMinimumSize(new Dimension(this.getWidth(),200));
 		objWrapper.setMaximumSize(new Dimension(this.getWidth(),800));
 		
-		objWrapper.add(new JLabel("Résultat pour le fichier "+this.fileLoaded),BorderLayout.NORTH);
+		JLabel file = new JLabel("Résultat pour le fichier "+this.fileLoaded);
+		file.setHorizontalAlignment(JLabel.CENTER);
+		file.setFont(new Font("Verdana", Font.BOLD, 14));
+		
+		objWrapper.add(file,BorderLayout.NORTH);
 		objWrapper.add(obj,BorderLayout.CENTER);
 		
 		
@@ -454,7 +464,9 @@ public class RushHourSolverInteractive extends JFrame{
 		if(this.methodeUsed == RushHour.RHC)
 		{
 			nbCase = new JLabel("Nombre minimal de cases : "+result[0]);
+			nbCase.setFont(new Font("Verdana", Font.ITALIC, 14));
 			nbMV = new JLabel("Avec "+(sequence.size()-1)+ " mouvements");
+			nbMV.setFont(new Font("Verdana", Font.ITALIC, 14));
 			
 			pan.add(nbCase);
 			pan.add(nbMV);
@@ -462,9 +474,9 @@ public class RushHourSolverInteractive extends JFrame{
 		else
 		{
 			if(this.logicielUsed==RushHourSolverInteractive.GUROBI)
-				nbMV = new JLabel("Nombre minimal de Mouvement: "+result[2]);
+				(nbMV = new JLabel("Nombre minimal de Mouvement: "+result[2])).setFont(new Font("Verdana", Font.ITALIC, 14));
 			else
-				nbMV = new JLabel("Nombre minimal de Mouvement: "+(sequence.size()-1));
+				(nbMV = new JLabel("Nombre minimal de Mouvement: "+(sequence.size()-1))).setFont(new Font("Verdana", Font.ITALIC, 14));
 			
 			nbCase = new JLabel("Avec "+result[0]+" cases déplacées");
 			
@@ -474,11 +486,20 @@ public class RushHourSolverInteractive extends JFrame{
 		
 		if(this.logicielUsed==RushHourSolverInteractive.DIJKSTRA) 
 		{
-			pan.add(new JLabel("Nombre de Configuration-but : "+this.g.getIndexOfSolutions().size()));
-			pan.add(new JLabel("Nombre de configurations réalisables : "+this.g.getConfigurations().size()));
+			
+			JLabel configBut = new JLabel("Nombre de Configuration-but : "+this.g.getIndexOfSolutions().size());
+			configBut.setFont(new Font("Verdana", Font.ITALIC, 14));
+			JLabel configReal = new JLabel("Nombre de configurations réalisables : "+this.g.getConfigurations().size());
+			configReal.setFont(new Font("Verdana", Font.ITALIC, 14));
+			
+			pan.add(configBut);
+			pan.add(configReal);
 		}
 		
-		pan.add(new JLabel("Temps d'éxécution de l'ALGO : SOON"));
+		JLabel timerLabel = new JLabel("Temps d'éxécution de l'ALGO : "+(this.timer/1000000)+" ms");
+		timerLabel.setFont(new Font("Verdana", Font.ITALIC, 14));
+		
+		pan.add(timerLabel);
 		
 		return pan;
 	}
@@ -561,24 +582,36 @@ public class RushHourSolverInteractive extends JFrame{
 		  
 		  
 		  RHCDij.addActionListener(new ActionListener() { 
-				  public void actionPerformed(ActionEvent e) { 
+				  public void actionPerformed(ActionEvent e) {
+					  long startTime,endTime;
+					  startTime = System.nanoTime();
 					    Object[] result = performRHCDij();
+						 endTime = System.nanoTime();
+						 timer = (endTime - startTime); 
 					    afficherResultat(result);
 					  } 
 					} );
 		  
 		  RHMDij.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
+				  long startTime,endTime;
+				  startTime = System.nanoTime();
 				    Object[] result = performRHMDij();
+					 endTime = System.nanoTime();
+					 timer = (endTime - startTime); 
 				    afficherResultat(result);
 				  } 
 				} );
 		  
 		  RHMGuro.addActionListener(new ActionListener() { 
 			  public void actionPerformed(ActionEvent e) { 
+				  long startTime,endTime;
+				  startTime = System.nanoTime();
 				  if(RushHourSolverInteractive.isGurobiRunnable)
 				  {
 				    Object[] result = performRHMGuro();
+					 endTime = System.nanoTime();
+					 timer = (endTime - startTime); 
 				    afficherResultat(result);
 				  }
 				  else
@@ -591,9 +624,13 @@ public class RushHourSolverInteractive extends JFrame{
 	  
 		  RHCGuro.addActionListener(new ActionListener() { 
 		  public void actionPerformed(ActionEvent e) { 
+			  long startTime,endTime;
+			  startTime = System.nanoTime();
 			  if(RushHourSolverInteractive.isGurobiRunnable)
 			  {
 			    Object[] result = performRHCGuro();
+				 endTime = System.nanoTime();
+				 timer = (endTime - startTime); 
 			    afficherResultat(result);
 			  }
 			  else

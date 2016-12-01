@@ -12,8 +12,8 @@ import javax.imageio.ImageIO;
 
 public class CaseVoitureGRepresentation extends CaseVoitureRepresentation{
 
-	public CaseVoitureGRepresentation(int h, int l,int partOfImg,String theme) {
-		super(h, l,RushHour.HORIZONTAL, partOfImg,theme);
+	public CaseVoitureGRepresentation(int partOfImg,BufferedImage[] img) {
+		super(RushHour.HORIZONTAL, partOfImg,img);
 		// TODO Auto-generated constructor stub
 	}
 	 
@@ -24,31 +24,18 @@ public class CaseVoitureGRepresentation extends CaseVoitureRepresentation{
 		 
 		 g.setColor(Color.RED);
 		 g.fillRect(2,2,this.getWidth()-2,this.getHeight()-2);
-		 
-		 
-    	 File file = new File("cars/"+theme+"/g.png");
     	 
-    	 if(file.exists() && !file.isDirectory())
-    	 {
-	         BufferedImage image = null;
-			try {
-				image = ImageIO.read(file);
-	
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+    	 BufferedImage image = image=this.imageCar_h;
+    	 
+		 if(image!=null) { 
+
+		Graphics2D g2 = (Graphics2D) g;
+		
 			int coupe = image.getWidth()/2;
 			image = image.getSubimage(coupe*this.partOfImg,0,coupe,image.getHeight());
 			
-			
-			Graphics2D g2 = (Graphics2D) g;
-			
-			//g2.rotate(-Math.PI / 2, this.getWidth() / 2, this.getHeight() / 2);
 			g2.drawImage(image, 1, 1, this.getWidth()-1, this.getHeight()-1, Color.WHITE, this);
-    	 }
+		 }
 
 	 }
 

@@ -20,11 +20,13 @@ public class CaseImageLoader {
 	{
 		this.theme=theme;
 		
-		try {
-			this.camion = ImageIO.read(new File("cars/"+this.theme+"/truck.png"));
-			this.camion_h = ImageIO.read(new File("cars/"+this.theme+"/truck_h.png"));
-		} catch (IOException e) {
-		}
+		try {this.camion = ImageIO.read(new File("cars/"+this.theme+"/truck.png"));} catch (IOException e) {}
+		try {this.camion_h = ImageIO.read(new File("cars/"+this.theme+"/truck_h.png"));} catch (IOException e) {}
+		try {this.exit = ImageIO.read(new File("cars/"+this.theme+"/exit.png"));} catch (IOException e) {}
+		try {this.voitureG = ImageIO.read(new File("cars/"+this.theme+"/g.png"));} catch (IOException e) {}
+		try {this.voiture = ImageIO.read(new File("cars/"+this.theme+"/car.png"));} catch (IOException e) {}
+		try {this.voiture_h = ImageIO.read(new File("cars/"+this.theme+"/car_h.png"));} catch (IOException e) {}
+		
 	}
 	
 	public BufferedImage[] getIMGOfCamion()
@@ -32,6 +34,30 @@ public class CaseImageLoader {
 		BufferedImage[] tab = new BufferedImage[2];
 		tab[0]=this.camion_h;
 		tab[1]=this.camion;
+		
+		return tab;
+		
+	}
+	
+	public BufferedImage getIMGExit()
+	{
+		return this.exit;
+		
+	}
+	
+	public BufferedImage[] getIMGVoitureG()
+	{
+		BufferedImage[] buff = new BufferedImage[2];
+		buff[0]=this.voitureG;
+		return buff;
+		
+	}
+	
+	public BufferedImage[] getIMGOfVoiture()
+	{
+		BufferedImage[] tab = new BufferedImage[2];
+		tab[0]=this.voiture_h;
+		tab[1]=this.voiture;
 		
 		return tab;
 		

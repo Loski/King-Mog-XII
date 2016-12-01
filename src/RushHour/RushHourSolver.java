@@ -46,7 +46,7 @@ public class RushHourSolver {
 			badChoice =false;
 			try
 			{
-			    System.out.println("Résoudre un problème de : ");
+			    System.out.println("Rï¿½soudre un problï¿½me de : ");
 			    System.out.println("(1) Rush Hour Mouvements");
 			    System.out.println("(2) Rush Hour Cases\n");
 				
@@ -80,8 +80,8 @@ public class RushHourSolver {
 			
 			try
 			{
-				System.out.println("Utiliser la méthode : ");
-			    System.out.println("(1) Programmation linéaire");
+				System.out.println("Utiliser la mï¿½thode : ");
+			    System.out.println("(1) Programmation linï¿½aire");
 			    System.out.println("(2) Algorithme de Dijkstra\n");
 				
 			    Scanner scanner = new Scanner(System.in);
@@ -123,7 +123,7 @@ public class RushHourSolver {
 		long startTime = System.nanoTime();
 		int nbCaseDeplace=-1;
 		
-		//Recréer le graphe des configs
+		//Recrï¿½er le graphe des configs
 		if(this.g==null || ! this.g.getConfigurations().get(0).equals(r))
 			this.g = new GrapheConfiguration(r);
 		
@@ -151,7 +151,7 @@ public class RushHourSolver {
 		if(probleme == 1)
 		{
 			System.out.println("Nombre minimal de mouvement : "+(sequence.size()-1));
-			System.out.println("Avec "+nbCaseDeplace+" cases déplacées");
+			System.out.println("Avec "+nbCaseDeplace+" cases dï¿½placï¿½es");
 		}
 		else
 		{
