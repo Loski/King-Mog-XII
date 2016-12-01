@@ -170,6 +170,7 @@ public class GurobiSolver {
 		caseByTurn();	
 		this.model.update();
 		contrainteDeDeplacement();
+		this.model.update();
 		
 		
 	}
@@ -213,7 +214,7 @@ public class GurobiSolver {
 				for(int j:pos)
 					for(int l:pos)
 	            		{	
-	            			expr.addTerm(1.0,Y[i][j][l][k]);	
+	            				expr.addTerm(1.0,Y[i][j][l][k]);	
 	            		}
 			}
 			
@@ -239,8 +240,8 @@ public class GurobiSolver {
 					
 					for(int l:pos)
 					{
-						exprL.addTerm(-1.0, Y[i][j][l][k]);
-						exprL.addTerm(1.0, Y[i][l][j][k]);
+							exprL.addTerm(-1.0, Y[i][j][l][k]);
+							exprL.addTerm(1.0, Y[i][l][j][k]);
 					}
 					
 					if(pos.length>0)
@@ -377,25 +378,31 @@ public class GurobiSolver {
             		
             		for(int l:this.getMarqueurPossible(i))
                     {
-                        Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y"+i+""+j+""+l+""+k);
+            				Y[i][j][l][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Y"+i+""+j+""+l+""+k);
 
                         int nbCase = Math.abs(j-l); 
                         if(this.rh.getVehicules().get(i).getOrientation()==RushHour.VERTICAL)
                             nbCase= nbCase/6;
-                        if(methode==RushHour.RHM)
-                        	obj.addTerm(1.0,Y[i][j][l][k]);
-                        else
-                            obj.addTerm(nbCase,Y[i][j][l][k]);
+                        
+	                        if(methode==RushHour.RHM)
+	                        	obj.addTerm(1.0,Y[i][j][l][k]);
+	                        else
+	                            obj.addTerm(nbCase,Y[i][j][l][k]);
                     }
             	}            	
             }
 		
+		model.update();
+		
 		model.setObjective(obj, GRB.MINIMIZE);
+		
+		model.update();
 		
 		for(int i=0;i<iMax;i++)
             for(int j:this.getPositionPossible(i))
                     for(int k=0;k<N;k++){
 						Z[i][j][k]= model.addVar(0.0, 1.0, 0.0, GRB.BINARY,"Z_"+i+"_"+j+"_"+k);
+						model.update();
 	                }
 		
 		for(int i = 0; i <iMax; i++){
@@ -407,7 +414,7 @@ public class GurobiSolver {
 			int taille = this.rh.getVehicules().get(i).getTaille();
 			for(int j = this.rh.getVehicules().get(i).getPosition(); j < position_initial + saut * taille ;j+=saut){
 				this.model.addConstr(Z[i][j][0], GRB.EQUAL, 1.0, "ZDepart"+i +"_"+j);
-				//System.out.println(Z[i][j][0].get(GRB.DoubleAttr.));
+				model.update();
 			}
 				
 		}
@@ -420,7 +427,9 @@ public class GurobiSolver {
 		try
 		{
 			this.env = new GRBEnv("RH.log");
-			this.model = new GRBModel(env);			
+			this.model = new GRBModel(env);	
+			
+			this.model.getEnv().set(GRB.DoubleParam.TimeLimit, 120.0);
 			this.initialisation(methode);
 			
 			//AJOUT CONTRAINTES
@@ -429,6 +438,25 @@ public class GurobiSolver {
 
 			this.model.optimize();
 			Object result[] = new Object[3];
+			
+			int status = model.get(GRB.IntAttr.Status);
+		    if (status == GRB.Status.TIME_LIMIT){
+		    	result[0] = (Integer)(int)model.get(GRB.DoubleAttr.ObjVal);
+		    	System.out.println("TIME LIMIT EXCEED");
+		    	return result;
+		    }
+		    
+		    
+		    if (status == GRB.Status.INF_OR_UNBD ||
+			        status == GRB.Status.INFEASIBLE  ||
+			        status == GRB.Status.UNBOUNDED     ){
+			    	this.model.dispose();
+					this.env.dispose();
+					result[0] = (Integer)(int)model.get(GRB.DoubleAttr.ObjVal)+1000;
+			    	System.out.println("N TROP PETIT");
+			    	return result;
+			    }
+		    
 			ArrayList<RushHour> graphe = new ArrayList<RushHour>();
 			graphe.add(rh);
 			RushHour precedent = rh;
@@ -439,7 +467,6 @@ public class GurobiSolver {
 					{
 						for(byte l=0;l<jMax;l++)
 							if(this.Y[i][j][l][k] != null && this.Y[i][j][l][k].get(GRB.DoubleAttr.X) == 1.0){
-								System.out.println("Salut");
 		            			 RushHour tmp = new RushHour(precedent);
 		            			 tmp.getVehicules().get(i).setPosition(l);
 		            			 tmp.majGrille();
@@ -451,14 +478,6 @@ public class GurobiSolver {
 		            				 nbCase+=Math.abs(j-l)/this.rh.getNbColonne();
 							}
 					}
-			int status = model.get(GRB.IntAttr.Status);
-		    if (status == GRB.Status.INF_OR_UNBD ||
-		        status == GRB.Status.INFEASIBLE  ||
-		        status == GRB.Status.UNBOUNDED     ){
-		    	this.model.dispose();
-				this.env.dispose();
-				return null;
-		    }
 		    	
 		    
 		    if(methode==RushHour.RHC)
@@ -497,13 +516,6 @@ public class GurobiSolver {
 		return this.mij[i][j];
 	}
 	
-	/*public static void main(String args[])
-	{
-		RushHour r = new RushHour("./puzzles/d�butant/jam1.txt");
-		GurobiSolver g = new GurobiSolver(r,50);
-		for(Integer i:g.getPIJ(0, 0))
-			System.out.println(i.intValue());
-	}*/
-	
+
 	
 }

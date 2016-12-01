@@ -34,7 +34,7 @@ public class Puzzle {
 	
 	public String getTxtFileName()
 	{
-		return this.txtFileLocation.substring(this.txtFileLocation.lastIndexOf("\\")+1);
+		return this.txtFileLocation.substring(this.txtFileLocation.lastIndexOf("/")+1);
 	}
 	
 	public static ArrayList<Puzzle> getListofPuzzle()
@@ -53,9 +53,9 @@ public class Puzzle {
 	      */
 	      
 		 File[] dir = new File[4];
-		 dir[0]=new File("./puzzles/débutant/");
-		 dir[1]=new File("./puzzles/intermédiaire/");
-		 dir[2]=new File("./puzzles/avancé/");
+		 dir[0]=new File("./puzzles/dÃ©butant/");
+		 dir[1]=new File("./puzzles/intermÃ©diaire/");
+		 dir[2]=new File("./puzzles/avancÃ©/");
 		 dir[3]=new File("./puzzles/expert/");
 		 //dir[4]=new File("./puzzles/debug/");
 		
@@ -79,11 +79,11 @@ public class Puzzle {
 	}
 
 	public int getN() {
-        if(difficulty.equals("débutant"))
+        if(difficulty.equals("dÃ©butant"))
         	return 14;
-        else if(difficulty.equals("intermédiaire"))
+        else if(difficulty.equals("intermÃ©diaire"))
         	return 25;
-        else if(difficulty.equals("avancé"))
+        else if(difficulty.equals("avancÃ©"))
         	return 31;
         else if(difficulty.equals("expert"))
         	return 50;
