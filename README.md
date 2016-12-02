@@ -1,1 +1,3 @@
 # MOGPL
+
+LAVASTE Maxime | LAFONTAINE Loïc
