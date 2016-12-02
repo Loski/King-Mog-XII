@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Puzzle {
 
@@ -35,6 +37,26 @@ public class Puzzle {
 	public String getTxtFileName()
 	{
 		return this.txtFileLocation.substring(this.txtFileLocation.lastIndexOf(File.separator)+1);
+	}
+	
+	public static void sort(ArrayList<Puzzle> puzzles)
+	{
+		Collections.sort(puzzles, new Comparator<Object>()
+		 {
+			@Override
+			public int compare(Object o1, Object o2) {
+				try
+				{
+		         String fileName1 = (((Puzzle)o1).getTxtFileName());
+		         String fileName2 = (((Puzzle)o2).getTxtFileName());
+		         
+		         int fileId1 = Integer.parseInt(fileName1.split("m")[1].split(".txt")[0]);
+		         int fileId2 = Integer.parseInt(fileName2.split("m")[1].split(".txt")[0]);
+
+		         return fileId1 - fileId2;
+				}catch(Exception e){/*System.out.println("WARNING : un fichier Puzzle est mal nommé");*/return 0;}
+			}
+		 });
 	}
 	
 	public static ArrayList<Puzzle> getListofPuzzle()

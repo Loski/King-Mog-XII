@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 public abstract class DijkstraSolver {
 	
-	private static int[][] resolve(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations)
+	private static int[][] resolve(HashMap<Integer,HashMap<Integer,Integer>> liste_adj, ArrayList<RushHour> configurations,int methode)
 	{
 		int[] distances = new int[configurations.size()];
 		int[] predecesseurs = new int[configurations.size()];
@@ -50,10 +50,17 @@ public abstract class DijkstraSolver {
 				sommetsNonMarques.remove(Integer.valueOf(nvSommetMarque));
 				
 				for (Entry<Integer, Integer> successeur : liste_adj.get(Integer.valueOf(nvSommetMarque)).entrySet()) 
-				{					
-						int distanceToSucc = successeur.getValue().intValue();
-						int indexOfSucc = successeur.getKey().intValue();
+				{		
+						int distanceToSucc =0;
+						int indexOfSucc = 0;
+					
+						indexOfSucc = successeur.getKey().intValue();
 						
+						if(methode==RushHour.RHC)
+							distanceToSucc = successeur.getValue().intValue();
+						else
+							distanceToSucc = 1;
+							
 						int distanceBefore = distances[indexOfSucc];
 						
 						distances[indexOfSucc]=Math.min(distances[indexOfSucc],distances[nvSommetMarque] + distanceToSucc);
@@ -104,7 +111,7 @@ public abstract class DijkstraSolver {
 	{	
 		long startTime = System.nanoTime();
 		
-		int[][] resultDij = resolve(liste_adj, configurations);
+		int[][] resultDij = resolve(liste_adj, configurations,RushHour.RHC);
 		
 		int[] predecesseurs = resultDij[1];
 		int[] distance = resultDij[0];
@@ -132,13 +139,13 @@ public abstract class DijkstraSolver {
 	{
 		HashMap<Integer,HashMap<Integer,Integer>> copy = new HashMap<Integer,HashMap<Integer,Integer>>();
 		
-		for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
+		/*for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
 			
 			copy.put(successeurs.getKey(),new HashMap<Integer,Integer>());
 			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
 				copy.get(successeurs.getKey()).put(sommet.getKey(),1);
 			}
-		}
+		}*/
 		
 		/*for (Entry<Integer, HashMap<Integer, Integer>> successeurs : liste_adj.entrySet()) {
 			for (Entry<Integer, Integer> sommet : successeurs.getValue().entrySet()) {
@@ -147,7 +154,7 @@ public abstract class DijkstraSolver {
 		}*/
 		
 		
-		int[][] resultDij = resolve(copy, configurations);
+		int[][] resultDij = resolve(liste_adj, configurations,RushHour.RHM);
 		
 		int[] predecesseurs = resultDij[1];
 		int indexOfSolution = resultDij[2][0];

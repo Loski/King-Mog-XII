@@ -227,6 +227,8 @@ public class RushHourSolverInteractive extends JFrame{
         
         int i=0;
         
+        Puzzle.sort(puzzleList);
+        
         for(Puzzle p:puzzleList)
         {
         	listData[i][0]=p.getDifficulty();
@@ -472,9 +474,7 @@ public class RushHourSolverInteractive extends JFrame{
 		if(this.methodeUsed == RushHour.RHC)
 		{
 			nbCase = new JLabel("Nombre minimal de cases : "+result[0]);
-			nbCase.setFont(new Font("Verdana", Font.ITALIC, 14));
 			nbMV = new JLabel("Avec "+(sequence.size()-1)+ " mouvements");
-			nbMV.setFont(new Font("Verdana", Font.ITALIC, 14));
 			
 			pan.add(nbCase);
 			pan.add(nbMV);
@@ -492,6 +492,9 @@ public class RushHourSolverInteractive extends JFrame{
 			pan.add(nbCase);
 		}
 		
+		nbMV.setFont(new Font("Verdana", Font.ITALIC, 14));
+		nbCase.setFont(new Font("Verdana", Font.ITALIC, 14));
+		
 		if(this.logicielUsed==RushHourSolverInteractive.DIJKSTRA) 
 		{
 			
@@ -504,7 +507,7 @@ public class RushHourSolverInteractive extends JFrame{
 			pan.add(configReal);
 		}
 		
-		JLabel timerLabel = new JLabel("Temps d'éxécution de l'ALGO : "+(this.timer/1000000)+" ms");
+		JLabel timerLabel = new JLabel("Temps d'exécution de l'ALGO : "+(this.timer/1000000)+" ms");
 		timerLabel.setFont(new Font("Verdana", Font.ITALIC, 14));
 		
 		pan.add(timerLabel);
@@ -570,8 +573,8 @@ public class RushHourSolverInteractive extends JFrame{
 	{
 		  JMenuBar menuBar = new JMenuBar();
 		  JMenu menuFichier = new JMenu("Fichier");
-		  JMenu menuRHC = new JMenu("Résoudre un probléme RHC");
-		  JMenu menuRHM = new JMenu("Résoudre un probléme RHM");
+		  JMenu menuRHC = new JMenu("Résoudre un problème RHC");
+		  JMenu menuRHM = new JMenu("Résoudre un problème RHM");
 
 		  JMenuItem loadFile = new JMenuItem("Charger un autre fichier");
 		  
